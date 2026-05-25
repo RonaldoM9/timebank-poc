@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TimeBank POC — Premier Lot
 
-## Getting Started
+Plateforme de TimeBanking où chacun échange ses compétences contre du temps via une unité interne appelée **TIME**.
 
-First, run the development server:
+> "Nous sommes tous des super-héros du quotidien."
+
+## Stack
+
+- **Next.js 16** — App Router
+- **TypeScript** — Strict mode
+- **Tailwind CSS v4** — Design tokens personnalisés
+- **Prisma 6** — ORM
+- **SQLite** — Base de données
+- **NextAuth v4** — Authentification Credentials
+- **bcryptjs** — Hash des mots de passe
+- **zod** — Validation des formulaires
+
+## Périmètre (Lot 1)
+
+Pages :
+- `/auth/signup` — Création de compte
+- `/auth/signin` — Connexion
+- `/dashboard` — Tableau de bord utilisateur
+- `/wallet` — Wallet + historique transactions
+
+Flux validé :
+```
+signup → mint 10 TIME → login → dashboard → wallet
+```
+
+## Installation
+
+```bash
+cd src
+
+# Installer les dépendances
+npm install
+
+# Générer le client Prisma
+npx prisma generate
+
+# Lancer la migration
+npx prisma migrate dev --name init
+
+# Démarrer le serveur de dev
+npm run dev
+```
+
+## Variables d'environnement
+
+Créer un fichier `.env` à la racine de `src/` :
+
+```env
+DATABASE_URL="file:./dev.db"
+NEXTAUTH_SECRET="replace-with-random-secret"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+Générer un secret aléatoire :
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+## Commandes Prisma
+
+```bash
+# Créer une migration
+npx prisma migrate dev --name nom_de_la_migration
+
+# Voir la base dans Prisma Studio
+npx prisma studio
+
+# Regénérer le client
+npx prisma generate
+```
+
+## Lancement
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# → http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Premier scénario de test
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Ouvrir `http://localhost:3000`
+2. Redirigé vers `/auth/signin`
+3. Cliquer "S'inscrire" → `/auth/signup`
+4. Remplir nom / email / mot de passe → "Créer mon compte"
+5. Redirigé vers `/auth/signin`
+6. Se connecter avec l'email et le mot de passe
+7. **Dashboard** : "Bonjour {name}", solde = 10 TIME, wallet address
+8. Aller sur **/wallet**
+9. Voir : solde = 10 TIME, wallet address, transaction "Mint initial" +10 TIME
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Structure
 
-## Learn More
+```
+src/
+├── app/
+│   ├── api/auth/
+│   │   ├── [...nextauth]/    → NextAuth handler
+│   │   └── signup/           → API d'inscription
+│   ├── auth/
+│   │   ├── signin/           → Page de connexion
+│   │   └── signup/           → Page d'inscription
+│   ├── dashboard/            → Tableau de bord
+│   ├── wallet/               → Wallet + historique
+│   ├── layout.tsx            → Layout global (fonts + providers)
+│   ├── providers.tsx         → SessionProvider
+│   └── page.tsx              → Redirection racine
+├── lib/
+│   ├── auth.ts               → Config NextAuth
+│   └── prisma.ts             → Client Prisma singleton
+├── prisma/
+│   └── schema.prisma         → Modèles User + Transaction
+└── .env                      → Variables d'environnement
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Limites du premier lot
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Pas de marketplace / services / bookings
+- Pas de blockchain ou digital twin
+- Pas de rating / admin / notifications / chat
+- TIME n'est pas une crypto ni une monnaie convertible
+- Les CTA "Explorer les services" et "Proposer un service" sont visibles mais pas fonctionnels
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Prochaine étape recommandée
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Implémentation de l'escrow (réservation de temps entre utilisateurs)
+- Catalogue de services
+- Recherche et filtres

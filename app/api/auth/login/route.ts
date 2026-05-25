@@ -1,0 +1,77 @@
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if (!email || !password) {
+      return NextResponse.redirect(new URL("/auth/signin?error=missing", req.nextUrl.origin));
+    }
+
+    // Find user
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return NextResponse.redirect(new URL("/auth/signin?error=invalid", req.nextUrl.origin));
+    }
+
+    // Verify password
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return NextResponse.redirect(new URL("/auth/signin?error=invalid", req.nextUrl.origin));
+    }
+
+    // Manual CSRF: get token + cookie, then pass both
+    const baseUrl = "http://localhost:3000";
+
+    // Step 1: Get CSRF token and capture cookie
+    const csrfRes = await fetch(`${baseUrl}/api/auth/csrf`, {
+      cache: "no-store",
+    });
+    const { csrfToken } = await csrfRes.json();
+    
+    // Extract the CSRF cookie from the response (Node 18+ supports getSetCookie)
+    const csrfCookies = csrfRes.headers.getSetCookie();
+    const csrfCookieHeader = csrfCookies?.join("; ") || "";
+
+    // Step 2: POST to credentials callback, manually passing the CSRF cookie
+    const loginRes = await fetch(`${baseUrl}/api/auth/callback/credentials`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": csrfCookieHeader,
+      },
+      body: new URLSearchParams({ email, password, csrfToken }),
+      redirect: "manual",
+    });
+
+    // Log what we got back
+    console.log("Login proxy status:", loginRes.status);
+    const allCookies = loginRes.headers.getSetCookie();
+    console.log("Cookies from login:", JSON.stringify(allCookies));
+
+    // Build response with redirect to dashboard on the correct host
+    const host = req.headers.get("host") || "204.168.193.43:3000";
+    const protocol = req.nextUrl.protocol || "http:";
+    const origin = `${protocol}//${host}`;
+    const response = NextResponse.redirect(new URL("/dashboard", origin));
+
+    // Forward session-token cookie from NextAuth's response
+    if (allCookies && allCookies.length > 0) {
+      for (const cookie of allCookies) {
+        if (cookie.includes("next-auth.session-token")) {
+          response.headers.append("Set-Cookie", cookie);
+          console.log("Forwarded session cookie!");
+        }
+      }
+    }
+
+    return response;
+  } catch (error) {
+    console.error("Login error:", error);
+    return NextResponse.redirect(new URL("/auth/signin?error=server", req.nextUrl.origin));
+  }
+}
