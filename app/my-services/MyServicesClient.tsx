@@ -1,0 +1,164 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Clock, Plus, Power, PowerOff, ExternalLink } from "lucide-react";
+import { toggleServiceStatus } from "@/app/services/actions";
+
+interface Service {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  ratePerHour: number;
+  status: string;
+  createdAt: string;
+}
+
+export default function MyServicesClient({ services }: { services: Service[] }) {
+  const router = useRouter();
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+
+  async function handleToggle(serviceId: string) {
+    setTogglingId(serviceId);
+    await toggleServiceStatus(serviceId);
+    setTogglingId(null);
+    router.refresh();
+  }
+
+  if (services.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 rounded-2xl bg-[#111111] border border-[#262626] flex items-center justify-center mx-auto mb-4">
+            <Clock className="w-8 h-8 text-[#5c5c5c]" />
+          </div>
+          <h2 className="text-xl font-anton tracking-wide text-[#f5f5f5] mb-2">
+            Tu n&apos;as pas encore proposé de service
+          </h2>
+          <p className="text-[#a3a3a3] text-sm mb-6">
+            Partage ton super-pouvoir avec la communauté et commence à gagner des TIME.
+          </p>
+          <Link
+            href="/services/new"
+            className="inline-flex items-center gap-2 bg-[#00d4aa] hover:bg-[#00b894] text-black font-semibold rounded-xl px-6 py-3 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Proposer mon premier service
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a]">
+      <header className="border-b border-[#262626]">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Clock className="w-6 h-6 text-[#00d4aa]" />
+            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
+              TimeBank
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5] mb-1">
+              Mes services
+            </h1>
+            <p className="text-[#a3a3a3] text-sm">
+              {services.filter((s) => s.status === "active").length} actif
+             {services.filter((s) => s.status === "active").length > 1 ? "s" : ""}
+              {" — "}
+              {services.filter((s) => s.status === "inactive").length} inactif
+              {services.filter((s) => s.status === "inactive").length > 1 ? "s" : ""}
+            </p>
+          </div>
+          <Link
+            href="/services/new"
+            className="inline-flex items-center gap-2 bg-[#00d4aa] hover:bg-[#00b894] text-black font-semibold rounded-xl px-4 py-2 text-sm transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Nouveau service
+          </Link>
+        </div>
+
+        <div className="space-y-3">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className="bg-[#111111] border border-[#262626] rounded-2xl p-5 hover:border-[#333] transition-colors"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-[#f5f5f5] truncate">
+                      {service.title}
+                    </h3>
+                    <span
+                      className={`text-xs font-bangers tracking-wider px-2 py-0.5 rounded-full ${
+                        service.status === "active"
+                          ? "bg-[#00d4aa]/10 text-[#00d4aa]"
+                          : "bg-[#5c5c5c]/10 text-[#5c5c5c]"
+                      }`}
+                    >
+                      {service.status === "active" ? "ACTIF" : "INACTIF"}
+                    </span>
+                  </div>
+                  <p className="text-[#a3a3a3] text-sm line-clamp-2 mb-2">
+                    {service.description}
+                  </p>
+                  <div className="flex items-center gap-3 text-xs text-[#5c5c5c]">
+                    <span className="bg-[#181818] border border-[#262626] rounded-lg px-2 py-0.5">
+                      {service.category}
+                    </span>
+                    <span>{service.ratePerHour} TIME/h</span>
+                    <span>
+                      Créé le{" "}
+                      {new Date(service.createdAt).toLocaleDateString("fr-FR")}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 shrink-0">
+                  <Link
+                    href={`/services/${service.id}`}
+                    className="inline-flex items-center justify-center gap-1.5 bg-[#181818] hover:bg-[#222] border border-[#262626] rounded-xl px-3 py-2 text-[#a3a3a3] hover:text-[#f5f5f5] text-xs transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    Voir
+                  </Link>
+                  <button
+                    onClick={() => handleToggle(service.id)}
+                    disabled={togglingId === service.id}
+                    className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs transition-colors ${
+                      service.status === "active"
+                        ? "bg-red-900/20 hover:bg-red-900/30 text-red-400 border border-red-800/50"
+                        : "bg-[#00d4aa]/10 hover:bg-[#00d4aa]/20 text-[#00d4aa] border border-[#00d4aa]/30"
+                    } disabled:opacity-50`}
+                  >
+                    {service.status === "active" ? (
+                      <>
+                        <PowerOff className="w-3.5 h-3.5" />
+                        Désactiver
+                      </>
+                    ) : (
+                      <>
+                        <Power className="w-3.5 h-3.5" />
+                        Activer
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}

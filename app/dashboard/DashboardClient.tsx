@@ -2,7 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { Clock, LogOut, Wallet, Search, Plus } from "lucide-react";
+import { Clock, LogOut, Wallet, Search, Plus, Layers } from "lucide-react";
 
 interface DashboardUser {
   id: string;
@@ -11,7 +11,15 @@ interface DashboardUser {
   walletAddress: string;
 }
 
-export default function DashboardClient({ user }: { user: DashboardUser }) {
+export default function DashboardClient({
+  user,
+  activeServices,
+  inactiveServices,
+}: {
+  user: DashboardUser;
+  activeServices: number;
+  inactiveServices: number;
+}) {
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
@@ -63,6 +71,41 @@ export default function DashboardClient({ user }: { user: DashboardUser }) {
           </div>
         </div>
 
+        {/* Service stats */}
+        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[#a3a3a3] text-sm font-medium">
+              Mes services
+            </span>
+            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+              ~ super-pouvoirs ~
+            </span>
+          </div>
+          <div className="flex items-center gap-6">
+            <div>
+              <div className="text-2xl font-bold text-[#f5f5f5]">
+                {activeServices}
+              </div>
+              <div className="text-xs text-[#a3a3a3]">actif{activeServices > 1 ? "s" : ""}</div>
+            </div>
+            <div className="w-px h-8 bg-[#262626]" />
+            <div>
+              <div className="text-2xl font-bold text-[#a3a3a3]">
+                {inactiveServices}
+              </div>
+              <div className="text-xs text-[#5c5c5c]">inactif{inactiveServices > 1 ? "s" : ""}</div>
+            </div>
+            {(activeServices + inactiveServices) > 0 && (
+              <Link
+                href="/my-services"
+                className="ml-auto text-[#00d4aa] hover:text-[#00b894] text-sm transition-colors underline underline-offset-2"
+              >
+                Voir tout
+              </Link>
+            )}
+          </div>
+        </div>
+
         {/* Action cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Link
@@ -80,29 +123,39 @@ export default function DashboardClient({ user }: { user: DashboardUser }) {
             </p>
           </Link>
 
-          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5 opacity-60 cursor-not-allowed">
+          <Link
+            href="/services"
+            className="bg-[#111111] border border-[#262626] rounded-2xl p-5 hover:border-[#00d4aa]/30 transition-all group"
+          >
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-[#5c5c5c]/20 flex items-center justify-center">
-                <Search className="w-5 h-5 text-[#5c5c5c]" />
+              <div className="w-10 h-10 rounded-xl bg-[#00d4aa]/10 flex items-center justify-center">
+                <Search className="w-5 h-5 text-[#00d4aa]" />
               </div>
-              <span className="font-semibold text-[#5c5c5c]">
+              <span className="font-semibold text-[#f5f5f5]">
                 Explorer les services
               </span>
             </div>
-            <p className="text-[#5c5c5c] text-sm">Bientôt disponible</p>
-          </div>
+            <p className="text-[#a3a3a3] text-sm">
+              Trouve un héros et réserve avec tes TIME
+            </p>
+          </Link>
 
-          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5 opacity-60 cursor-not-allowed">
+          <Link
+            href="/services/new"
+            className="bg-[#111111] border border-[#262626] rounded-2xl p-5 hover:border-[#00d4aa]/30 transition-all group"
+          >
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-[#5c5c5c]/20 flex items-center justify-center">
-                <Plus className="w-5 h-5 text-[#5c5c5c]" />
+              <div className="w-10 h-10 rounded-xl bg-[#00d4aa]/10 flex items-center justify-center">
+                <Plus className="w-5 h-5 text-[#00d4aa]" />
               </div>
-              <span className="font-semibold text-[#5c5c5c]">
+              <span className="font-semibold text-[#f5f5f5]">
                 Proposer un service
               </span>
             </div>
-            <p className="text-[#5c5c5c] text-sm">Bientôt disponible</p>
-          </div>
+            <p className="text-[#a3a3a3] text-sm">
+              Partage ton super-pouvoir et gagne des TIME
+            </p>
+          </Link>
         </div>
 
         {/* Comics footer */}

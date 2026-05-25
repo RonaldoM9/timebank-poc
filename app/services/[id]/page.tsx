@@ -1,0 +1,40 @@
+import { getServerSession } from "next-auth";
+import { notFound } from "next/navigation";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import ServiceDetailClient from "./ServiceDetailClient";
+
+export default async function ServiceDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const service = await prisma.service.findUnique({
+    where: { id },
+    include: {
+      provider: {
+        select: { id: true, name: true, walletAddress: true },
+      },
+    },
+  });
+
+  if (!service) notFound();
+
+  const session = await getServerSession(authOptions);
+  const isOwner = session?.user?.email
+    ? (await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true },
+      }))?.id === service.provider.id
+    : false;
+
+  const serialized = {
+    ...service,
+    createdAt: service.createdAt.toISOString(),
+    updatedAt: service.updatedAt.toISOString(),
+  };
+
+  return <ServiceDetailClient service={serialized} isOwner={isOwner} />;
+}
