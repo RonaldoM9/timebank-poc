@@ -19,6 +19,7 @@ model User {
   transactionsFrom Transaction[] @relation("FromUser")
   transactionsTo   Transaction[] @relation("ToUser")
   services         Service[]
+  clientBookings   Booking[]  @relation("ClientBookings")
 }
 
 model Service {
@@ -32,7 +33,25 @@ model Service {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  provider   User     @relation(fields: [providerId], references: [id])
+  provider User      @relation(fields: [providerId], references: [id])
+  bookings Booking[]
+}
+
+model Booking {
+  id                 String    @id @default(cuid())
+  serviceId          String
+  clientId           String
+  hours              Int
+  totalTime          Int
+  status             String    @default("pending")
+  createdAt          DateTime  @default(now())
+  completedAt        DateTime?
+  cancelledAt        DateTime?
+  cancellationReason String?
+
+  service      Service       @relation(fields: [serviceId], references: [id])
+  client       User          @relation("ClientBookings", fields: [clientId], references: [id])
+  transactions Transaction[]
 }
 
 model Transaction {
@@ -42,8 +61,10 @@ model Transaction {
   amount    Float
   type      String   // mint, escrow, release, refund, transfer
   status    String   @default("completed")
+  bookingId String?
   createdAt DateTime @default(now())
 
-  fromUser User? @relation("FromUser", fields: [fromId], references: [id])
-  toUser   User? @relation("ToUser", fields: [toId], references: [id])
+  fromUser User?    @relation("FromUser", fields: [fromId], references: [id])
+  toUser   User?    @relation("ToUser", fields: [toId], references: [id])
+  booking  Booking? @relation(fields: [bookingId], references: [id])
 }

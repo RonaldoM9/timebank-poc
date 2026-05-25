@@ -21,10 +21,10 @@ interface WalletUser {
 }
 
 const typeLabels: Record<string, string> = {
-  mint: "Mint initial",
+  mint: "Crédit de bienvenue",
   transfer: "Transfert",
-  escrow: "Mise sous séquestre",
-  release: "Libération",
+  escrow: "Réservation en attente",
+  release: "Service terminé",
   refund: "Remboursement",
 };
 

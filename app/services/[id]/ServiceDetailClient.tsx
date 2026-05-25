@@ -134,20 +134,12 @@ export default function ServiceDetailClient({ service, isOwner }: { service: Ser
               </Link>
             </div>
           ) : session ? (
-            <div className="bg-[#181818] border border-[#262626] rounded-xl p-4 text-center">
-              <p className="text-[#a3a3a3] text-sm mb-2">
-                Réserver ce service avec mes TIME
-              </p>
-              <button
-                disabled
-                className="bg-[#00d4aa]/30 text-black/50 font-semibold rounded-xl px-6 py-2.5 cursor-not-allowed text-sm"
-              >
-                Réserver avec mes TIME
-              </button>
-              <p className="text-[#5c5c5c] text-xs mt-2">
-                La réservation arrive au Lot 2B
-              </p>
-            </div>
+            <Link
+              href={`/services/${service.id}/book`}
+              className="block w-full bg-[#00d4aa] hover:bg-[#00b894] text-black font-semibold rounded-xl py-3 text-center transition-colors text-sm"
+            >
+              Réserver avec mes TIME
+            </Link>
           ) : (
             <Link
               href="/auth/signin"

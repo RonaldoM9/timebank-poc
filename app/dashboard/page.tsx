@@ -23,11 +23,32 @@ export default async function DashboardPage() {
   const activeCount = services.filter((s) => s.status === "active").length;
   const inactiveCount = services.filter((s) => s.status === "inactive").length;
 
+  const [myBookingsCount, missionsCount, recentTransactions] = await Promise.all([
+    prisma.booking.count({ where: { clientId: user.id, status: "pending" } }),
+    prisma.booking.count({
+      where: { service: { providerId: user.id }, status: "pending" },
+    }),
+    prisma.transaction.findMany({
+      where: {
+        OR: [{ fromId: user.id }, { toId: user.id }],
+        type: { in: ["escrow", "release", "refund"] },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+    }),
+  ]);
+
   return (
     <DashboardClient
       user={user}
       activeServices={activeCount}
       inactiveServices={inactiveCount}
+      myBookingsCount={myBookingsCount}
+      missionsCount={missionsCount}
+      recentTransactions={recentTransactions.map((tx) => ({
+        ...tx,
+        createdAt: tx.createdAt.toISOString(),
+      }))}
     />
   );
 }

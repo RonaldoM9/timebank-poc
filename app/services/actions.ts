@@ -3,6 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getUserBalance, createEscrow, releaseEscrow, refundEscrow } from "@/lib/ledger";
 import { z } from "zod";
 
 const createServiceSchema = z.object({
@@ -173,4 +174,351 @@ export async function getServiceById(id: string) {
     createdAt: service.createdAt.toISOString(),
     updatedAt: service.updatedAt.toISOString(),
   };
+}
+
+// ─── Booking Server Actions ─────────────────────────────────────────────
+
+export type BookingItem = {
+  id: string;
+  serviceId: string;
+  clientId: string;
+  hours: number;
+  totalTime: number;
+  status: string;
+  createdAt: string;
+  completedAt: string | null;
+  cancelledAt: string | null;
+  cancellationReason: string | null;
+  service: {
+    id: string;
+    title: string;
+    ratePerHour: number;
+    provider: { id: string; name: string };
+  };
+  client: { id: string; name: string };
+};
+
+/** Réservations où l'user connecté est le client */
+export async function getMyBookingsClient(): Promise<BookingItem[]> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return [];
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
+  if (!user) return [];
+
+  const bookings = await prisma.booking.findMany({
+    where: { clientId: user.id },
+    orderBy: { createdAt: "desc" },
+    include: {
+      service: {
+        select: {
+          id: true,
+          title: true,
+          ratePerHour: true,
+          provider: { select: { id: true, name: true } },
+        },
+      },
+      client: { select: { id: true, name: true } },
+    },
+  });
+
+  return bookings.map((b) => ({
+    ...b,
+    createdAt: b.createdAt.toISOString(),
+    completedAt: b.completedAt?.toISOString() ?? null,
+    cancelledAt: b.cancelledAt?.toISOString() ?? null,
+  }));
+}
+
+/** Réservations où l'user connecté est le provider du service */
+export async function getMyBookingsProvider(): Promise<BookingItem[]> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return [];
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
+  if (!user) return [];
+
+  const bookings = await prisma.booking.findMany({
+    where: { service: { providerId: user.id } },
+    orderBy: { createdAt: "desc" },
+    include: {
+      service: {
+        select: {
+          id: true,
+          title: true,
+          ratePerHour: true,
+          provider: { select: { id: true, name: true } },
+        },
+      },
+      client: { select: { id: true, name: true } },
+    },
+  });
+
+  return bookings.map((b) => ({
+    ...b,
+    createdAt: b.createdAt.toISOString(),
+    completedAt: b.completedAt?.toISOString() ?? null,
+    cancelledAt: b.cancelledAt?.toISOString() ?? null,
+  }));
+}
+
+/** Marque une réservation comme terminée et libère l'escrow (client only) */
+export async function completeBooking(
+  bookingId: string
+): Promise<{ success: true } | { error: string }> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return { error: "Vous devez être connecté" };
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
+  if (!user) return { error: "Utilisateur introuvable" };
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: {
+      service: { select: { providerId: true } },
+    },
+  });
+  if (!booking) return { error: "Réservation introuvable" };
+  if (booking.clientId !== user.id)
+    return { error: "Seul le client peut confirmer la complétion" };
+  if (booking.status !== "pending")
+    return { error: "Seules les réservations en attente peuvent être complétées" };
+
+  await prisma.$transaction([
+    prisma.booking.update({
+      where: { id: bookingId },
+      data: { status: "completed", completedAt: new Date() },
+    }),
+  ]);
+
+  const releaseResult = await releaseEscrow({
+    providerId: booking.service.providerId,
+    bookingId,
+    amount: booking.totalTime,
+  });
+
+  if ("error" in releaseResult) {
+    return { error: releaseResult.error };
+  }
+
+  return { success: true };
+}
+
+/** Annule une réservation et rembourse l'escrow (client only) */
+export async function cancelBooking(
+  bookingId: string,
+  reason?: string
+): Promise<{ success: true } | { error: string }> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return { error: "Vous devez être connecté" };
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
+  if (!user) return { error: "Utilisateur introuvable" };
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+  });
+  if (!booking) return { error: "Réservation introuvable" };
+  if (booking.clientId !== user.id)
+    return { error: "Seul le client peut annuler une réservation" };
+  if (booking.status !== "pending")
+    return { error: "Seules les réservations en attente peuvent être annulées" };
+
+  await prisma.$transaction([
+    prisma.booking.update({
+      where: { id: bookingId },
+      data: {
+        status: "cancelled",
+        cancelledAt: new Date(),
+        cancellationReason: reason ?? null,
+      },
+    }),
+  ]);
+
+  const refundResult = await refundEscrow({
+    clientId: booking.clientId,
+    bookingId,
+    amount: booking.totalTime,
+  });
+
+  if ("error" in refundResult) {
+    return { error: refundResult.error };
+  }
+
+  return { success: true };
+}
+
+export type BookingDetail = {
+  id: string;
+  serviceId: string;
+  clientId: string;
+  hours: number;
+  totalTime: number;
+  status: string;
+  createdAt: string;
+  completedAt: string | null;
+  cancelledAt: string | null;
+  cancellationReason: string | null;
+  service: {
+    id: string;
+    title: string;
+    description: string;
+    ratePerHour: number;
+    provider: {
+      id: string;
+      name: string;
+    };
+  };
+  client: {
+    id: string;
+    name: string;
+  };
+  transactions: {
+    id: string;
+    type: string;
+    amount: number;
+    status: string;
+    createdAt: string;
+  }[];
+};
+
+export async function getMyBookingById(bookingId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return { error: "Non connecté" };
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
+  if (!user) return { error: "Utilisateur introuvable" };
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: {
+      service: {
+        include: {
+          provider: {
+            select: { id: true, name: true },
+          },
+        },
+      },
+      client: {
+        select: { id: true, name: true },
+      },
+      transactions: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  if (!booking) return null;
+
+  // Sécurité : seul le client ou le provider peut voir
+  const isClient = booking.clientId === user.id;
+  const isProvider = booking.service.provider.id === user.id;
+  if (!isClient && !isProvider) return null;
+
+  return {
+    ...booking,
+    createdAt: booking.createdAt.toISOString(),
+    completedAt: booking.completedAt?.toISOString() ?? null,
+    cancelledAt: booking.cancelledAt?.toISOString() ?? null,
+    transactions: booking.transactions.map((tx) => ({
+      ...tx,
+      createdAt: tx.createdAt.toISOString(),
+    })),
+  };
+}
+
+// ─── Create Booking ─────────────────────────────────────────────────────
+
+export async function createBooking(
+  serviceId: string,
+  formData: FormData
+): Promise<
+  | { success: true; bookingId: string }
+  | { error: string }
+> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return { error: "Vous devez être connecté" };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
+  if (!user) return { error: "Utilisateur introuvable" };
+
+  // Récupérer le service avec son provider
+  const service = await prisma.service.findUnique({
+    where: { id: serviceId },
+    select: {
+      id: true,
+      title: true,
+      ratePerHour: true,
+      status: true,
+      providerId: true,
+      provider: { select: { id: true, name: true } },
+    },
+  });
+
+  if (!service) return { error: "Service introuvable" };
+  if (service.status !== "active") return { error: "Ce service n'est plus actif" };
+  if (service.providerId === user.id) return { error: "Vous ne pouvez pas réserver votre propre service" };
+
+  // Valider les heures
+  const hoursRaw = formData.get("hours");
+  const hours = typeof hoursRaw === "string" ? parseInt(hoursRaw, 10) : NaN;
+
+  if (isNaN(hours) || hours <= 0) {
+    return { error: "Le nombre d'heures doit être supérieur à 0" };
+  }
+
+  // Recalculer le total côté serveur
+  const totalTime = service.ratePerHour * hours;
+
+  // Vérifier le solde
+  const balance = await getUserBalance(user.id);
+  if (balance < totalTime) {
+    return { error: "Solde TIME insuffisant. Vous avez besoin de " + totalTime + " TIME mais vous n'avez que " + balance + " TIME." };
+  }
+
+  // Créer le booking
+  const booking = await prisma.booking.create({
+    data: {
+      serviceId: service.id,
+      clientId: user.id,
+      hours,
+      totalTime,
+      status: "pending",
+    },
+  });
+
+  // Appeler l'escrow
+  const escrowResult = await createEscrow({
+    clientId: user.id,
+    bookingId: booking.id,
+    amount: totalTime,
+  });
+
+  if ("error" in escrowResult) {
+    // Rollback le booking si l'escrow échoue
+    await prisma.booking.delete({ where: { id: booking.id } });
+    return { error: escrowResult.error };
+  }
+
+  return { success: true, bookingId: booking.id };
 }

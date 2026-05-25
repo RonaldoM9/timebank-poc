@@ -2,7 +2,16 @@
 
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { Clock, LogOut, Wallet, Search, Plus, Layers } from "lucide-react";
+import {
+  Clock,
+  LogOut,
+  Wallet,
+  Search,
+  Plus,
+  Layers,
+  CalendarCheck,
+  Inbox,
+} from "lucide-react";
 
 interface DashboardUser {
   id: string;
@@ -11,14 +20,29 @@ interface DashboardUser {
   walletAddress: string;
 }
 
+interface MiniTx {
+  id: string;
+  type: string;
+  amount: number;
+  fromId: string | null;
+  toId: string | null;
+  createdAt: string;
+}
+
 export default function DashboardClient({
   user,
   activeServices,
   inactiveServices,
+  myBookingsCount,
+  missionsCount,
+  recentTransactions = [],
 }: {
   user: DashboardUser;
   activeServices: number;
   inactiveServices: number;
+  myBookingsCount: number;
+  missionsCount: number;
+  recentTransactions: MiniTx[];
 }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -104,6 +128,75 @@ export default function DashboardClient({
               </Link>
             )}
           </div>
+        </div>
+
+        {/* Booking stats */}
+        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[#a3a3a3] text-sm font-medium">
+              Mes réservations
+            </span>
+            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+              ~ missions ~
+            </span>
+          </div>
+          <div className="flex items-center gap-6">
+            <Link
+              href="/bookings"
+              className="flex items-center gap-3 group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                <CalendarCheck className="w-5 h-5 text-yellow-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-[#f5f5f5] group-hover:text-[#00d4aa] transition-colors">
+                  {myBookingsCount}
+                </div>
+                <div className="text-xs text-[#a3a3a3]">
+                  réservation{myBookingsCount > 1 ? "s" : ""} en cours
+                </div>
+              </div>
+            </Link>
+            <div className="w-px h-10 bg-[#262626]" />
+            <Link
+              href="/bookings"
+              className="flex items-center gap-3 group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <Inbox className="w-5 h-5 text-blue-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-[#f5f5f5] group-hover:text-[#00d4aa] transition-colors">
+                  {missionsCount}
+                </div>
+                <div className="text-xs text-[#a3a3a3]">
+                  mission{missionsCount > 1 ? "s" : ""} reçue{missionsCount > 1 ? "s" : ""}
+                </div>
+              </div>
+            </Link>
+          </div>
+
+          {recentTransactions.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-[#262626]">
+              <p className="text-xs text-[#5c5c5c] mb-2">Dernières transactions</p>
+              {recentTransactions.map((tx) => {
+                const labels: Record<string, string> = {
+                  escrow: "Réservation",
+                  release: "Service terminé",
+                  refund: "Remboursement",
+                };
+                const isCredit = tx.type !== "escrow";
+                return (
+                  <div key={tx.id} className="flex items-center justify-between text-xs py-1">
+                    <span className="text-[#a3a3a3]">{labels[tx.type] || tx.type}</span>
+                    <span className={isCredit ? "text-[#00d4aa]" : "text-red-400"}>
+                      {isCredit ? "+" : "-"}{tx.amount} TIME
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Action cards */}
