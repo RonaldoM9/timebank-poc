@@ -26,7 +26,7 @@ export default async function BookingDetailPage({
       service: {
         include: {
           provider: {
-            select: { id: true, name: true },
+            select: { id: true, name: true, reputation: true },
           },
         },
       },
@@ -36,6 +36,7 @@ export default async function BookingDetailPage({
       transactions: {
         orderBy: { createdAt: "desc" },
       },
+      rating: true,
     },
   });
 
@@ -78,6 +79,17 @@ export default async function BookingDetailPage({
       status: tx.status,
       createdAt: tx.createdAt.toISOString(),
     })),
+    rating: booking.rating
+      ? {
+          id: booking.rating.id,
+          score: booking.rating.score,
+          comment: booking.rating.comment,
+          fromId: booking.rating.fromId,
+          toId: booking.rating.toId,
+          createdAt: booking.rating.createdAt.toISOString(),
+        }
+      : null,
+    providerReputation: booking.service.provider.reputation,
   };
 
   return (

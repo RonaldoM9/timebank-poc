@@ -18,6 +18,7 @@ interface DashboardUser {
   name: string;
   timeBalance: number;
   walletAddress: string;
+  reputation: number;
 }
 
 interface MiniTx {
@@ -36,6 +37,7 @@ export default function DashboardClient({
   myBookingsCount,
   missionsCount,
   recentTransactions = [],
+  ratingsReceivedCount = 0,
 }: {
   user: DashboardUser;
   activeServices: number;
@@ -43,6 +45,7 @@ export default function DashboardClient({
   myBookingsCount: number;
   missionsCount: number;
   recentTransactions: MiniTx[];
+  ratingsReceivedCount: number;
 }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -195,6 +198,39 @@ export default function DashboardClient({
                   </div>
                 );
               })}
+            </div>
+          )}
+        </div>
+
+        {/* Reputation */}
+        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[#a3a3a3] text-sm font-medium">
+              Réputation
+            </span>
+            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+              ~ confiance ~
+            </span>
+          </div>
+          {ratingsReceivedCount > 0 ? (
+            <div className="flex items-center gap-4">
+              <div className="text-3xl font-bold text-yellow-400">
+                {user.reputation.toFixed(1)}
+                <span className="text-sm text-[#a3a3a3] font-normal"> / 5</span>
+              </div>
+              <div className="text-xs text-[#a3a3a3]">
+                Basé sur {ratingsReceivedCount} avis
+                {ratingsReceivedCount > 1 ? "s" : ""}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <p className="text-[#f5f5f5] text-lg font-semibold">
+                Nouveau héros
+              </p>
+              <p className="text-[#5c5c5c] text-xs mt-1">
+                Aucun avis pour le moment
+              </p>
             </div>
           )}
         </div>

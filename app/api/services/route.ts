@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     orderBy: { createdAt: "desc" },
     include: {
       provider: {
-        select: { name: true, walletAddress: true },
+        select: { name: true, walletAddress: true, reputation: true },
       },
     },
   });

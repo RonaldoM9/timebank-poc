@@ -16,6 +16,7 @@ interface Service {
   provider: {
     name: string;
     walletAddress: string;
+    reputation: number;
   };
 }
 
@@ -159,7 +160,9 @@ export default function ServicesClient({ initialServices }: { initialServices: S
                         <span className="text-[#a3a3a3]">{service.provider.name}</span>
                       </p>
                       <p className="text-[10px] text-[#5c5c5c] font-bangers tracking-wider">
-                        NOUVEAU HÉROS
+                        {service.provider.reputation > 0
+                          ? `⭐ ${service.provider.reputation.toFixed(1)}/5`
+                          : "NOUVEAU HÉROS"}
                       </p>
                     </div>
                     <Link

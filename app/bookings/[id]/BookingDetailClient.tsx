@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, User, Shield, Calendar, CheckCircle, XCircle, Hourglass, AlertTriangle } from "lucide-react";
 import { completeBooking, cancelBooking } from "@/app/services/actions";
+import { createRatingAction } from "@/app/ratings/actions";
+import RatingStars from "@/components/RatingStars";
+import { useState } from "react";
 
 interface BookingDetailData {
   id: string;
@@ -37,6 +40,15 @@ interface BookingDetailData {
     status: string;
     createdAt: string;
   }[];
+  rating: {
+    id: string;
+    score: number;
+    comment: string | null;
+    fromId: string;
+    toId: string;
+    createdAt: string;
+  } | null;
+  providerReputation: number;
 }
 
 const statusConfig: Record<string, { label: string; bg: string; text: string; icon: React.ReactNode }> = {
@@ -80,6 +92,11 @@ export default function BookingDetailClient({
   const router = useRouter();
   const status = statusConfig[booking.status] || statusConfig.pending;
   const isPending = booking.status === "pending";
+  const [ratingScore, setRatingScore] = useState(0);
+  const [ratingComment, setRatingComment] = useState("");
+  const [ratingSubmitting, setRatingSubmitting] = useState(false);
+  const [ratingError, setRatingError] = useState<string | null>(null);
+  const [ratingSuccess, setRatingSuccess] = useState(false);
 
   async function handleComplete() {
     if (!confirm("Marquer cette réservation comme terminée ? Le montant sera libéré au provider.")) return;
@@ -100,6 +117,36 @@ export default function BookingDetailClient({
     }
     router.refresh();
   }
+
+  async function handleRatingSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (ratingScore < 1) {
+      setRatingError("Veuillez sélectionner une note.");
+      return;
+    }
+    setRatingSubmitting(true);
+    setRatingError(null);
+
+    const form = new FormData();
+    form.set("bookingId", booking.id);
+    form.set("score", String(ratingScore));
+    if (ratingComment.trim()) form.set("comment", ratingComment.trim());
+
+    const result = await createRatingAction(form);
+    if (result?.error) {
+      setRatingError(result.error);
+      setRatingSubmitting(false);
+    } else {
+      setRatingSuccess(true);
+      setRatingSubmitting(false);
+    }
+  }
+
+  const isCompleted = booking.status === "completed";
+  const existingRating = booking.rating;
+  const showRatingForm = isCompleted && isClient && !existingRating && !ratingSuccess;
+  const showRatingDisplay = existingRating || ratingSuccess;
+  const isProvider = !isClient;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -357,6 +404,126 @@ export default function BookingDetailClient({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Rating Section */}
+          {isCompleted && (
+            <div className="border-t border-[#262626] pt-6 mt-6">
+              <h2 className="text-sm font-semibold text-[#a3a3a3] mb-3 uppercase tracking-wider flex items-center gap-1.5">
+                Avis
+              </h2>
+
+              {/* Provider reputation */}
+              <div className="bg-[#181818] border border-[#262626] rounded-xl p-4 mb-4">
+                <p className="text-xs text-[#a3a3a3]">
+                  Réputation de {booking.service.provider.name} :{" "}
+                  <span className="text-[#f5f5f5] font-semibold">
+                    {booking.providerReputation > 0
+                      ? `${booking.providerReputation} / 5`
+                      : "Nouveau héros"}
+                  </span>
+                </p>
+              </div>
+
+              {/* Pending / Cancelled — no rating */}
+              {booking.status === "pending" && (
+                <p className="text-[#5c5c5c] text-sm">
+                  La mission doit être terminée avant de pouvoir laisser un avis.
+                </p>
+              )}
+              {booking.status === "cancelled" && (
+                <p className="text-[#5c5c5c] text-sm">
+                  Une mission annulée ne peut pas être notée.
+                </p>
+              )}
+
+              {/* Client — rating form */}
+              {showRatingForm && (
+                <form onSubmit={handleRatingSubmit} className="space-y-4">
+                  <p className="text-[#a3a3a3] text-sm">
+                    Votre retour aide la communauté à identifier les héros de confiance.
+                  </p>
+                  <div>
+                    <label className="block text-xs text-[#a3a3a3] mb-2">Votre note</label>
+                    <RatingStars value={ratingScore} onChange={setRatingScore} />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-[#a3a3a3] mb-2">
+                      Commentaire (optionnel)
+                    </label>
+                    <textarea
+                      value={ratingComment}
+                      onChange={(e) => setRatingComment(e.target.value)}
+                      maxLength={500}
+                      rows={3}
+                      placeholder="Partagez votre expérience…"
+                      className="w-full bg-[#0a0a0a] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm resize-none"
+                    />
+                    <p className="text-[10px] text-[#5c5c5c] mt-1 text-right">
+                      {ratingComment.length}/500
+                    </p>
+                  </div>
+                  {ratingError && (
+                    <p className="text-red-400 text-xs">{ratingError}</p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={ratingSubmitting}
+                    className="bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-50 text-black font-semibold rounded-xl py-2.5 px-6 text-sm transition-colors"
+                  >
+                    {ratingSubmitting ? "Publication…" : "Publier mon avis"}
+                  </button>
+                </form>
+              )}
+
+              {/* Rating display for client (already rated) */}
+              {isClient && showRatingDisplay && (
+                <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-xl p-4">
+                  <p className="text-[#00d4aa] text-xs font-semibold mb-2">
+                    Avis déjà publié
+                  </p>
+                  <RatingStars value={(existingRating?.score ?? 5)} readOnly />
+                  {existingRating?.comment && (
+                    <p className="text-[#f5f5f5] text-sm mt-2">
+                      {existingRating.comment}
+                    </p>
+                  )}
+                  <p className="text-[#5c5c5c] text-xs mt-1">
+                    {existingRating?.createdAt
+                      ? new Date(existingRating.createdAt).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
+                      : "À l'instant"}
+                  </p>
+                </div>
+              )}
+
+              {/* Provider — show rating received */}
+              {!isClient && existingRating && (
+                <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-xl p-4">
+                  <p className="text-[#00d4aa] text-xs font-semibold mb-2">Avis reçu</p>
+                  <RatingStars value={existingRating.score} readOnly />
+                  {existingRating.comment && (
+                    <p className="text-[#f5f5f5] text-sm mt-2">{existingRating.comment}</p>
+                  )}
+                  <p className="text-[#5c5c5c] text-xs mt-1">
+                    {new Date(existingRating.createdAt).toLocaleDateString("fr-FR", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+              )}
+
+              {!isClient && !existingRating && (
+                <p className="text-[#5c5c5c] text-sm">
+                  Le client n&apos;a pas encore laissé d&apos;avis.
+                </p>
+              )}
             </div>
           )}
 

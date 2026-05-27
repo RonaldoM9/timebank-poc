@@ -10,7 +10,7 @@ export default async function DashboardPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, name: true, timeBalance: true, walletAddress: true },
+    select: { id: true, name: true, timeBalance: true, walletAddress: true, reputation: true },
   });
 
   if (!user) redirect("/auth/signin");
@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   const activeCount = services.filter((s) => s.status === "active").length;
   const inactiveCount = services.filter((s) => s.status === "inactive").length;
 
-  const [myBookingsCount, missionsCount, recentTransactions] = await Promise.all([
+  const [myBookingsCount, missionsCount, recentTransactions, ratingsReceivedCount] = await Promise.all([
     prisma.booking.count({ where: { clientId: user.id, status: "pending" } }),
     prisma.booking.count({
       where: { service: { providerId: user.id }, status: "pending" },
@@ -36,11 +36,12 @@ export default async function DashboardPage() {
       orderBy: { createdAt: "desc" },
       take: 3,
     }),
+    prisma.rating.count({ where: { toId: user.id } }),
   ]);
 
   return (
     <DashboardClient
-      user={user}
+      user={{ ...user, reputation: user.reputation }}
       activeServices={activeCount}
       inactiveServices={inactiveCount}
       myBookingsCount={myBookingsCount}
@@ -49,6 +50,7 @@ export default async function DashboardPage() {
         ...tx,
         createdAt: tx.createdAt.toISOString(),
       }))}
+      ratingsReceivedCount={ratingsReceivedCount}
     />
   );
 }

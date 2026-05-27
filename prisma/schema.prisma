@@ -20,6 +20,9 @@ model User {
   transactionsTo   Transaction[] @relation("ToUser")
   services         Service[]
   clientBookings   Booking[]  @relation("ClientBookings")
+  reputation       Float      @default(0)
+  ratingsGiven     Rating[]   @relation("RatingsGiven")
+  ratingsReceived  Rating[]   @relation("RatingsReceived")
 }
 
 model Service {
@@ -52,6 +55,7 @@ model Booking {
   service      Service       @relation(fields: [serviceId], references: [id])
   client       User          @relation("ClientBookings", fields: [clientId], references: [id])
   transactions Transaction[]
+  rating       Rating?
 }
 
 model Transaction {
@@ -67,4 +71,18 @@ model Transaction {
   fromUser User?    @relation("FromUser", fields: [fromId], references: [id])
   toUser   User?    @relation("ToUser", fields: [toId], references: [id])
   booking  Booking? @relation(fields: [bookingId], references: [id])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  fromId    String
+  toId      String
+  score     Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+  from    User    @relation("RatingsGiven", fields: [fromId], references: [id])
+  to      User    @relation("RatingsReceived", fields: [toId], references: [id])
 }

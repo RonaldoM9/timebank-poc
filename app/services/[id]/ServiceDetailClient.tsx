@@ -16,6 +16,7 @@ interface ServiceDetail {
     id: string;
     name: string;
     walletAddress: string;
+    reputation: number;
   };
 }
 
@@ -115,9 +116,22 @@ export default function ServiceDetailClient({ service, isOwner }: { service: Ser
                 ? `Wallet : ${service.provider.walletAddress.slice(0, 16)}…`
                 : "Nouveau héros — aucune transaction encore"}
             </p>
-            <p className="text-[10px] text-[#5c5c5c] font-bangers tracking-wider mt-1">
-              RÉPUTATION : NOUVEAU HÉROS
-            </p>
+            <div className="flex items-center gap-2 mt-2">
+              {service.provider.reputation > 0 ? (
+                <>
+                  <span className="text-yellow-400 text-sm font-semibold">
+                    ⭐ {service.provider.reputation.toFixed(1)}/5
+                  </span>
+                  <span className="text-[#5c5c5c] text-xs">
+                    Héros de confiance
+                  </span>
+                </>
+              ) : (
+                <span className="text-[10px] text-[#5c5c5c] font-bangers tracking-wider">
+                  NOUVEAU HÉROS DE LA COMMUNAUTÉ
+                </span>
+              )}
+            </div>
           </div>
 
           {/* CTA */}
