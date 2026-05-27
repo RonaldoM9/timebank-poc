@@ -37,6 +37,18 @@ export default async function BookingDetailPage({
         orderBy: { createdAt: "desc" },
       },
       rating: true,
+      proofOfCompletion: {
+        select: {
+          id: true,
+          method: true,
+          validatorId: true,
+          providerId: true,
+          status: true,
+          createdAt: true,
+          validator: { select: { name: true } },
+          provider: { select: { name: true } },
+        },
+      },
     },
   });
 
@@ -90,6 +102,16 @@ export default async function BookingDetailPage({
         }
       : null,
     providerReputation: booking.service.provider.reputation,
+    proofOfCompletion: booking.proofOfCompletion
+      ? {
+          id: booking.proofOfCompletion.id,
+          method: booking.proofOfCompletion.method,
+          validatorName: booking.proofOfCompletion.validator.name,
+          providerName: booking.proofOfCompletion.provider.name,
+          status: booking.proofOfCompletion.status,
+          createdAt: booking.proofOfCompletion.createdAt.toISOString(),
+        }
+      : null,
   };
 
   return (

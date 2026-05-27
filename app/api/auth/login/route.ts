@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Manual CSRF: get token + cookie, then pass both
-    const baseUrl = "http://localhost:3000";
+    const port = process.env.PORT || "3000";
+    const baseUrl = `http://localhost:${port}`;
 
     // Step 1: Get CSRF token and capture cookie
     const csrfRes = await fetch(`${baseUrl}/api/auth/csrf`, {
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
     console.log("Cookies from login:", JSON.stringify(allCookies));
 
     // Build response with redirect to dashboard on the correct host
-    const host = req.headers.get("host") || "204.168.193.43:3000";
+    const host = req.headers.get("host") || `localhost:${process.env.PORT || "3000"}`;
     const protocol = req.nextUrl.protocol || "http:";
     const origin = `${protocol}//${host}`;
     const response = NextResponse.redirect(new URL("/dashboard", origin));

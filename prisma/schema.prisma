@@ -35,6 +35,8 @@ model User {
   ratingsReceived  Rating[]   @relation("RatingsReceived")
   urgentRequests   UrgentRequest[] @relation("RequesterRequests")
   urgentOffers     UrgentOffer[]   @relation("ProviderOffers")
+  proofsValidated  ProofOfCompletion[] @relation("ProofValidator")
+  proofsProvided   ProofOfCompletion[] @relation("ProofProvider")
 }
 
 model Service {
@@ -64,10 +66,30 @@ model Booking {
   cancelledAt        DateTime?
   cancellationReason String?
 
+  completionTokenHash    String?
+  completionTokenExpiresAt DateTime?
+  completionTokenMethod String? @default("qr_code")
+
   service      Service       @relation(fields: [serviceId], references: [id])
   client       User          @relation("ClientBookings", fields: [clientId], references: [id])
   transactions Transaction[]
   rating       Rating?
+  proofOfCompletion ProofOfCompletion?
+}
+
+model ProofOfCompletion {
+  id          String   @id @default(cuid())
+  bookingId   String   @unique
+  method      String   @default("qr_code")
+  validatorId String
+  providerId  String
+  tokenHash   String
+  status      String   @default("validated")
+  createdAt   DateTime @default(now())
+
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  validator User    @relation("ProofValidator", fields: [validatorId], references: [id])
+  provider  User    @relation("ProofProvider", fields: [providerId], references: [id])
 }
 
 model Transaction {

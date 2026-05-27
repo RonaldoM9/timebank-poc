@@ -2,11 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Clock, User, Shield, Calendar, CheckCircle, XCircle, Hourglass, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Clock, User, Shield, Calendar, CheckCircle, XCircle, Hourglass, AlertTriangle, QrCode, RefreshCw, Smartphone, Copy } from "lucide-react";
 import { completeBooking, cancelBooking } from "@/app/services/actions";
+import { generateQRToken } from "@/app/services/qr-actions";
+import { generateNFCToken } from "@/app/services/nfc-actions";
 import { createRatingAction } from "@/app/ratings/actions";
 import RatingStars from "@/components/RatingStars";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import QRCode from "react-qr-code";
 
 interface BookingDetailData {
   id: string;
@@ -49,6 +52,14 @@ interface BookingDetailData {
     createdAt: string;
   } | null;
   providerReputation: number;
+  proofOfCompletion: {
+    id: string;
+    method: string;
+    validatorName: string;
+    providerName: string;
+    status: string;
+    createdAt: string;
+  } | null;
 }
 
 const statusConfig: Record<string, { label: string; bg: string; text: string; icon: React.ReactNode }> = {
@@ -98,6 +109,64 @@ export default function BookingDetailClient({
   const [ratingError, setRatingError] = useState<string | null>(null);
   const [ratingSuccess, setRatingSuccess] = useState(false);
 
+  // QR state
+  const [qrToken, setQrToken] = useState<string | null>(null);
+  const [qrExpiresAt, setQrExpiresAt] = useState<string | null>(null);
+  const [qrGenerating, setQrGenerating] = useState(false);
+  const [qrError, setQrError] = useState<string | null>(null);
+  const [qrSuccessMsg, setQrSuccessMsg] = useState<string | null>(null);
+
+  // NFC state
+  const [nfcToken, setNfcToken] = useState<string | null>(null);
+  const [nfcUrl, setNfcUrl] = useState<string | null>(null);
+  const [nfcExpiresAt, setNfcExpiresAt] = useState<string | null>(null);
+  const [nfcGenerating, setNfcGenerating] = useState(false);
+  const [nfcError, setNfcError] = useState<string | null>(null);
+  const [nfcSuccessMsg, setNfcSuccessMsg] = useState<string | null>(null);
+  const [nfcCopied, setNfcCopied] = useState(false);
+
+  // For countdown display
+  const [timeLeft, setTimeLeft] = useState<string>("");
+
+  useEffect(() => {
+    if (!qrExpiresAt) return;
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const exp = new Date(qrExpiresAt).getTime();
+      const diff = exp - now;
+      if (diff <= 0) {
+        setTimeLeft("Expiré");
+        clearInterval(interval);
+        return;
+      }
+      const mins = Math.floor(diff / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      setTimeLeft(`${mins}:${secs.toString().padStart(2, "0")}`);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [qrExpiresAt]);
+
+  // NFC countdown
+  const [nfcTimeLeft, setNfcTimeLeft] = useState<string>("");
+
+  useEffect(() => {
+    if (!nfcExpiresAt) return;
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const exp = new Date(nfcExpiresAt).getTime();
+      const diff = exp - now;
+      if (diff <= 0) {
+        setNfcTimeLeft("Expiré");
+        clearInterval(interval);
+        return;
+      }
+      const mins = Math.floor(diff / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      setNfcTimeLeft(`${mins}:${secs.toString().padStart(2, "0")}`);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [nfcExpiresAt]);
+
   async function handleComplete() {
     if (!confirm("Marquer cette réservation comme terminée ? Le montant sera libéré au provider.")) return;
     const result = await completeBooking(booking.id);
@@ -116,6 +185,72 @@ export default function BookingDetailClient({
       return;
     }
     router.refresh();
+  }
+
+  async function handleGenerateQR() {
+    setQrGenerating(true);
+    setQrError(null);
+    setQrSuccessMsg(null);
+
+    const result = await generateQRToken(booking.id);
+    if ("error" in result) {
+      setQrError(result.error);
+      setQrGenerating(false);
+      return;
+    }
+
+    setQrToken(result.token);
+    setQrExpiresAt(result.expiresAt);
+    setQrGenerating(false);
+    setQrSuccessMsg("QR code généré. Montrez-le au client pour valider la mission.");
+  }
+
+  function getQRUrl(): string {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://204.168.193.43:3000";
+    return `${baseUrl}/complete/qr/${qrToken}`;
+  }
+
+  async function handleGenerateNFC() {
+    setNfcGenerating(true);
+    setNfcError(null);
+    setNfcSuccessMsg(null);
+
+    const result = await generateNFCToken(booking.id);
+    if ("error" in result) {
+      setNfcError(result.error);
+      setNfcGenerating(false);
+      return;
+    }
+
+    setNfcToken(result.token);
+    setNfcUrl(result.nfcUrl);
+    setNfcExpiresAt(result.expiresAt);
+    setNfcGenerating(false);
+    setNfcSuccessMsg("Lien NFC généré. Écrivez ce lien dans un tag NFC ou partagez-le avec le client.");
+  }
+
+  function getNFCUrl(): string {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://204.168.193.43:3000";
+    return `${baseUrl}/complete/nfc/${nfcToken}`;
+  }
+
+  async function handleCopyNFC() {
+    if (!nfcUrl) return;
+    try {
+      await navigator.clipboard.writeText(nfcUrl);
+      setNfcCopied(true);
+      setTimeout(() => setNfcCopied(false), 2000);
+    } catch {
+      // Fallback
+      const textarea = document.createElement("textarea");
+      textarea.value = nfcUrl;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      setNfcCopied(true);
+      setTimeout(() => setNfcCopied(false), 2000);
+    }
   }
 
   async function handleRatingSubmit(e: React.FormEvent) {
@@ -147,6 +282,8 @@ export default function BookingDetailClient({
   const showRatingForm = isCompleted && isClient && !existingRating && !ratingSuccess;
   const showRatingDisplay = existingRating || ratingSuccess;
   const isProvider = !isClient;
+
+  const hasProof = booking.proofOfCompletion;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -330,16 +467,233 @@ export default function BookingDetailClient({
             </div>
           )}
 
-          {/* Actions */}
-          {isPending && isClient && (
+          {/* ─── PROOF OF COMPLETION ─── */}
+          {hasProof && (
+            <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-xl p-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                {booking.proofOfCompletion!.method === "nfc" ? (
+                  <Smartphone className="w-5 h-5 text-[#00d4aa]" />
+                ) : (
+                  <QrCode className="w-5 h-5 text-[#00d4aa]" />
+                )}
+                <h2 className="text-sm font-semibold text-[#f5f5f5] uppercase tracking-wider">
+                  Preuve de réalisation
+                </h2>
+              </div>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-[#a3a3a3]">Méthode :</span>
+                  <span className="text-[#f5f5f5] font-medium">
+                    {booking.proofOfCompletion!.method === "nfc"
+                      ? "NFC"
+                      : booking.proofOfCompletion!.method === "qr_code"
+                        ? "QR code"
+                        : booking.proofOfCompletion!.method}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#a3a3a3]">Validé par :</span>
+                  <span className="text-[#f5f5f5] font-medium">{booking.proofOfCompletion!.validatorName}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#a3a3a3]">Provider :</span>
+                  <span className="text-[#f5f5f5] font-medium">{booking.proofOfCompletion!.providerName}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#a3a3a3]">Date :</span>
+                  <span className="text-[#f5f5f5] font-medium">
+                    {new Date(booking.proofOfCompletion!.createdAt).toLocaleDateString("fr-FR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+              <div className="mt-3">
+                <span className="inline-flex items-center gap-1 text-xs font-bangers tracking-wider rounded-full px-2.5 py-0.5 bg-[#00d4aa]/10 text-[#00d4aa]">
+                  <CheckCircle className="w-3 h-3" />
+                  {booking.proofOfCompletion!.method === "nfc"
+                    ? "Validation NFC confirmée"
+                    : booking.proofOfCompletion!.method === "qr_code"
+                      ? "Validation QR confirmée"
+                      : "Validation manuelle"}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* ─── QR PROVIDER BLOCK (pending, user is provider) ─── */}
+          {isPending && isProvider && !hasProof && (
+            <div className="bg-[#181818] border border-[#262626] rounded-xl p-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <QrCode className="w-5 h-5 text-[#00d4aa]" />
+                <h2 className="text-sm font-semibold text-[#f5f5f5] uppercase tracking-wider">
+                  Validation QR
+                </h2>
+              </div>
+
+              {!qrToken ? (
+                <div>
+                  <p className="text-[#a3a3a3] text-sm mb-4">
+                    Montrez ce QR code au client une fois la mission terminée.
+                    Le client devra le scanner pour confirmer la réalisation et libérer les TIME.
+                  </p>
+                  {qrError && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+                      <p className="text-red-400 text-sm">{qrError}</p>
+                    </div>
+                  )}
+                  <button
+                    onClick={handleGenerateQR}
+                    disabled={qrGenerating}
+                    className="bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-50 text-black font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <QrCode className="w-4 h-4" />
+                      {qrGenerating ? "Génération…" : "Générer le QR de validation"}
+                    </span>
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  {qrSuccessMsg && (
+                    <div className="bg-[#00d4aa]/10 border border-[#00d4aa]/20 rounded-xl p-3 mb-4">
+                      <p className="text-[#00d4aa] text-sm">{qrSuccessMsg}</p>
+                    </div>
+                  )}
+                  <div className="flex flex-col items-center gap-3 mb-4">
+                    <div className="bg-white rounded-xl p-4 inline-block">
+                      <QRCode value={getQRUrl()} size={200} />
+                    </div>
+                    <div className="text-center">
+                      {timeLeft && timeLeft !== "Expiré" ? (
+                        <p className="text-[#a3a3a3] text-xs">
+                          Expire dans <span className="text-yellow-400 font-mono">{timeLeft}</span>
+                        </p>
+                      ) : timeLeft === "Expiré" ? (
+                        <p className="text-red-400 text-xs">QR expiré</p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleGenerateQR}
+                    disabled={qrGenerating}
+                    className="bg-[#262626] hover:bg-[#333333] text-[#f5f5f5] font-semibold rounded-xl py-2 px-4 text-xs transition-colors"
+                  >
+                    <span className="flex items-center justify-center gap-1.5">
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      {qrGenerating ? "Régénération…" : "Régénérer le QR"}
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ─── NFC PROVIDER BLOCK (pending, user is provider) ─── */}
+          {isPending && isProvider && !hasProof && (
+            <div className="bg-[#181818] border border-[#262626] rounded-xl p-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Smartphone className="w-5 h-5 text-[#00d4aa]" />
+                <h2 className="text-sm font-semibold text-[#f5f5f5] uppercase tracking-wider">
+                  Validation NFC
+                </h2>
+              </div>
+
+              {!nfcToken ? (
+                <div>
+                  <p className="text-[#a3a3a3] text-sm mb-4">
+                    Générez un lien NFC de validation. Écrivez ce lien dans un tag NFC ou partagez-le avec le client. Une fois scanné, le client pourra confirmer la mission et libérer les TIME.
+                  </p>
+                  {nfcError && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+                      <p className="text-red-400 text-sm">{nfcError}</p>
+                    </div>
+                  )}
+                  <button
+                    onClick={handleGenerateNFC}
+                    disabled={nfcGenerating}
+                    className="bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-50 text-black font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <Smartphone className="w-4 h-4" />
+                      {nfcGenerating ? "Génération…" : "Générer le lien NFC"}
+                    </span>
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  {nfcSuccessMsg && (
+                    <div className="bg-[#00d4aa]/10 border border-[#00d4aa]/20 rounded-xl p-3 mb-4">
+                      <p className="text-[#00d4aa] text-sm">{nfcSuccessMsg}</p>
+                    </div>
+                  )}
+
+                  {/* NFC Link display */}
+                  <div className="bg-[#0a0a0a] border border-[#262626] rounded-xl p-3 mb-3">
+                    <p className="text-[#a3a3a3] text-xs mb-1">Lien NFC :</p>
+                    <p className="text-[#00d4aa] text-sm font-mono break-all">{getNFCUrl()}</p>
+                  </div>
+
+                  {/* Copy button */}
+                  <button
+                    onClick={handleCopyNFC}
+                    className="w-full bg-[#262626] hover:bg-[#333333] text-[#f5f5f5] font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors mb-2"
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <Copy className="w-4 h-4" />
+                      {nfcCopied ? "Copié !" : "Copier le lien NFC"}
+                    </span>
+                  </button>
+
+                  {/* Instructions */}
+                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 mb-3">
+                    <p className="text-yellow-400 text-xs">
+                      💡 Écrivez ce lien dans un tag NFC avec une app NFC externe (NFC Tools, etc.). Le client touchera le tag pour ouvrir la page de validation.
+                    </p>
+                  </div>
+
+                  {/* Expiration + QR fallback */}
+                  <div className="flex items-center justify-between">
+                    {nfcTimeLeft && nfcTimeLeft !== "Expiré" ? (
+                      <p className="text-[#a3a3a3] text-xs">
+                        Expire dans <span className="text-yellow-400 font-mono">{nfcTimeLeft}</span>
+                      </p>
+                    ) : nfcTimeLeft === "Expiré" ? (
+                      <p className="text-red-400 text-xs">Lien expiré</p>
+                    ) : <span />}
+
+                    <button
+                      onClick={handleGenerateNFC}
+                      disabled={nfcGenerating}
+                      className="bg-[#262626] hover:bg-[#333333] text-[#f5f5f5] font-semibold rounded-xl py-2 px-3 text-xs transition-colors"
+                    >
+                      <span className="flex items-center justify-center gap-1.5">
+                        <RefreshCw className="w-3 h-3" />
+                        {nfcGenerating ? "Régénération…" : "Régénérer"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ─── ACTIONS ─── */}
+          {/* Client actions */}
+          {isPending && isClient && !hasProof && (
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
+              {/* QR is the primary action for client too when QR was generated */}
               <button
                 onClick={handleComplete}
-                className="flex-1 bg-[#00d4aa] hover:bg-[#00b894] text-black font-semibold rounded-xl py-3 text-center transition-colors text-sm"
+                className="flex-1 bg-[#262626] hover:bg-[#333333] text-[#f5f5f5] font-semibold rounded-xl py-3 text-center transition-colors text-sm border border-[#262626]"
               >
                 <span className="flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4" />
-                  Marquer comme terminé
+                  Marquer terminé manuellement
                 </span>
               </button>
               <button
@@ -354,10 +708,10 @@ export default function BookingDetailClient({
             </div>
           )}
 
-          {isPending && !isClient && (
+          {isPending && !isClient && !hasProof && !qrToken && (
             <div className="bg-[#181818] border border-[#262626] rounded-xl p-4 mb-6 text-center">
               <p className="text-[#a3a3a3] text-sm">
-                Réservation en attente — le client peut la marquer comme terminée ou l&apos;annuler
+                Réservation en attente — utilisez le bloc "Validation QR" ci-dessus pour générer un QR, ou le client peut marquer comme terminée manuellement.
               </p>
             </div>
           )}
@@ -501,60 +855,17 @@ export default function BookingDetailClient({
                       {existingRating.comment}
                     </p>
                   )}
-                  <p className="text-[#5c5c5c] text-xs mt-1">
-                    {existingRating?.createdAt
-                      ? new Date(existingRating.createdAt).toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : "À l'instant"}
-                  </p>
                 </div>
               )}
 
-              {/* Provider — show rating received */}
-              {!isClient && existingRating && (
-                <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-xl p-4">
-                  <p className="text-[#00d4aa] text-xs font-semibold mb-2">Avis reçu</p>
-                  <RatingStars value={existingRating.score} readOnly />
-                  {existingRating.comment && (
-                    <p className="text-[#f5f5f5] text-sm mt-2">{existingRating.comment}</p>
-                  )}
-                  <p className="text-[#5c5c5c] text-xs mt-1">
-                    {new Date(existingRating.createdAt).toLocaleDateString("fr-FR", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-              )}
-
-              {!isClient && !existingRating && (
+              {/* Provider — cannot rate own booking */}
+              {isProvider && (
                 <p className="text-[#5c5c5c] text-sm">
-                  Le client n&apos;a pas encore laissé d&apos;avis.
+                  Vous ne pouvez pas laisser un avis sur votre propre mission.
                 </p>
               )}
             </div>
           )}
-
-          {/* Lien vers le service */}
-          <div className="mt-6 pt-4 border-t border-[#262626]">
-            <Link
-              href={`/services/${booking.service.id}`}
-              className="text-[#00d4aa] hover:text-[#00b894] text-sm transition-colors underline underline-offset-2"
-            >
-              Voir le service
-            </Link>
-          </div>
-        </div>
-
-        {/* Comics footer */}
-        <div className="text-center pt-8">
-          <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-40">
-            ~ chaque minute compte ~
-          </span>
         </div>
       </main>
     </div>
