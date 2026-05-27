@@ -11,6 +11,7 @@ import {
   Layers,
   CalendarCheck,
   Inbox,
+  MapPin,
 } from "lucide-react";
 
 interface DashboardUser {
@@ -19,6 +20,10 @@ interface DashboardUser {
   timeBalance: number;
   walletAddress: string;
   reputation: number;
+  city: string | null;
+  department: string | null;
+  serviceRadiusKm: number | null;
+  availableOnline: boolean | null;
 }
 
 interface MiniTx {
@@ -202,7 +207,48 @@ export default function DashboardClient({
           )}
         </div>
 
-        {/* Reputation */}
+        {/* Ma zone d'intervention */}
+        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[#a3a3a3] text-sm font-medium">
+              Ma zone d&apos;intervention
+            </span>
+            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+              ~ local heroes ~
+            </span>
+          </div>
+          {user.city ? (
+            <div className="space-y-1">
+              <p className="text-[#f5f5f5] font-semibold">
+                {user.city}
+                {user.department ? `, ${user.department}` : ""}
+              </p>
+              {user.serviceRadiusKm && (
+                <p className="text-xs text-[#a3a3a3]">
+                  Rayon : {user.serviceRadiusKm} km
+                </p>
+              )}
+              <p className="text-xs text-[#a3a3a3]">
+                Disponible en ligne : {user.availableOnline ? "Oui" : "Non"}
+              </p>
+            </div>
+          ) : (
+            <div>
+              <p className="text-[#5c5c5c] text-sm">
+                Complète ta zone pour devenir visible comme héros local.
+              </p>
+            </div>
+          )}
+          <Link
+            href="/settings/location"
+            className="inline-flex items-center gap-1.5 mt-3 text-xs text-[#00d4aa] hover:text-[#00b894] transition-colors font-medium"
+          >
+            <MapPin className="w-3.5 h-3.5" />
+            Modifier ma localisation
+          </Link>
+        </div>
+
+        {/* Réputation */}
         <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[#a3a3a3] text-sm font-medium">

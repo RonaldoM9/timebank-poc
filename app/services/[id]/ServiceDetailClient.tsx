@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Clock, ArrowLeft, Calendar, User, Shield } from "lucide-react";
+import { Clock, ArrowLeft, Calendar, User, Shield, MapPin } from "lucide-react";
 
 interface ServiceDetail {
   id: string;
@@ -17,6 +17,12 @@ interface ServiceDetail {
     name: string;
     walletAddress: string;
     reputation: number;
+    city: string | null;
+    department: string | null;
+    region: string | null;
+    locationVisibility: string | null;
+    serviceRadiusKm: number | null;
+    availableOnline: boolean | null;
   };
 }
 
@@ -71,7 +77,12 @@ export default function ServiceDetailClient({ service, isOwner }: { service: Ser
               <div className="flex items-center gap-4 text-sm text-[#a3a3a3] mt-2">
                 <div className="flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5 text-[#5c5c5c]" />
-                  {service.provider.name}
+                  <Link
+                    href={`/profile/${service.provider.id}`}
+                    className="hover:text-[#00d4aa] transition-colors"
+                  >
+                    {service.provider.name}
+                  </Link>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-[#5c5c5c]" />
@@ -132,6 +143,57 @@ export default function ServiceDetailClient({ service, isOwner }: { service: Ser
                 </span>
               )}
             </div>
+            {/* Zone d'intervention */}
+            {(service.provider.locationVisibility !== "hidden" || service.provider.availableOnline) && (
+              <div className="mt-3 pt-3 border-t border-[#262626] space-y-2">
+                <p className="text-[10px] text-[#a3a3a3] uppercase tracking-wider font-semibold">
+                  Zone d&apos;intervention
+                </p>
+                {(() => {
+                  const p = service.provider;
+                  const vis = p.locationVisibility;
+                  if (vis === "city" && p.city) {
+                    return (
+                      <p className="text-xs text-[#f5f5f5] flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#5c5c5c]" />
+                        {p.city}
+                        {p.department ? `, ${p.department}` : ""}
+                        {p.serviceRadiusKm ? ` · ${p.serviceRadiusKm} km autour` : ""}
+                      </p>
+                    );
+                  }
+                  if (vis === "department" && p.department) {
+                    return (
+                      <p className="text-xs text-[#f5f5f5] flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#5c5c5c]" />
+                        {p.department}
+                      </p>
+                    );
+                  }
+                  if (vis === "region" && p.region) {
+                    return (
+                      <p className="text-xs text-[#f5f5f5] flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#5c5c5c]" />
+                        {p.region}
+                      </p>
+                    );
+                  }
+                  return null;
+                })()}
+                {service.provider.availableOnline && (
+                  <p className="text-xs text-[#00d4aa] font-medium">
+                    ✅ Disponible en ligne
+                  </p>
+                )}
+                <Link
+                  href={`/profile/${service.provider.id}`}
+                  className="inline-flex items-center gap-1 text-xs text-[#00d4aa] hover:text-[#00b894] transition-colors font-medium"
+                >
+                  Voir le profil local
+                  <span className="text-lg leading-none">→</span>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* CTA */}

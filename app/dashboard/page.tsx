@@ -10,7 +10,7 @@ export default async function DashboardPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, name: true, timeBalance: true, walletAddress: true, reputation: true },
+    select: { id: true, name: true, timeBalance: true, walletAddress: true, reputation: true, city: true, department: true, serviceRadiusKm: true, availableOnline: true },
   });
 
   if (!user) redirect("/auth/signin");

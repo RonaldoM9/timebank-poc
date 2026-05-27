@@ -7,7 +7,18 @@ export default async function ServicesPage() {
     orderBy: { createdAt: "desc" },
     include: {
       provider: {
-        select: { name: true, walletAddress: true },
+        select: {
+          id: true,
+          name: true,
+          walletAddress: true,
+          reputation: true,
+          city: true,
+          department: true,
+          region: true,
+          locationVisibility: true,
+          serviceRadiusKm: true,
+          availableOnline: true,
+        },
       },
     },
   });

@@ -14,7 +14,17 @@ model User {
   password      String
   walletAddress String  @unique
   timeBalance   Float   @default(0)
-  createdAt     DateTime @default(now())
+  bio           String?
+  avatar        String?
+  city             String?
+  postalCode       String?
+  department       String?
+  region           String?
+  country          String  @default("France")
+  serviceRadiusKm  Int?    @default(10)
+  locationVisibility String @default("city")
+  availableOnline  Boolean @default(false)
+  createdAt        DateTime @default(now())
 
   transactionsFrom Transaction[] @relation("FromUser")
   transactionsTo   Transaction[] @relation("ToUser")

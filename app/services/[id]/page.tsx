@@ -15,7 +15,18 @@ export default async function ServiceDetailPage({
     where: { id },
     include: {
       provider: {
-        select: { id: true, name: true, walletAddress: true, reputation: true },
+        select: {
+          id: true,
+          name: true,
+          walletAddress: true,
+          reputation: true,
+          city: true,
+          department: true,
+          region: true,
+          locationVisibility: true,
+          serviceRadiusKm: true,
+          availableOnline: true,
+        },
       },
     },
   });

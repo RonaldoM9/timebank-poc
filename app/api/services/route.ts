@@ -5,6 +5,10 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
+  const city = searchParams.get("city") || "";
+  const department = searchParams.get("department") || "";
+  const region = searchParams.get("region") || "";
+  const availableOnline = searchParams.get("availableOnline") || "";
 
   const where: Record<string, unknown> = { status: "active" };
 
@@ -19,12 +23,37 @@ export async function GET(request: NextRequest) {
     ];
   }
 
+  // Filtres géographiques
+  if (city) {
+    where.provider = { ...(where.provider as Record<string, unknown> || {}), city };
+  }
+  if (department) {
+    where.provider = { ...(where.provider as Record<string, unknown> || {}), department };
+  }
+  if (region) {
+    where.provider = { ...(where.provider as Record<string, unknown> || {}), region };
+  }
+  if (availableOnline === "true") {
+    where.provider = { ...(where.provider as Record<string, unknown> || {}), availableOnline: true };
+  }
+
   const services = await prisma.service.findMany({
     where,
     orderBy: { createdAt: "desc" },
     include: {
       provider: {
-        select: { name: true, walletAddress: true, reputation: true },
+        select: {
+          id: true,
+          name: true,
+          walletAddress: true,
+          reputation: true,
+          city: true,
+          department: true,
+          region: true,
+          locationVisibility: true,
+          serviceRadiusKm: true,
+          availableOnline: true,
+        },
       },
     },
   });
