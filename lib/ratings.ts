@@ -46,6 +46,11 @@ export async function createRating(params: CreateRatingParams): Promise<void> {
     throw new Error("Le score doit être un entier entre 1 et 5.");
   }
 
+  // Valider la longueur du commentaire
+  if (comment && comment.trim().length > 500) {
+    throw new Error("Le commentaire ne peut pas dépasser 500 caractères.");
+  }
+
   // Déterminer le provider
   const toId = booking.service.providerId;
 

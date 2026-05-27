@@ -12,6 +12,7 @@ import {
   CalendarCheck,
   Inbox,
   MapPin,
+  Zap,
 } from "lucide-react";
 
 interface DashboardUser {
@@ -312,6 +313,23 @@ export default function DashboardClient({
             </div>
             <p className="text-[#a3a3a3] text-sm">
               Trouve un héros et réserve avec tes TIME
+            </p>
+          </Link>
+
+          <Link
+            href="/urgent"
+            className="bg-[#111111] border border-[#262626] rounded-2xl p-5 hover:border-[#f59e0b]/30 transition-all group"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-[#f59e0b]/10 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-[#f59e0b]" />
+              </div>
+              <span className="font-semibold text-[#f5f5f5]">
+                Aide urgente
+              </span>
+            </div>
+            <p className="text-[#a3a3a3] text-sm">
+              Publie un besoin urgent ou aide un voisin
             </p>
           </Link>
 

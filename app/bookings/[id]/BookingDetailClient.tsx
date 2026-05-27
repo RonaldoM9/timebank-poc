@@ -196,11 +196,23 @@ export default function BookingDetailClient({
               <div className="flex items-center gap-4 text-sm text-[#a3a3a3] mt-2 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5 text-[#5c5c5c]" />
-                  Client : {booking.client.name}
+                  Client :{" "}
+                  <Link
+                    href={`/profile/${booking.clientId}`}
+                    className="hover:text-[#00d4aa] transition-colors"
+                  >
+                    {booking.client.name}
+                  </Link>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5 text-[#5c5c5c]" />
-                  Héros : {booking.service.provider.name}
+                  Héros :{" "}
+                  <Link
+                    href={`/profile/${booking.service.provider.id}`}
+                    className="hover:text-[#00d4aa] transition-colors"
+                  >
+                    {booking.service.provider.name}
+                  </Link>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-[#5c5c5c]" />
