@@ -1,17 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, ShieldQuestion, Sparkles } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, ShieldQuestion, Sparkles, Shield, Award, Zap } from "lucide-react";
 import type { PublicProfile } from "@/lib/profile";
+import type { HeroLevel } from "@/lib/gamification";
 import PublicProfileHeader from "@/components/PublicProfileHeader";
 import ProfileImpactCards from "@/components/ProfileImpactCards";
 import PublicServiceCard from "@/components/PublicServiceCard";
 import PublicRatingCard from "@/components/PublicRatingCard";
+import HeroLevelBadge from "@/components/HeroLevelBadge";
+
+interface TopBadge {
+  code: string;
+  name: string;
+  icon: string;
+}
 
 export default function ProfileClient({
   profile,
+  heroLevel,
+  totalXp,
+  topBadges,
 }: {
   profile: PublicProfile;
+  heroLevel: HeroLevel;
+  totalXp: number;
+  topBadges: TopBadge[];
 }) {
   const hasServices = profile.activeServices.length > 0;
   const hasRatings = profile.recentRatings.length > 0;
@@ -47,6 +61,51 @@ export default function ProfileClient({
             createdAt={profile.createdAt}
             walletAddressShort={profile.walletAddressShort}
           />
+        </section>
+
+        {/* Section Hero Level */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Shield className="w-5 h-5 text-[#00d4aa]" />
+            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+              Niveau Hero
+            </h2>
+          </div>
+          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <HeroLevelBadge level={heroLevel} />
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-xs text-[#a3a3a3] font-medium">XP Totale</p>
+                  <p className="text-xl font-anton tracking-wide text-[#00d4aa]">
+                    {totalXp}
+                  </p>
+                </div>
+                {topBadges.length > 0 && (
+                  <div className="hidden sm:flex items-center gap-2 border-l border-[#262626] pl-4">
+                    {topBadges.slice(0, 3).map((badge) => (
+                      <div
+                        key={badge.code}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00d4aa]/10 border border-[#00d4aa]/20"
+                        title={badge.name}
+                      >
+                        <Award className="h-4 w-4 text-[#00d4aa]" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            {/* Mobile badges */}
+            {topBadges.length > 0 && (
+              <div className="flex items-center gap-2 mt-3 sm:hidden">
+                <Zap className="w-3 h-3 text-[#5c5c5c]" />
+                <span className="text-[11px] text-[#a3a3a3]">
+                  Badges&nbsp;: {topBadges.map((b) => b.name).join(", ")}
+                </span>
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Section Impact — KPIs */}

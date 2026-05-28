@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Clock, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import {
+  ArrowLeft,
+  Clock,
+  ArrowUpRight,
+  ArrowDownRight,
+  Gift,
+} from "lucide-react";
 
 interface Transaction {
   id: string;
@@ -80,6 +86,15 @@ export default function WalletClient({
             </span>
           </div>
         </div>
+
+        {/* Donner du TIME button */}
+        <Link
+          href="/wallet/transfer"
+          className="flex items-center justify-center gap-2 rounded-xl bg-[#00d4aa] hover:bg-[#00b894] text-[#0a0a0a] font-bold text-sm px-4 py-3 transition-colors w-full"
+        >
+          <Gift className="w-4 h-4" />
+          Donner du TIME
+        </Link>
 
         {/* Transactions */}
         <div className="bg-[#111111] border border-[#262626] rounded-2xl overflow-hidden">

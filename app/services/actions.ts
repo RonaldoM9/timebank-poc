@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getUserBalance, createEscrow, releaseEscrow, refundEscrow } from "@/lib/ledger";
+import { awardXP, evaluateUserRewards } from "@/lib/gamification";
 import { z } from "zod";
 
 const createServiceSchema = z.object({
@@ -309,6 +310,30 @@ export async function completeBooking(
   if ("error" in releaseResult) {
     return { error: releaseResult.error };
   }
+
+  // ─── Gamification : XP + badges + quêtes ─────────────────────────
+  // Provider reçoit +50 XP pour mission terminée
+  await awardXP({
+    userId: booking.service.providerId,
+    type: "booking_complete",
+    points: 50,
+    sourceType: "booking",
+    sourceId: booking.id,
+    description: "Mission terminée en tant qu'aidant",
+  });
+
+  // Client reçoit +20 XP
+  await awardXP({
+    userId: booking.clientId,
+    type: "booking_complete",
+    points: 20,
+    sourceType: "booking",
+    sourceId: booking.id,
+    description: "Mission terminée en tant que bénéficiaire",
+  });
+
+  // Check badges, quêtes, niveau
+  await evaluateUserRewards(booking.service.providerId, "booking_complete");
 
   return { success: true };
 }

@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { awardXP, evaluateUserRewards, createAchievement } from "./gamification";
 
 export interface CreateRatingParams {
   bookingId: string;
@@ -78,6 +79,41 @@ export async function createRating(params: CreateRatingParams): Promise<void> {
       data: { reputation: newRep },
     });
   });
+
+  // ─── Gamification ──────────────────────────────────────────
+  // Provider reçoit +30 XP pour avis reçu
+  await awardXP({
+    userId: toId,
+    type: "rating_received",
+    points: 30,
+    sourceType: "rating",
+    sourceId: params.bookingId,
+    description: `Avis ${score}/5 reçu`,
+  });
+
+  // Client reçoit +10 XP pour avoir laissé un avis
+  await awardXP({
+    userId: fromId,
+    type: "rating_received",
+    points: 10,
+    sourceType: "rating",
+    sourceId: params.bookingId,
+    description: "Avis laissé",
+  });
+
+  // Create achievement for the provider
+  await createAchievement({
+    userId: toId,
+    type: "rating_received",
+    title: `Avis ${score}/5 reçu`,
+    description: comment || `${score}/5 — sans commentaire`,
+    metadata: { score, bookingId: params.bookingId },
+  });
+
+  // Check badges, quests, level for the provider
+  if (score >= 4) {
+    await evaluateUserRewards(toId, "rating_received");
+  }
 }
 
 export async function recalculateUserReputation(

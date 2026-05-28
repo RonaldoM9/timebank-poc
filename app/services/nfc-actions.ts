@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { releaseEscrow } from "@/lib/ledger";
+import { awardXP, evaluateUserRewards, createAchievement } from "@/lib/gamification";
 import crypto from "crypto";
 
 const TTL_MINUTES = parseInt(process.env.QR_TOKEN_TTL_MINUTES || "30", 10);
@@ -160,6 +161,25 @@ export async function validateNFCProof(
   if ("error" in releaseResult) {
     return { error: releaseResult.error };
   }
+
+  // ─── Gamification ──────────────────────────────────────────
+  await awardXP({
+    userId: booking.service.providerId,
+    type: "booking_complete",
+    points: 50,
+    sourceType: "booking",
+    sourceId: booking.id,
+    description: "Mission terminée via NFC (aidant)",
+  });
+  await awardXP({
+    userId: booking.clientId,
+    type: "booking_complete",
+    points: 20,
+    sourceType: "booking",
+    sourceId: booking.id,
+    description: "Mission validée via NFC (bénéficiaire)",
+  });
+  await evaluateUserRewards(booking.service.providerId, "booking_complete");
 
   return { success: true };
 }

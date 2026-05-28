@@ -13,7 +13,12 @@ import {
   Inbox,
   MapPin,
   Zap,
+  Shield,
+  Award,
 } from "lucide-react";
+import type { HeroLevel } from "@/lib/gamification";
+import HeroLevelBadge from "@/components/HeroLevelBadge";
+import XpProgressBar from "@/components/XpProgressBar";
 
 interface DashboardUser {
   id: string;
@@ -44,6 +49,8 @@ export default function DashboardClient({
   missionsCount,
   recentTransactions = [],
   ratingsReceivedCount = 0,
+  heroLevel,
+  badgesCount = 0,
 }: {
   user: DashboardUser;
   activeServices: number;
@@ -52,6 +59,8 @@ export default function DashboardClient({
   missionsCount: number;
   recentTransactions: MiniTx[];
   ratingsReceivedCount: number;
+  heroLevel: HeroLevel;
+  badgesCount: number;
 }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -103,6 +112,46 @@ export default function DashboardClient({
             {user.walletAddress}
           </div>
         </div>
+
+        {/* Hero Level card */}
+        <Link
+          href="/rewards"
+          className="block bg-[#111111] border border-[#262626] rounded-2xl p-6 hover:border-[#00d4aa]/30 transition-all group"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[#a3a3a3] text-sm font-medium">
+              Progression Hero
+            </span>
+            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+              ~ niveau ~
+            </span>
+          </div>
+          <div className="flex items-center gap-4 mb-3">
+            <div className="shrink-0">
+              <HeroLevelBadge level={heroLevel} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xl font-bold text-[#f5f5f5] group-hover:text-[#00d4aa] transition-colors">
+                {heroLevel.name}
+              </div>
+              <div className="flex items-center gap-3 mt-1 text-xs text-[#a3a3a3]">
+                <span className="flex items-center gap-1">
+                  <Award className="w-3.5 h-3.5 text-[#00d4aa]" />
+                  {badgesCount} badge{badgesCount > 1 ? "s" : ""}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Shield className="w-3.5 h-3.5 text-yellow-400" />
+                  {heroLevel.currentXp} XP
+                </span>
+              </div>
+            </div>
+          </div>
+          <XpProgressBar
+            currentXp={heroLevel.currentXp}
+            nextLevelXp={heroLevel.nextLevelXp}
+            progress={heroLevel.progress}
+          />
+        </Link>
 
         {/* Service stats */}
         <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "./DashboardClient";
+import { getTotalXp, getLevelFromXp } from "@/lib/gamification";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -39,6 +40,10 @@ export default async function DashboardPage() {
     prisma.rating.count({ where: { toId: user.id } }),
   ]);
 
+  const totalXp = await getTotalXp(user.id);
+  const heroLevel = getLevelFromXp(totalXp);
+  const badgesCount = await prisma.userBadge.count({ where: { userId: user.id } });
+
   return (
     <DashboardClient
       user={{ ...user, reputation: user.reputation }}
@@ -51,6 +56,8 @@ export default async function DashboardPage() {
         createdAt: tx.createdAt.toISOString(),
       }))}
       ratingsReceivedCount={ratingsReceivedCount}
+      heroLevel={heroLevel}
+      badgesCount={badgesCount}
     />
   );
 }

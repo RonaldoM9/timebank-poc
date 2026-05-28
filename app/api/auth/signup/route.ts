@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { awardXP, evaluateUserRewards, checkAndUpdateQuests } from "@/lib/gamification";
 
 const signupSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
@@ -60,6 +61,12 @@ export async function POST(request: Request) {
         status: "completed",
       },
     });
+
+    // ─── Gamification : XP pour création de profil ──────────
+    // Pas de quête welcome-hero ici car le profil n'est pas complet,
+    // l'XP sera attribuée quand l'utilisateur complète bio + localisation
+    // On initie les quêtes pour l'utilisateur
+    await checkAndUpdateQuests(user.id, "profile_complete", 1);
 
     return NextResponse.json(
       { success: true, name: user.name },
