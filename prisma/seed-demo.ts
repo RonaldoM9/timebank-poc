@@ -585,7 +585,10 @@ async function main() {
       return "";
     }
 
-    const totalTime = scenario.hours * 60; // convert to minutes? schema has totalTime Int
+    // Look up service rate to compute correct totalTime
+    const svc = SERVICES.find(s => s.title === scenario.serviceTitle);
+    const rate = svc?.ratePerHour ?? 1;
+    const totalTime = Math.round(scenario.hours * rate);
     const booking = await prisma.booking.create({
       data: {
         serviceId,
@@ -681,9 +684,8 @@ async function main() {
     });
     if (!booking) continue;
 
-    const txAmount = b.hours;
-
-    // Escrow hold (client -> escrow)
+    // Escrow hold (client -> escrow) — use booking.totalTime (hours * ratePerHour)
+    const txAmount = booking.totalTime;
     await prisma.transaction.create({
       data: {
         fromId: createdUsers.get(b.clientEmail),
