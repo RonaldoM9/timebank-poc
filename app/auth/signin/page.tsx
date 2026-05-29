@@ -25,7 +25,7 @@ export default async function SigninPage(props: {
           <div className="inline-flex items-center gap-3 mb-4">
             <Clock className="w-8 h-8" style={{ color: "#00d4aa" }} />
             <h1 className="text-3xl tracking-wide" style={{ fontFamily: anton.style.fontFamily, color: "#f5f5f5" }}>
-              TimeBank
+              TimeHeroes
             </h1>
           </div>
           <p className="text-sm" style={{ color: "#a3a3a3" }}>
@@ -89,6 +89,24 @@ export default async function SigninPage(props: {
               Se connecter
             </button>
           </form>
+
+          {/* ─── Connexion démo 1-clic ── */}
+          <div className="mt-6 pt-6 border-t" style={{ borderColor: "#262626" }}>
+            <form action="/api/auth/login" method="POST" className="space-y-2">
+              <input type="hidden" name="email" value="demo@timeheroes.fr" />
+              <input type="hidden" name="password" value="TimeHeroes2026!" />
+              <button
+                type="submit"
+                className="w-full font-semibold rounded-xl px-4 py-3 transition-colors text-sm"
+                style={{ backgroundColor: "#1a3a2a", border: "1px solid #00d4aa", color: "#00d4aa" }}
+              >
+                ⚡ Connexion démo
+              </button>
+            </form>
+            <p className="text-xs mt-2 text-center" style={{ color: "#666" }}>
+              Compte démo : demo@timeheroes.fr / TimeHeroes2026!
+            </p>
+          </div>
 
           <p className="text-center text-sm mt-6" style={{ color: "#a3a3a3" }}>
             Pas encore de compte ?{" "}
