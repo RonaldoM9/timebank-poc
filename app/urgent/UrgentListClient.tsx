@@ -77,7 +77,7 @@ export default function UrgentListClient({ initialRequests }: { initialRequests:
           <div className="flex items-center gap-3">
             <Zap className="w-6 h-6 text-[#f59e0b]" />
             <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeBank — Urgent
+              TimeHeroes — Urgent
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -124,7 +124,7 @@ export default function UrgentListClient({ initialRequests }: { initialRequests:
             <div>
               <p className="text-yellow-400 text-xs font-semibold mb-1">Important</p>
               <p className="text-[#a3a3a3] text-xs leading-relaxed">
-                TimeBank est un réseau d&apos;entraide locale, pas un service d&apos;urgence.
+                TimeHeroes est un réseau d&apos;entraide locale, pas un service d&apos;urgence.
                 Pour les urgences médicales ou de sécurité, contactez les services d&apos;urgence.
               </p>
             </div>

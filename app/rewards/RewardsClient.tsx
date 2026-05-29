@@ -138,7 +138,7 @@ export default function RewardsClient({
           <div className="flex items-center gap-3">
             <Clock className="w-6 h-6 text-[#00d4aa]" />
             <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeBank
+              TimeHeroes
             </span>
           </div>
           <Link
@@ -359,7 +359,7 @@ export default function RewardsClient({
             ~ chaque geste compte, chaque héros brille ~
           </p>
           <p className="text-[10px] text-[#3a3a3a] mt-2">
-            TimeBank &mdash; L&apos;entraide qui fait grandir
+TimeHeroes &mdash; L&apos;entraide qui fait grandir
           </p>
         </div>
       </footer>

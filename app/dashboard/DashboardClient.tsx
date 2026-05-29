@@ -70,7 +70,7 @@ export default function DashboardClient({
           <div className="flex items-center gap-3">
             <Clock className="w-6 h-6 text-[#00d4aa]" />
             <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeBank
+              TimeHeroes
             </span>
           </div>
           <button
@@ -90,7 +90,7 @@ export default function DashboardClient({
             Bonjour {user.name} 👋
           </h1>
           <p className="text-[#a3a3a3] text-sm">
-            Bienvenue sur votre tableau de bord TimeBank
+Bienvenue sur votre tableau de bord TimeHeroes
           </p>
         </div>
 

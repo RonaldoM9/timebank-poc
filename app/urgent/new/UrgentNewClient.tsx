@@ -53,7 +53,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
           <div className="flex items-center gap-3">
             <Zap className="w-6 h-6 text-[#f59e0b]" />
             <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeBank — Urgent
+              TimeHeroes — Urgent
             </span>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
           <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-3 mb-6">
             <p className="text-[#a3a3a3] text-xs">
               Pour les urgences médicales ou de sécurité, contactez les services d&apos;urgence (15, 17, 18, 112).
-              TimeBank est un réseau d&apos;entraide locale, pas un service de secours.
+              TimeHeroes est un réseau d&apos;entraide locale, pas un service de secours.
             </p>
           </div>
 

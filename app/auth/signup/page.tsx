@@ -50,7 +50,7 @@ export default function SignupPage() {
           <div className="inline-flex items-center gap-3 mb-4">
             <Clock className="w-8 h-8 text-[#00d4aa]" />
             <h1 className="text-3xl font-anton tracking-wide text-[#f5f5f5]">
-              TimeBank
+              TimeHeroes
             </h1>
           </div>
           <p className="text-[#a3a3a3] text-sm">

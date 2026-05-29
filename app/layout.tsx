@@ -21,9 +21,9 @@ const bangers = Bangers({
 });
 
 export const metadata: Metadata = {
-  title: "TimeBank — Échangez du temps, pas de l'argent",
+  title: "TimeHeroes — Échangez du temps, pas de l'argent",
   description:
-    "Plateforme de TimeBanking. Chacun échange ses compétences contre du temps via l'unité interne TIME.",
+    "Plateforme de TimeHeroes. Chacun échange ses compétences contre du temps via l'unité interne TIME.",
 };
 
 export default function RootLayout({

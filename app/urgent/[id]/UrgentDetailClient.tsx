@@ -100,7 +100,7 @@ export default function UrgentDetailClient({
           <div className="flex items-center gap-3">
             <Zap className="w-6 h-6 text-[#f59e0b]" />
             <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeBank — Urgent
+              TimeHeroes — Urgent
             </span>
           </div>
           <Link

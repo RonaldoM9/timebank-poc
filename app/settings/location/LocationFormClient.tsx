@@ -108,7 +108,7 @@ export default function LocationFormClient({
           <div className="flex items-center gap-3">
             <Clock className="w-6 h-6 text-[#00d4aa]" />
             <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeBank
+              TimeHeroes
             </span>
           </div>
           <Link
