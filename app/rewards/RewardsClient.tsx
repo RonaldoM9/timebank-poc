@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   Clock,
+  Award,
   Sparkles,
   CheckCircle,
   Lock,
@@ -17,6 +18,8 @@ import {
   Flag,
 } from "lucide-react";
 import type { HeroLevel } from "@/lib/gamification";
+import ConnectedHeader from "@/components/ConnectedHeader";
+import EmptyState from "@/components/EmptyState";
 import HeroLevelBadge from "@/components/HeroLevelBadge";
 import XpProgressBar from "@/components/XpProgressBar";
 import BadgeCard from "@/components/BadgeCard";
@@ -133,23 +136,7 @@ export default function RewardsClient({
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
-      <header className="border-b border-[#262626]">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-1.5 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Retour au tableau de bord
-          </Link>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-10">
         {/* Section 1: Hero Level Card */}
@@ -235,15 +222,7 @@ export default function RewardsClient({
                 ))}
               </div>
             ) : (
-              <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6 text-center">
-                <Trophy className="w-8 h-8 text-[#5c5c5c] mx-auto mb-2" />
-                <p className="text-sm text-[#a3a3a3]">
-                  Aucun badge débloqué pour le moment
-                </p>
-                <p className="text-xs text-[#5c5c5c] mt-1">
-                  Continue tes missions pour gagner des badges&nbsp;!
-                </p>
-              </div>
+              <EmptyState icon={<Award />} title="Aucun badge pour le moment" description="Termine une mission pour débloquer ton premier badge." actionLabel="Voir les missions" actionHref="/services" />
             )}
           </div>
 

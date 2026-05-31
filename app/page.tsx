@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
+import { getImpactStats } from "@/lib/impact";
 import PublicHeader from "@/components/landing/PublicHeader";
 import LandingHero from "@/components/landing/LandingHero";
 import ProblemSection from "@/components/landing/ProblemSection";
@@ -19,6 +20,8 @@ export default async function Home() {
     redirect("/dashboard");
   }
 
+  const stats = await getImpactStats();
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <PublicHeader />
@@ -29,7 +32,7 @@ export default async function Home() {
         <HowItWorksSection />
         <FeatureGrid />
         <ComparisonSection />
-        <ImpactStatsSection />
+        <ImpactStatsSection stats={stats} />
         <UseCasesSection />
         <FinalCTA />
       </main>

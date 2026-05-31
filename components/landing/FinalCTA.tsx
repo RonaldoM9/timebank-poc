@@ -28,6 +28,13 @@ export default function FinalCTA() {
             Explorer les missions
             <ArrowRight className="w-4 h-4" />
           </Link>
+          <Link
+            href="/impact"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[#262626] text-[#a3a3a3] hover:border-[#00d4aa]/30 hover:text-[#f5f5f5] transition-all text-sm sm:text-base"
+          >
+            Voir l'impact
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
 
         {/* Demo credentials again */}

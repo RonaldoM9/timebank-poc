@@ -3,9 +3,32 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Clock, ExternalLink, CheckCircle, XCircle, Sparkles } from "lucide-react";
+import { Clock, ExternalLink, CheckCircle, XCircle, Sparkles, MessageSquare, Calendar } from "lucide-react";
 import { completeBooking, cancelBooking } from "@/app/services/actions";
 import type { BookingItem } from "@/app/services/actions";
+import ConnectedHeader from "@/components/ConnectedHeader";
+import EmptyState from "@/components/EmptyState";
+
+function formatRelativeTime(dateStr: string): string {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+
+  if (diffMins < 1) return "à l'instant";
+  if (diffMins < 60) return `il y a ${diffMins} min`;
+
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `il y a ${diffHours}h`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `il y a ${diffDays}j`;
+
+  return d.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+  });
+}
 
 function StatusBadge({ status }: { status: string }) {
   const config: Record<string, { label: string; classes: string }> = {
@@ -115,6 +138,23 @@ function BookingCard({
         })}
       </div>
 
+      {/* Discussion indicator */}
+      {booking._count.messages > 0 && (
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-1 text-[10px] text-[#5c5c5c]">
+            <MessageSquare className="w-3 h-3" />
+            <span>
+              {booking._count.messages} message{booking._count.messages > 1 ? "s" : ""}
+            </span>
+          </div>
+          {booking.lastMessageAt && (
+            <div className="text-[10px] text-[#5c5c5c]">
+              · Dernier message : {formatRelativeTime(booking.lastMessageAt)}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center justify-between pt-3 border-t border-[#262626]">
         <Link
           href={`/bookings/${booking.id}`}
@@ -169,22 +209,7 @@ export default function BookingsClient({
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
-      <header className="border-b border-[#262626]">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-          <Link
-            href="/dashboard"
-            className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-          >
-            Tableau de bord
-          </Link>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Hero */}
@@ -212,16 +237,13 @@ export default function BookingsClient({
           </div>
 
           {clientBookings.length === 0 ? (
-            <div className="text-center py-10 bg-[#111111] border border-[#262626] rounded-2xl">
-              <Sparkles className="w-10 h-10 text-[#5c5c5c] mx-auto mb-3" />
-              <p className="text-[#a3a3a3] text-sm">Aucune réservation pour le moment.</p>
-              <Link
-                href="/services"
-                className="inline-block mt-3 text-[#00d4aa] hover:text-[#00b894] text-sm transition-colors underline underline-offset-2"
-              >
-                Explorer les services
-              </Link>
-            </div>
+            <EmptyState
+              icon={<Calendar className="w-7 h-7 text-[#5c5c5c]" />}
+              title="Tu n'as pas encore de réservation"
+              description="Explore les missions disponibles et réserve un créneau avec ton TIME."
+              actionLabel="Voir les missions"
+              actionHref="/services"
+            />
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {clientBookings.map((b) => (

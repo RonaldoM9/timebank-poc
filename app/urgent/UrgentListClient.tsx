@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Clock, Search, MapPin, AlertCircle, Plus, Zap, Users, Calendar } from "lucide-react";
 import { useSession } from "next-auth/react";
+import ConnectedHeader from "@/components/ConnectedHeader";
 
 interface UrgentRequest {
   id: string;
@@ -72,33 +73,7 @@ export default function UrgentListClient({ initialRequests }: { initialRequests:
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <header className="border-b border-[#262626]">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Zap className="w-6 h-6 text-[#f59e0b]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes — Urgent
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            {session && (
-              <Link
-                href="/urgent/new"
-                className="flex items-center gap-1.5 bg-[#f59e0b] hover:bg-[#d97706] text-black font-semibold rounded-xl px-4 py-2 text-sm transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                Demander de l&apos;aide
-              </Link>
-            )}
-            <Link
-              href="/dashboard"
-              className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-            >
-              Tableau de bord
-            </Link>
-          </div>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-5xl mx-auto px-4 py-8">
         {/* Hero section */}

@@ -58,6 +58,7 @@ export default async function DashboardPage() {
       ratingsReceivedCount={ratingsReceivedCount}
       heroLevel={heroLevel}
       badgesCount={badgesCount}
+      userEmail={session.user.email}
     />
   );
 }

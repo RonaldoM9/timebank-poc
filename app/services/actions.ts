@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getUserBalance, createEscrow, releaseEscrow, refundEscrow } from "@/lib/ledger";
 import { awardXP, evaluateUserRewards } from "@/lib/gamification";
+import { createSystemBookingMessage } from "@/app/bookings/messages/actions";
 import { z } from "zod";
 
 const createServiceSchema = z.object({
@@ -190,6 +191,8 @@ export type BookingItem = {
   completedAt: string | null;
   cancelledAt: string | null;
   cancellationReason: string | null;
+  lastMessageAt: string | null;
+  _count: { messages: number };
   service: {
     id: string;
     title: string;
@@ -223,6 +226,7 @@ export async function getMyBookingsClient(): Promise<BookingItem[]> {
         },
       },
       client: { select: { id: true, name: true } },
+      _count: { select: { messages: true } },
     },
   });
 
@@ -231,6 +235,7 @@ export async function getMyBookingsClient(): Promise<BookingItem[]> {
     createdAt: b.createdAt.toISOString(),
     completedAt: b.completedAt?.toISOString() ?? null,
     cancelledAt: b.cancelledAt?.toISOString() ?? null,
+    lastMessageAt: b.lastMessageAt?.toISOString() ?? null,
   }));
 }
 
@@ -258,6 +263,7 @@ export async function getMyBookingsProvider(): Promise<BookingItem[]> {
         },
       },
       client: { select: { id: true, name: true } },
+      _count: { select: { messages: true } },
     },
   });
 
@@ -266,6 +272,7 @@ export async function getMyBookingsProvider(): Promise<BookingItem[]> {
     createdAt: b.createdAt.toISOString(),
     completedAt: b.completedAt?.toISOString() ?? null,
     cancelledAt: b.cancelledAt?.toISOString() ?? null,
+    lastMessageAt: b.lastMessageAt?.toISOString() ?? null,
   }));
 }
 
@@ -310,6 +317,9 @@ export async function completeBooking(
   if ("error" in releaseResult) {
     return { error: releaseResult.error };
   }
+
+  // ─── Message système : mission terminée ─────────────────────────
+  await createSystemBookingMessage(booking.id, "Mission terminée.");
 
   // ─── Gamification : XP + badges + quêtes ─────────────────────────
   // Provider reçoit +50 XP pour mission terminée
@@ -381,6 +391,9 @@ export async function cancelBooking(
   if ("error" in refundResult) {
     return { error: refundResult.error };
   }
+
+  // ─── Message système : mission annulée ──────────────────────────
+  await createSystemBookingMessage(booking.id, "Mission annulée.");
 
   return { success: true };
 }
@@ -583,6 +596,26 @@ export async function createBooking(
     // Rollback le booking si l'escrow échoue
     await prisma.booking.delete({ where: { id: booking.id } });
     return { error: escrowResult.error };
+  }
+
+  // ─── Message système : réservation créée ────────────────────────
+  await createSystemBookingMessage(booking.id, "Réservation créée.");
+  if (startAt) {
+    const dateStr = startAt.toLocaleDateString("fr-FR", {
+      weekday: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const endStr = endAt
+      ? endAt.toLocaleDateString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "";
+    await createSystemBookingMessage(
+      booking.id,
+      `Créneau confirmé : ${dateStr}-${endStr}.`
+    );
   }
 
   return { success: true, bookingId: booking.id };

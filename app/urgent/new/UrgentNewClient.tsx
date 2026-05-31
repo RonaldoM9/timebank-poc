@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createUrgentRequest } from "@/app/urgent/actions";
 import { ArrowLeft, Zap, Loader2 } from "lucide-react";
 import Link from "next/link";
+import ConnectedHeader from "@/components/ConnectedHeader";
 
 const CATEGORIES = [
   "Tech", "Design", "Langues", "Career", "Bricolage",
@@ -48,16 +49,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <header className="border-b border-[#262626]">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Zap className="w-6 h-6 text-[#f59e0b]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes — Urgent
-            </span>
-          </div>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <Link

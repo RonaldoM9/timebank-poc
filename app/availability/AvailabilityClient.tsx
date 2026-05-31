@@ -13,6 +13,8 @@ import {
   Repeat,
   ArrowLeft,
 } from "lucide-react";
+import ConnectedHeader from "@/components/ConnectedHeader";
+import EmptyState from "@/components/EmptyState";
 import type { AvailabilitySlotItem } from "./actions";
 import {
   createRecurringSlot,
@@ -188,41 +190,16 @@ export default function AvailabilityClient({
 
   if (!hasAnySlots) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 rounded-2xl bg-[#111111] border border-[#262626] flex items-center justify-center mx-auto mb-4">
-            <Calendar className="w-8 h-8 text-[#5c5c5c]" />
-          </div>
-          <h2 className="text-xl font-anton tracking-wide text-[#f5f5f5] mb-2">
-            Aucune disponibilité
-          </h2>
-          <p className="text-[#a3a3a3] text-sm mb-6">
-            Ajoute tes premiers créneaux pour permettre aux autres Heroes de réserver
-            tes missions.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              onClick={() => setActiveTab("recurring")}
-              className="inline-flex items-center gap-2 bg-[#00d4aa] hover:bg-[#00b894] text-black font-semibold rounded-xl px-6 py-3 transition-colors"
-            >
-              <Repeat className="w-4 h-4" />
-              Créneau récurrent
-            </button>
-            <button
-              onClick={() => setActiveTab("oneoff")}
-              className="inline-flex items-center gap-2 border border-[#00d4aa]/50 text-white rounded-xl px-6 py-3 hover:bg-[#00d4aa]/10 transition-colors"
-            >
-              <Calendar className="w-4 h-4" />
-              Créneau ponctuel
-            </button>
-          </div>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 mt-8 text-[#a3a3a3] hover:text-[#f5f5f5] text-sm transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Retour au tableau de bord
-          </Link>
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
+        <ConnectedHeader />
+        <div className="flex-1 flex items-center justify-center">
+          <EmptyState
+            icon={<Calendar />}
+            title="Aucune disponibilité"
+            description="Ajoute tes premiers créneaux pour permettre aux autres Heroes de réserver tes missions."
+            actionLabel="Ajouter un créneau"
+            actionHref="#"
+          />
         </div>
       </div>
     );
@@ -233,22 +210,7 @@ export default function AvailabilityClient({
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
-      <header className="border-b border-[#262626]">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-          <Link
-            href="/dashboard"
-            className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-          >
-            Tableau de bord
-          </Link>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Title */}

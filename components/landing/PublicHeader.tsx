@@ -26,12 +26,12 @@ export default function PublicHeader() {
           >
             Missions
           </Link>
-          <a
-            href="#impact"
+          <Link
+            href="/impact"
             className="text-sm text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
           >
             Impact
-          </a>
+          </Link>
           <a
             href="#how-it-works"
             className="text-sm text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
@@ -73,13 +73,13 @@ export default function PublicHeader() {
             >
               Missions
             </Link>
-            <a
-              href="#impact"
+            <Link
+              href="/impact"
               className="text-sm text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
               onClick={() => setMenuOpen(false)}
             >
               Impact
-            </a>
+            </Link>
             <a
               href="#how-it-works"
               className="text-sm text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"

@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { BookingItem } from "@/app/services/actions";
 import BookingsClient from "./BookingsClient";
 
 export default async function BookingsPage() {
@@ -29,6 +30,7 @@ export default async function BookingsPage() {
           },
         },
         client: { select: { id: true, name: true } },
+        _count: { select: { messages: true } },
       },
     }),
     prisma.booking.findMany({
@@ -44,15 +46,18 @@ export default async function BookingsPage() {
           },
         },
         client: { select: { id: true, name: true } },
+        _count: { select: { messages: true } },
       },
     }),
   ]);
 
-  const serialize = (b: typeof clientBookings[number]) => ({
+  const serialize = (b: typeof clientBookings[number]): BookingItem => ({
     ...b,
     createdAt: b.createdAt.toISOString(),
     completedAt: b.completedAt?.toISOString() ?? null,
     cancelledAt: b.cancelledAt?.toISOString() ?? null,
+    lastMessageAt: b.lastMessageAt?.toISOString() ?? null,
+    _count: b._count ?? { messages: 0 },
   });
 
   return (

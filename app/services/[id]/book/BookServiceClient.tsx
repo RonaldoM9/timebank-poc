@@ -7,6 +7,7 @@ import Link from "next/link";
 import { createBooking } from "@/app/services/actions";
 import { getProviderSlots } from "@/app/availability/actions";
 import type { AvailableSlot } from "@/app/availability/actions";
+import ConnectedHeader from "@/components/ConnectedHeader";
 
 interface ServiceBook {
   id: string;
@@ -75,22 +76,7 @@ export default function BookServiceClient({
   if (isOwner) {
     return (
       <div className="min-h-screen bg-[#0a0a0a]">
-        <header className="border-b border-[#262626]">
-          <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Clock className="w-6 h-6 text-[#00d4aa]" />
-              <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-                TimeHeroes
-              </span>
-            </div>
-            <Link
-              href={`/services/${service.id}`}
-              className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-            >
-              Retour
-            </Link>
-          </div>
-        </header>
+        <ConnectedHeader />
         <main className="max-w-2xl mx-auto px-4 py-8">
           <Link
             href={`/services/${service.id}`}
@@ -122,22 +108,7 @@ export default function BookServiceClient({
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <header className="border-b border-[#262626]">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-          <Link
-            href="/services"
-            className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-          >
-            Marketplace
-          </Link>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <Link

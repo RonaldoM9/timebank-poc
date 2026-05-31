@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Clock, ArrowLeft, Calendar, User, Shield, MapPin } from "lucide-react";
+import ConnectedHeader from "@/components/ConnectedHeader";
 
 interface ServiceDetail {
   id: string;
@@ -31,22 +32,7 @@ export default function ServiceDetailClient({ service, isOwner }: { service: Ser
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <header className="border-b border-[#262626]">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-          <Link
-            href="/services"
-            className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-          >
-            Marketplace
-          </Link>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         <Link

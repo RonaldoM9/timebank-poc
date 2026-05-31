@@ -82,6 +82,10 @@ model Booking {
   transactions Transaction[]
   rating       Rating?
   proofOfCompletion ProofOfCompletion?
+
+  lastMessageAt DateTime?
+
+  messages BookingMessage[]
 }
 
 model ProofOfCompletion {
@@ -277,4 +281,46 @@ model UserQuest {
 
   @@unique([userId, questId])
   @@map("UserQuest")
+}
+
+// ─── Lot 14 — Discussion sécurisée par booking ────────────────────────────
+
+model BookingMessage {
+  id        String   @id @default(cuid())
+
+  bookingId String
+  authorId  String?
+
+  content   String
+  type      String   @default("USER") // USER, SYSTEM
+
+  isFlagged Boolean  @default(false)
+  isHidden  Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  booking Booking? @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model MessageReport {
+  id         String   @id @default(cuid())
+
+  messageId  String
+  reporterId String
+
+  reason     String
+  comment    String?
+  status     String   @default("OPEN") // OPEN, REVIEWED, DISMISSED
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([messageId])
+  @@index([reporterId])
+  @@index([status])
 }

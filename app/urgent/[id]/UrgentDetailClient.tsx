@@ -9,6 +9,7 @@ import {
   User, Loader2, AlertCircle, CheckCircle, MessageSquare,
 } from "lucide-react";
 import { acceptOffer, proposeHelp } from "@/app/urgent/actions";
+import ConnectedHeader from "@/components/ConnectedHeader";
 
 interface UrgentOffer {
   id: string;
@@ -95,22 +96,7 @@ export default function UrgentDetailClient({
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <header className="border-b border-[#262626]">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Zap className="w-6 h-6 text-[#f59e0b]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes — Urgent
-            </span>
-          </div>
-          <Link
-            href="/urgent"
-            className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-          >
-            Retour aux demandes
-          </Link>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         <Link

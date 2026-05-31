@@ -1,10 +1,7 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import {
-  Clock,
-  LogOut,
   Wallet,
   Search,
   Plus,
@@ -20,6 +17,9 @@ import {
 import type { HeroLevel } from "@/lib/gamification";
 import HeroLevelBadge from "@/components/HeroLevelBadge";
 import XpProgressBar from "@/components/XpProgressBar";
+import ConnectedHeader from "@/components/ConnectedHeader";
+import DemoChecklist from "@/components/DemoChecklist";
+import OnboardingBlock from "@/components/OnboardingBlock";
 
 interface DashboardUser {
   id: string;
@@ -52,6 +52,7 @@ export default function DashboardClient({
   ratingsReceivedCount = 0,
   heroLevel,
   badgesCount = 0,
+  userEmail = "",
 }: {
   user: DashboardUser;
   activeServices: number;
@@ -62,27 +63,13 @@ export default function DashboardClient({
   ratingsReceivedCount: number;
   heroLevel: HeroLevel;
   badgesCount: number;
+  userEmail?: string;
 }) {
+  const isDemoAccount = userEmail === "demo@timeheroes.fr";
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      {/* Header */}
-      <header className="border-b border-[#262626]">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-          <button
-            onClick={() => signOut({ callbackUrl: "/auth/signin" })}
-            className="flex items-center gap-2 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-          >
-            <LogOut className="w-4 h-4" />
-            Déconnexion
-          </button>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         {/* Hero greeting */}
@@ -91,9 +78,17 @@ export default function DashboardClient({
             Bonjour {user.name} 👋
           </h1>
           <p className="text-[#a3a3a3] text-sm">
-Bienvenue sur votre tableau de bord TimeHeroes
+            Bienvenue sur votre tableau de bord TimeHeroes
           </p>
         </div>
+
+        {/* Demo: Checklist + Onboarding */}
+        {isDemoAccount && (
+          <>
+            <DemoChecklist />
+            <OnboardingBlock />
+          </>
+        )}
 
         {/* Balance card */}
         <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">

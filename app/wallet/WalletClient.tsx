@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import {
-  ArrowLeft,
-  Clock,
   ArrowUpRight,
   ArrowDownRight,
   Gift,
+  Wallet,
 } from "lucide-react";
+import ConnectedHeader from "@/components/ConnectedHeader";
+import EmptyState from "@/components/EmptyState";
 
 interface Transaction {
   id: string;
@@ -44,22 +45,7 @@ export default function WalletClient({
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
-      <header className="border-b border-[#262626]">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5]">
@@ -105,9 +91,13 @@ export default function WalletClient({
           </div>
 
           {transactions.length === 0 ? (
-            <div className="px-6 py-8 text-center text-[#5c5c5c] text-sm">
-              Aucune transaction pour le moment
-            </div>
+            <EmptyState
+              icon={<Wallet className="w-12 h-12" />}
+              title="Aucune transaction"
+              description="Ton historique TIME apparaîtra ici après tes premiers échanges."
+              actionLabel="Explorer les missions"
+              actionHref="/services"
+            />
           ) : (
             <div className="divide-y divide-[#262626]">
               {transactions.map((tx) => {

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Clock, Sparkles, ArrowLeft, Calendar } from "lucide-react";
+import { Clock, Sparkles, Calendar, CalendarCheck } from "lucide-react";
 import type { AgendaBooking } from "./page";
+import ConnectedHeader from "@/components/ConnectedHeader";
+import EmptyState from "@/components/EmptyState";
 
 function StatusBadge({ status }: { status: string }) {
   const config: Record<string, { label: string; classes: string }> = {
@@ -107,36 +109,6 @@ function AgendaCard({
   );
 }
 
-function EmptyState({
-  icon,
-  title,
-  description,
-  linkHref,
-  linkLabel,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  linkHref?: string;
-  linkLabel?: string;
-}) {
-  return (
-    <div className="text-center py-12 bg-[#111111] border border-[#262626] rounded-2xl">
-      <div className="flex justify-center mb-3">{icon}</div>
-      <p className="text-[#a3a3a3] text-sm font-medium">{title}</p>
-      <p className="text-[#5c5c5c] text-xs mt-1">{description}</p>
-      {linkHref && linkLabel && (
-        <Link
-          href={linkHref}
-          className="inline-block mt-3 text-[#00d4aa] hover:text-[#00b894] text-sm transition-colors underline underline-offset-2"
-        >
-          {linkLabel}
-        </Link>
-      )}
-    </div>
-  );
-}
-
 export default function AgendaClient({
   upcoming,
   past,
@@ -148,26 +120,11 @@ export default function AgendaClient({
   userId: string;
   userName: string;
 }) {
+  const hasNoBookings = upcoming.length === 0 && past.length === 0;
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      {/* Header */}
-      <header className="border-b border-[#262626]">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Calendar className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Tableau de bord
-          </Link>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Hero */}
@@ -183,59 +140,57 @@ export default function AgendaClient({
           </span>
         </div>
 
-        {/* Missions à venir */}
-        <section>
-          <div className="flex items-center gap-3 mb-4">
-            <h2 className="text-lg font-semibold text-[#f5f5f5]">
-              Missions à venir
-            </h2>
-            <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-60">
-              ~ à l&apos;horizon ~
-            </span>
-          </div>
+        {hasNoBookings ? (
+          <EmptyState
+            icon={<CalendarCheck className="w-12 h-12" />}
+            title="Aucune mission planifiée pour le moment"
+            description="Explore les missions disponibles et réserve un créneau."
+            actionLabel="Explorer les missions"
+            actionHref="/services"
+          />
+        ) : (
+          <>
+            {/* Missions à venir */}
+            <section>
+              <div className="flex items-center gap-3 mb-4">
+                <h2 className="text-lg font-semibold text-[#f5f5f5]">
+                  Missions à venir
+                </h2>
+                <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-60">
+                  ~ à l&apos;horizon ~
+                </span>
+              </div>
 
-          {upcoming.length === 0 ? (
-            <EmptyState
-              icon={<Sparkles className="w-10 h-10 text-[#5c5c5c]" />}
-              title="Aucune mission à venir"
-              description="Tu n'as pas de missions planifiées pour le moment."
-              linkHref="/services"
-              linkLabel="Explorer les services"
-            />
-          ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {upcoming.map((b) => (
-                <AgendaCard key={b.id} booking={b} userId={userId} />
-              ))}
-            </div>
-          )}
-        </section>
+              {upcoming.length === 0 ? null : (
+                <div className="grid grid-cols-1 gap-4">
+                  {upcoming.map((b) => (
+                    <AgendaCard key={b.id} booking={b} userId={userId} />
+                  ))}
+                </div>
+              )}
+            </section>
 
-        {/* Missions passées */}
-        <section>
-          <div className="flex items-center gap-3 mb-4">
-            <h2 className="text-lg font-semibold text-[#f5f5f5]">
-              Missions passées
-            </h2>
-            <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-60">
-              ~ accomplissements ~
-            </span>
-          </div>
+            {/* Missions passées */}
+            <section>
+              <div className="flex items-center gap-3 mb-4">
+                <h2 className="text-lg font-semibold text-[#f5f5f5]">
+                  Missions passées
+                </h2>
+                <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-60">
+                  ~ accomplissements ~
+                </span>
+              </div>
 
-          {past.length === 0 ? (
-            <EmptyState
-              icon={<Clock className="w-10 h-10 text-[#5c5c5c]" />}
-              title="Aucune mission passée"
-              description="Ton historique de missions est vide pour l'instant."
-            />
-          ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {past.map((b) => (
-                <AgendaCard key={b.id} booking={b} userId={userId} />
-              ))}
-            </div>
-          )}
-        </section>
+              {past.length === 0 ? null : (
+                <div className="grid grid-cols-1 gap-4">
+                  {past.map((b) => (
+                    <AgendaCard key={b.id} booking={b} userId={userId} />
+                  ))}
+                </div>
+              )}
+            </section>
+          </>
+        )}
 
         {/* Comics footer */}
         <div className="text-center pt-6">

@@ -8,6 +8,9 @@ import { generateQRToken } from "@/app/services/qr-actions";
 import { generateNFCToken } from "@/app/services/nfc-actions";
 import { createRatingAction } from "@/app/ratings/actions";
 import RatingStars from "@/components/RatingStars";
+import BookingDiscussion from "@/components/BookingDiscussion";
+import ConnectedHeader from "@/components/ConnectedHeader";
+import SuccessAlert from "@/components/SuccessAlert";
 import { useState, useEffect } from "react";
 import QRCode from "react-qr-code";
 
@@ -284,26 +287,12 @@ export default function BookingDetailClient({
   const isProvider = !isClient;
 
   const hasProof = booking.proofOfCompletion;
+  const hasReleaseTx = booking.transactions.some((tx) => tx.type === "release");
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
-      <header className="border-b border-[#262626]">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-        </div>
-      </header>
+      <ConnectedHeader />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         {/* Back link */}
@@ -867,7 +856,24 @@ export default function BookingDetailClient({
             </div>
           )}
         </div>
+
+          {/* ─── Lot 14 — Discussion sécurisée par booking ─── */}
+          <BookingDiscussion bookingId={booking.id} userId={userId} />
       </main>
+
+      <SuccessAlert
+        message="Mission validée. Le TIME peut être libéré."
+        visible={Boolean(hasProof) && !hasReleaseTx}
+      />
+      <SuccessAlert
+        message="TIME libéré"
+        visible={hasReleaseTx}
+      />
+      <SuccessAlert
+        message="Merci pour ton avis"
+        visible={ratingSuccess}
+        onClose={() => setRatingSuccess(false)}
+      />
     </div>
   );
 }
