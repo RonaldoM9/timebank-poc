@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Clock, Search, ExternalLink, Sparkles, MapPin } from "lucide-react";
+import { Search, ExternalLink, Sparkles, MapPin } from "lucide-react";
+import ConnectedHeader from "@/components/ConnectedHeader";
+import PublicHeader from "@/components/landing/PublicHeader";
 import { useSession } from "next-auth/react";
 
 interface Service {
@@ -80,31 +82,7 @@ export default function ServicesClient({ initialServices }: { initialServices: S
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <header className="border-b border-[#262626]">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
-              TimeHeroes
-            </span>
-          </div>
-          {session ? (
-            <Link
-              href="/dashboard"
-              className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-            >
-              Tableau de bord
-            </Link>
-          ) : (
-            <Link
-              href="/auth/signin"
-              className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
-            >
-              Connexion
-            </Link>
-          )}
-        </div>
-      </header>
+      {session ? <ConnectedHeader /> : <PublicHeader />}
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Hero */}
