@@ -10,6 +10,7 @@ import {
   Plus,
   Layers,
   CalendarCheck,
+  Calendar,
   Inbox,
   MapPin,
   Zap,
@@ -396,6 +397,40 @@ Bienvenue sur votre tableau de bord TimeHeroes
             </div>
             <p className="text-[#a3a3a3] text-sm">
               Partage ton super-pouvoir et gagne des TIME
+            </p>
+          </Link>
+
+          <Link
+            href="/availability"
+            className="bg-[#111111] border border-[#262626] rounded-2xl p-5 hover:border-[#00d4aa]/30 transition-all group"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-[#00d4aa]/10 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-[#00d4aa]" />
+              </div>
+              <span className="font-semibold text-[#f5f5f5]">
+                Mes disponibilités
+              </span>
+            </div>
+            <p className="text-[#a3a3a3] text-sm">
+              Ajoute tes créneaux pour que les Heroes réservent
+            </p>
+          </Link>
+
+          <Link
+            href="/agenda"
+            className="bg-[#111111] border border-[#262626] rounded-2xl p-5 hover:border-[#00d4aa]/30 transition-all group"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-[#00d4aa]/10 flex items-center justify-center">
+                <CalendarCheck className="w-5 h-5 text-[#00d4aa]" />
+              </div>
+              <span className="font-semibold text-[#f5f5f5]">
+                Mon agenda
+              </span>
+            </div>
+            <p className="text-[#a3a3a3] text-sm">
+              Voir mes missions à venir et passées
             </p>
           </Link>
         </div>

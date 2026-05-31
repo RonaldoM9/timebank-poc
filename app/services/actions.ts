@@ -467,7 +467,7 @@ export async function getMyBookingById(bookingId: string) {
   };
 }
 
-// ─── Create Booking ─────────────────────────────────────────────────────
+// ─── Create Booking (with or without slot) ───────────────────────────────
 
 export async function createBooking(
   serviceId: string,
@@ -521,6 +521,44 @@ export async function createBooking(
     return { error: "Solde TIME insuffisant. Vous avez besoin de " + totalTime + " TIME mais vous n'avez que " + balance + " TIME." };
   }
 
+  // Valider le créneau si fourni
+  const startAtRaw = formData.get("startAt");
+  const endAtRaw = formData.get("endAt");
+  let startAt: Date | undefined;
+  let endAt: Date | undefined;
+
+  if (startAtRaw && endAtRaw) {
+    startAt = new Date(startAtRaw as string);
+    endAt = new Date(endAtRaw as string);
+
+    if (isNaN(startAt.getTime()) || isNaN(endAt.getTime())) {
+      return { error: "Dates de créneau invalides" };
+    }
+    if (startAt <= new Date()) {
+      return { error: "Impossible de réserver dans le passé" };
+    }
+    if (endAt <= startAt) {
+      return { error: "La date de fin doit être après la date de début" };
+    }
+
+    // Vérifier conflit avec autres bookings
+    const conflict = await prisma.booking.findFirst({
+      where: {
+        service: { providerId: service.providerId },
+        status: { in: ["pending", "confirmed", "in_progress"] },
+        startAt: { not: null },
+        endAt: { not: null },
+        AND: [
+          { startAt: { lt: endAt } },
+          { endAt: { gt: startAt } },
+        ],
+      },
+    });
+    if (conflict) {
+      return { error: "Ce créneau est déjà réservé" };
+    }
+  }
+
   // Créer le booking
   const booking = await prisma.booking.create({
     data: {
@@ -529,6 +567,8 @@ export async function createBooking(
       hours,
       totalTime,
       status: "pending",
+      startAt: startAt || null,
+      endAt: endAt || null,
     },
   });
 

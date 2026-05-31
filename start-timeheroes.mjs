@@ -4,7 +4,8 @@ import next from 'next';
 import http from 'http';
 import { parse } from 'url';
 
-const port = parseInt(process.env.PORT || '3096', 10);
+process.env.PORT = process.env.PORT || '3096';
+const port = parseInt(process.env.PORT, 10);
 const app = next({ dev: false, dir: '.' });
 const handle = app.getRequestHandler();
 

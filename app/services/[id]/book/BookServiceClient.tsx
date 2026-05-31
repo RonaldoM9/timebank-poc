@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Clock, Loader2, Coins, User, Zap } from "lucide-react";
+import { ArrowLeft, Clock, Loader2, Coins, User, Zap, Calendar } from "lucide-react";
 import Link from "next/link";
 import { createBooking } from "@/app/services/actions";
+import { getProviderSlots } from "@/app/availability/actions";
+import type { AvailableSlot } from "@/app/availability/actions";
 
 interface ServiceBook {
   id: string;
@@ -34,9 +36,23 @@ export default function BookServiceClient({
   const [hours, setHours] = useState<number>(1);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [slots, setSlots] = useState<AvailableSlot[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<{ startAt: string; endAt: string } | null>(null);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
   const totalTime = service.ratePerHour * hours;
   const insufficient = balance < totalTime;
+
+  // Fetch available slots when hours change
+  useEffect(() => {
+    if (isOwner) return;
+    setLoadingSlots(true);
+    setSelectedSlot(null);
+    getProviderSlots(service.provider.id, hours)
+      .then(setSlots)
+      .catch(() => setSlots([]))
+      .finally(() => setLoadingSlots(false));
+  }, [hours, service.provider.id, isOwner]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -205,6 +221,62 @@ export default function BookServiceClient({
                 className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] focus:outline-none focus:border-[#00d4aa] transition-colors"
               />
             </div>
+
+            {/* Sélecteur de créneaux */}
+            <div>
+              <label className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+                <Calendar className="w-4 h-4 inline mr-1.5 -mt-0.5" />
+                Créneau disponible
+              </label>
+              {loadingSlots ? (
+                <div className="flex items-center justify-center py-6">
+                  <Loader2 className="w-5 h-5 animate-spin text-[#a3a3a3]" />
+                </div>
+              ) : slots.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {slots.map((slot) => {
+                    const isSelected =
+                      selectedSlot?.startAt === slot.startAt &&
+                      selectedSlot?.endAt === slot.endAt;
+                    return (
+                      <button
+                        key={slot.startAt}
+                        type="button"
+                        onClick={() =>
+                          setSelectedSlot(
+                            isSelected
+                              ? null
+                              : { startAt: slot.startAt, endAt: slot.endAt }
+                          )
+                        }
+                        className={`text-left px-4 py-3 rounded-xl border text-sm transition-colors ${
+                          isSelected
+                            ? "border-[#00d4aa] bg-[#00d4aa]/10 text-[#00d4aa]"
+                            : "border-[#262626] bg-[#181818] text-[#f5f5f5] hover:border-[#404040]"
+                        }`}
+                      >
+                        {slot.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="bg-[#181818] border border-[#262626] rounded-xl p-3">
+                  <p className="text-[#a3a3a3] text-xs">
+                    Ce Hero n&apos;a pas encore ajouté de disponibilité. La
+                    réservation sans créneau reste possible.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Champs cachés pour le créneau sélectionné */}
+            {selectedSlot && (
+              <>
+                <input type="hidden" name="startAt" value={selectedSlot.startAt} />
+                <input type="hidden" name="endAt" value={selectedSlot.endAt} />
+              </>
+            )}
 
             {/* Récapitulatif */}
             <div className="bg-[#181818] border border-[#262626] rounded-xl p-4">

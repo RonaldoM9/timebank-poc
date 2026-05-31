@@ -38,6 +38,7 @@ model User {
   proofsValidated  ProofOfCompletion[] @relation("ProofValidator")
   proofsProvided   ProofOfCompletion[] @relation("ProofProvider")
   badges           UserBadge[]
+  availabilitySlots AvailabilitySlot[]
   xpEvents         UserXpEvent[]
   achievements     AchievementEvent[]
   userQuests       UserQuest[]
@@ -66,6 +67,8 @@ model Booking {
   totalTime          Int
   status             String    @default("pending")
   createdAt          DateTime  @default(now())
+  startAt            DateTime?
+  endAt              DateTime?
   completedAt        DateTime?
   cancelledAt        DateTime?
   cancellationReason String?
@@ -157,6 +160,26 @@ model UrgentOffer {
 
   urgentRequest UrgentRequest @relation(fields: [urgentRequestId], references: [id])
   provider      User          @relation("ProviderOffers", fields: [providerId], references: [id])
+}
+
+// ─── Lot 13 — Availability & Calendar ────────────────────────────────────────
+
+model AvailabilitySlot {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   @default("RECURRING") // RECURRING or ONE_OFF
+  dayOfWeek Int?     // 1=lundi..7=dimanche (for RECURRING)
+  startTime String?  // "18:00"
+  endTime   String?  // "20:00"
+  startAt   DateTime? // for ONE_OFF
+  endAt     DateTime? // for ONE_OFF
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("AvailabilitySlot")
 }
 
 // ─── Lot 10 — Gamification ────────────────────────────────────────────────
