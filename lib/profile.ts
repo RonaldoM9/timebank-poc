@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { computeCompletion } from "./heroPassport";
 
 export interface PublicProfile {
   id: string;
@@ -20,6 +21,21 @@ export interface PublicProfile {
   availableOnline: boolean;
   activeServices: PublicServiceItem[];
   recentRatings: PublicRatingItem[];
+  /** Hero Passport fields */
+  passport: {
+    bio: string | null;
+    offeredSkills: string | null;
+    wantedHelp: string | null;
+    motivations: string | null;
+    completionPercent: number;
+  } | null;
+  /** Computed trust badges */
+  badges: {
+    localHero: boolean;
+    firstMission: boolean;
+    reliable: boolean;
+    profileComplete: boolean;
+  };
 }
 
 export interface PublicServiceItem {
@@ -57,6 +73,14 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
       locationVisibility: true,
       serviceRadiusKm: true,
       availableOnline: true,
+      heroPassport: {
+        select: {
+          bio: true,
+          offeredSkills: true,
+          wantedHelp: true,
+          motivations: true,
+        },
+      },
     },
   });
 
@@ -117,6 +141,24 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
       : user.walletAddress
     : "";
 
+  // Badges
+  const hp = user.heroPassport;
+  const completionPercent = hp
+    ? computeCompletion({
+        bio: hp.bio,
+        offeredSkills: hp.offeredSkills,
+        wantedHelp: hp.wantedHelp,
+        motivations: hp.motivations,
+      })
+    : 0;
+
+  const badges = {
+    localHero: !!(user.city || user.department),
+    firstMission: missionsCompleted > 0,
+    reliable: user.reputation >= 4.0,
+    profileComplete: completionPercent >= 80,
+  };
+
   return {
     id: user.id,
     name: user.name,
@@ -151,5 +193,15 @@ export async function getPublicProfile(userId: string): Promise<PublicProfile | 
       clientId: r.from.id,
       serviceTitle: r.booking.service.title,
     })),
+    passport: hp
+      ? {
+          bio: hp.bio,
+          offeredSkills: hp.offeredSkills,
+          wantedHelp: hp.wantedHelp,
+          motivations: hp.motivations,
+          completionPercent,
+        }
+      : null,
+    badges,
   };
 }

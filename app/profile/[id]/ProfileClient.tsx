@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, ShieldQuestion, Sparkles, Shield, Award, Zap } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, ShieldQuestion, Sparkles, Shield, Award, Zap, HeartHandshake, BookOpen, Target, BadgeCheck } from "lucide-react";
 import type { PublicProfile } from "@/lib/profile";
 import type { HeroLevel } from "@/lib/gamification";
 import PublicProfileHeader from "@/components/PublicProfileHeader";
@@ -108,6 +108,46 @@ export default function ProfileClient({
           </div>
         </section>
 
+        {/* Section Trust Badges */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <BadgeCheck className="w-5 h-5 text-[#00d4aa]" />
+            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+              Badges de confiance
+            </h2>
+          </div>
+          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+            <div className="flex flex-wrap gap-3">
+              {[
+                { key: "localHero" as const, label: "Héros local", desc: "Localisation renseignée", color: "border-blue-500/30 bg-blue-500/10 text-blue-400" },
+                { key: "firstMission" as const, label: "Première mission", desc: "Mission accomplie", color: "border-[#00d4aa]/30 bg-[#00d4aa]/10 text-[#00d4aa]" },
+                { key: "reliable" as const, label: "Héros fiable", desc: "Note positive", color: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400" },
+                { key: "profileComplete" as const, label: "Profil complété", desc: "Passport ≥ 80 %", color: "border-purple-500/30 bg-purple-500/10 text-purple-400" },
+              ].map((b) => {
+                const earned = profile.badges[b.key];
+                return (
+                  <div
+                    key={b.key}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-opacity ${
+                      earned
+                        ? `${b.color} opacity-100`
+                        : "border-[#262626] bg-transparent text-[#5c5c5c] opacity-50"
+                    }`}
+                  >
+                    <span className={earned ? "" : "grayscale"}>
+                      {b.key === "localHero" ? "📍" : b.key === "firstMission" ? "🚀" : b.key === "reliable" ? "⭐" : "✅"}
+                    </span>
+                    <span>{b.label}</span>
+                    {!earned && (
+                      <span className="text-[10px] text-[#5c5c5c] ml-1">— à débloquer</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         {/* Section Impact — KPIs */}
         <section>
           <div className="flex items-center gap-2 mb-4">
@@ -211,6 +251,73 @@ export default function ProfileClient({
             )}
           </div>
         </section>
+
+        {/* Section Hero Passport */}
+        {profile.passport && (
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <BookOpen className="w-5 h-5 text-[#00d4aa]" />
+              <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+                Hero Passport
+              </h2>
+              <span className="text-xs text-[#5c5c5c] ml-auto">
+                {profile.passport.completionPercent}% complété
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Compétences offertes */}
+              {profile.passport.offeredSkills && (
+                <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <HeartHandshake className="w-4 h-4 text-[#00d4aa]" />
+                    <h3 className="text-sm font-semibold text-[#f5f5f5]">
+                      Compétences offertes
+                    </h3>
+                  </div>
+                  <p className="text-sm text-[#a3a3a3] leading-relaxed whitespace-pre-line">
+                    {profile.passport.offeredSkills}
+                  </p>
+                </div>
+              )}
+
+              {/* Aides recherchées */}
+              {profile.passport.wantedHelp && (
+                <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="w-4 h-4 text-yellow-400" />
+                    <h3 className="text-sm font-semibold text-[#f5f5f5]">
+                      Aides recherchées
+                    </h3>
+                  </div>
+                  <p className="text-sm text-[#a3a3a3] leading-relaxed whitespace-pre-line">
+                    {profile.passport.wantedHelp}
+                  </p>
+                </div>
+              )}
+
+              {/* Motivations — full width */}
+              {profile.passport.motivations && (
+                <div
+                  className={`bg-[#111111] border border-[#262626] rounded-2xl p-5 ${
+                    profile.passport.offeredSkills && profile.passport.wantedHelp
+                      ? "sm:col-span-2"
+                      : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles className="w-4 h-4 text-purple-400" />
+                    <h3 className="text-sm font-semibold text-[#f5f5f5]">
+                      Motivations
+                    </h3>
+                  </div>
+                  <p className="text-sm text-[#a3a3a3] leading-relaxed whitespace-pre-line">
+                    {profile.passport.motivations}
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Section Services actifs */}
         <section>

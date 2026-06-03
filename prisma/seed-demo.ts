@@ -1058,7 +1058,68 @@ async function main() {
   console.log(`  ✓ ${urgentCount} demandes urgentes créées`);
   console.log("");
 
-  // ─── Step 12: Create demo messages for unread tracking ─────────────────
+  // ─── Step 12: Seed HeroPassport for demo users ───────────────────────
+  console.log("🛂 Création des Hero Passports...");
+
+  type PassportSeed = {
+    email: string;
+    bio: string;
+    offeredSkills: string;
+    wantedHelp: string;
+    motivations: string;
+  };
+
+  const PASSPORTS: PassportSeed[] = [
+    {
+      email: "demo@timeheroes.fr",
+      bio: "Passionné par le numérique et l'entraide, j'aide mes voisins à se sentir chez eux avec leurs appareils. Je crois qu'on est tous plus forts quand on partage.",
+      offeredSkills: "Aide numérique (smartphone, PC, imprimante)\nBricolage léger\nOrganisation de documents",
+      wantedHelp: "J'aimerais apprendre le jardinage\nAide pour des petits travaux chez moi\nConseils en cuisine",
+      motivations: "Créer du lien dans mon quartier\nTransmettre ce que je sais\nApprendre de nouvelles choses",
+    },
+    {
+      email: "sarah.demo@timeheroes.fr",
+      bio: "Maman de deux enfants, professeure dans l'âme. J'adore voir les progrès des élèves et leur donner confiance en eux.",
+      offeredSkills: "Soutien scolaire (primaire et collège)\nAide aux devoirs\nMéthodologie et organisation",
+      wantedHelp: "Aide pour le jardinage\nBabysitting ponctuel\nCours de cuisine",
+      motivations: "Transmettre mes compétences\nAider les familles\nCréer du lien social",
+    },
+    {
+      email: "karim.demo@timeheroes.fr",
+      bio: "Bricoleur autodidacte, je répare tout ce qui peut l'être. Un coup de main n'a jamais fait de mal à personne.",
+      offeredSkills: "Bricolage (étagères, cadres, réparations simples)\nPetite menuiserie\nMontage de meubles",
+      wantedHelp: "Aide pour l'informatique\nCours d'anglais",
+      motivations: "Aider les autres\nPartager mon expérience\nRencontrer des voisins",
+    },
+  ];
+
+  let passportCount = 0;
+  for (const p of PASSPORTS) {
+    const userId = createdUsers.get(p.email);
+    if (!userId) {
+      console.log(`  ⚠️ User not found for: ${p.email}`);
+      continue;
+    }
+
+    // Check if passport already exists
+    const existing = await prisma.heroPassport.findUnique({ where: { userId } });
+    if (existing) continue;
+
+    await prisma.heroPassport.create({
+      data: {
+        userId,
+        bio: p.bio,
+        offeredSkills: p.offeredSkills,
+        wantedHelp: p.wantedHelp,
+        motivations: p.motivations,
+      },
+    });
+    passportCount++;
+  }
+  console.log(`  ✓ ${passportCount} Hero Passports créés`);
+  console.log("");
+
+  // ─── Step 13: Create demo messages for unread tracking ─────────────────
   console.log("💬 Création des messages de démonstration...");
 
   let msgCount = 0;
