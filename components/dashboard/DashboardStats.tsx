@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Clock, Inbox, Send, MessageCircle, ClipboardList } from "lucide-react";
+import { useState } from "react";
+import { Clock, Inbox, Send, MessageCircle, ClipboardList, ChevronDown } from "lucide-react";
 import type { DashboardStats as DashboardStatsType } from "@/lib/dashboard";
 
 type WidgetConfig = {
   key: keyof DashboardStatsType;
   title: string;
+  shortLabel: string;      // mobile label (short)
   icon: React.ReactNode;
   href: string;
   accent: string;
@@ -18,6 +20,7 @@ const WIDGETS: WidgetConfig[] = [
   {
     key: "timeBalance",
     title: "TIME disponible",
+    shortLabel: "TIME",
     icon: <Clock className="w-5 h-5" />,
     href: "/wallet",
     accent: "from-[#00d4aa]/20 to-[#00b894]/5 border-[#00d4aa]/30",
@@ -27,6 +30,7 @@ const WIDGETS: WidgetConfig[] = [
   {
     key: "receivedBookingsCount",
     title: "Missions reçues",
+    shortLabel: "Reçues",
     icon: <Inbox className="w-5 h-5" />,
     href: "/bookings?role=provider",
     accent: "from-blue-500/20 to-blue-500/5 border-blue-500/30",
@@ -35,6 +39,7 @@ const WIDGETS: WidgetConfig[] = [
   {
     key: "requestedBookingsCount",
     title: "Missions demandées",
+    shortLabel: "Demandées",
     icon: <Send className="w-5 h-5" />,
     href: "/bookings?role=customer",
     accent: "from-purple-500/20 to-purple-500/5 border-purple-500/30",
@@ -43,6 +48,7 @@ const WIDGETS: WidgetConfig[] = [
   {
     key: "unreadMessagesCount",
     title: "Messages",
+    shortLabel: "Messages",
     icon: <MessageCircle className="w-5 h-5" />,
     href: "/bookings",
     accent: "from-amber-500/20 to-amber-500/5 border-amber-500/30",
@@ -51,11 +57,17 @@ const WIDGETS: WidgetConfig[] = [
   {
     key: "todoActionsCount",
     title: "À faire",
+    shortLabel: "À faire",
     icon: <ClipboardList className="w-5 h-5" />,
     href: "/bookings?filter=todo",
     accent: "from-rose-500/20 to-rose-500/5 border-rose-500/30",
     emptyMessage: "Tout est à jour",
   },
+];
+
+// Primary widgets shown on mobile (in order)
+const MOBILE_PRIMARY_KEYS: (keyof DashboardStatsType)[] = [
+  "timeBalance", "todoActionsCount", "unreadMessagesCount", "receivedBookingsCount",
 ];
 
 const ICON_BG: Record<string, string> = {
@@ -73,11 +85,154 @@ export default function DashboardStats({
 }) {
   const hasActions =
     stats.todoActionsCount > 0 || stats.unreadMessagesCount > 0;
+  const [accordionOpen, setAccordionOpen] = useState(false);
 
   return (
     <div className="space-y-4">
-      {/* Widgets grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      {/* ─── MOBILE: 4 compact widgets (hidden on md+) ─── */}
+      <div className="grid grid-cols-2 gap-2 md:hidden">
+        {MOBILE_PRIMARY_KEYS.map((key) => {
+          const w = WIDGETS.find((x) => x.key === key)!;
+          const value = stats[key];
+          const displayValue = w.formatValue
+            ? w.formatValue(value)
+            : String(value);
+
+          return (
+            <Link
+              key={key}
+              href={w.href}
+              className={`flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all ${value === 0 ? "opacity-70" : ""}`}
+            >
+              {/* Icon */}
+              <div
+                className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center ${ICON_BG[w.title]}`}
+              >
+                {w.icon}
+              </div>
+              {/* Value + label */}
+              <div className="min-w-0">
+                <div className="text-lg font-bold text-[#f5f5f5] leading-tight">
+                  {displayValue}
+                </div>
+                <div className="text-[11px] text-[#a3a3a3] font-medium truncate">
+                  {w.shortLabel}
+                  {key === "unreadMessagesCount" && value > 0 && (
+                    <span className="text-amber-400 ml-1">
+                      · {value} non lu{value > 1 ? "s" : ""}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* ─── MOBILE: Activity summary (hidden on md+) ─── */}
+      <div className="md:hidden">
+        {hasActions ? (
+          <p className="text-sm text-[#a3a3a3]">
+            Tu as{" "}
+            {[
+              stats.todoActionsCount > 0 &&
+                `${stats.todoActionsCount} action${stats.todoActionsCount > 1 ? "s" : ""} à traiter`,
+              stats.unreadMessagesCount > 0 &&
+                `${stats.unreadMessagesCount} message${stats.unreadMessagesCount > 1 ? "s" : ""} non lu${stats.unreadMessagesCount > 1 ? "s" : ""}`,
+            ]
+              .filter(Boolean)
+              .join(" et ")}
+            .
+          </p>
+        ) : (
+          <p className="text-sm text-[#5c5c5c]">
+            Tout est à jour. Tu peux explorer les missions proches de toi.
+          </p>
+        )}
+      </div>
+
+      {/* ─── MOBILE: Accordion "Voir plus" (hidden on md+) ─── */}
+      <div className="md:hidden">
+        <button
+          onClick={() => setAccordionOpen(!accordionOpen)}
+          className="w-full flex items-center justify-between gap-2 bg-[#111111] border border-[#262626] rounded-xl px-4 py-2.5 text-sm text-[#a3a3a3] hover:text-[#f5f5f5] hover:border-[#00d4aa]/30 transition-all"
+        >
+          <span>Voir plus de statistiques</span>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform ${accordionOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {accordionOpen && (
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {/* Missions demandées (not in primary 4) */}
+            {(() => {
+              const w = WIDGETS.find((x) => x.key === "requestedBookingsCount")!;
+              const value = stats.requestedBookingsCount;
+              return (
+                <Link
+                  key="requestedBookingsCount"
+                  href={w.href}
+                  className="flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all"
+                >
+                  <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center ${ICON_BG[w.title]}`}>
+                    {w.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-lg font-bold text-[#f5f5f5] leading-tight">{value}</div>
+                    <div className="text-[11px] text-[#a3a3a3] font-medium truncate">{w.shortLabel}</div>
+                  </div>
+                </Link>
+              );
+            })()}
+
+            {/* Lien vers le profil/récompenses */}
+            <Link
+              href="/rewards"
+              className="flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all"
+            >
+              <div className="w-8 h-8 shrink-0 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                <span className="text-yellow-400 text-sm font-bold">XP</span>
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-[#f5f5f5] leading-tight">Progression</div>
+                <div className="text-[11px] text-[#a3a3a3] font-medium truncate">Niveau & badges</div>
+              </div>
+            </Link>
+
+            {/* Lien vers les avis */}
+            <Link
+              href="/ratings"
+              className="flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all"
+            >
+              <div className="w-8 h-8 shrink-0 rounded-lg bg-yellow-400/10 flex items-center justify-center">
+                <span className="text-yellow-400 text-sm">⭐</span>
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-[#f5f5f5] leading-tight">Réputation</div>
+                <div className="text-[11px] text-[#a3a3a3] font-medium truncate">Avis reçus</div>
+              </div>
+            </Link>
+
+            {/* Lien vers l'impact */}
+            <Link
+              href="/impact"
+              className="flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all"
+            >
+              <div className="w-8 h-8 shrink-0 rounded-lg bg-[#00d4aa]/10 flex items-center justify-center">
+                <span className="text-[#00d4aa] text-sm font-bold">🌍</span>
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-[#f5f5f5] leading-tight">Impact</div>
+                <div className="text-[11px] text-[#a3a3a3] font-medium truncate">Ton engagement</div>
+              </div>
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {/* ─── DESKTOP: Full 5-widget grid (hidden on <md) ─── */}
+      <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {WIDGETS.map((w) => {
           const value = stats[w.key];
           const displayValue = w.formatValue
@@ -136,8 +291,8 @@ export default function DashboardStats({
         })}
       </div>
 
-      {/* Activity summary */}
-      <div className="bg-[#111111] border border-[#262626] rounded-xl px-4 py-3">
+      {/* ─── DESKTOP: Activity summary (hidden on <md) ─── */}
+      <div className="hidden md:block bg-[#111111] border border-[#262626] rounded-xl px-4 py-3">
         {hasActions ? (
           <p className="text-sm text-[#a3a3a3]">
             Tu as{" "}
