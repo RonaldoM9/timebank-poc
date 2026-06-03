@@ -20,6 +20,8 @@ import XpProgressBar from "@/components/XpProgressBar";
 import ConnectedHeader from "@/components/ConnectedHeader";
 import DemoChecklist from "@/components/DemoChecklist";
 import OnboardingBlock from "@/components/OnboardingBlock";
+import DashboardStats from "@/components/dashboard/DashboardStats";
+import type { DashboardStats as DashboardStatsType } from "@/lib/dashboard";
 
 interface DashboardUser {
   id: string;
@@ -53,6 +55,7 @@ export default function DashboardClient({
   heroLevel,
   badgesCount = 0,
   userEmail = "",
+  dashboardStats,
 }: {
   user: DashboardUser;
   activeServices: number;
@@ -64,6 +67,7 @@ export default function DashboardClient({
   heroLevel: HeroLevel;
   badgesCount: number;
   userEmail?: string;
+  dashboardStats: DashboardStatsType;
 }) {
   const isDemoAccount = userEmail === "demo@timeheroes.fr";
 
@@ -89,6 +93,9 @@ export default function DashboardClient({
             <OnboardingBlock />
           </>
         )}
+
+        {/* Activity widgets */}
+        <DashboardStats stats={dashboardStats} />
 
         {/* Balance card */}
         <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">

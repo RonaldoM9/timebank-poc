@@ -301,8 +301,16 @@ export async function markBookingMessagesAsRead(
   const perm = await assertParticipant(user.id, bookingId);
   if (!perm.ok) return { error: perm.error };
 
-  // P0 simple: just mark as read by touching lastMessageAt
-  // (full per-user read tracking would need BookingMessageRead model — P1)
+  // Mark all unread messages sent by the other participant as read
+  await prisma.bookingMessage.updateMany({
+    where: {
+      bookingId,
+      authorId: { not: user.id },
+      readAt: null,
+    },
+    data: { readAt: new Date() },
+  });
+
   return { success: true };
 }
 

@@ -448,8 +448,15 @@ async function main() {
     // Urgent requests
     await prisma.urgentRequest.deleteMany({ where: { requesterId: { in: demoUserIds } } });
 
+    // Availability
+    await prisma.availabilitySlot.deleteMany({ where: { userId: { in: demoUserIds } } });
+
     // Bookings (client or service provider)
     const demoServiceIds = (await prisma.service.findMany({ where: { providerId: { in: demoUserIds } }, select: { id: true } })).map((s) => s.id);
+    // Delete messages referencing these bookings first
+    await prisma.bookingMessage.deleteMany({
+      where: { booking: { OR: [{ clientId: { in: demoUserIds } }, { serviceId: { in: demoServiceIds } }] } },
+    });
     await prisma.booking.deleteMany({
       where: { OR: [{ clientId: { in: demoUserIds } }, { serviceId: { in: demoServiceIds } }] },
     });
@@ -478,6 +485,7 @@ async function main() {
     await prisma.proofOfCompletion.deleteMany({ where: { OR: [{ validatorId: existingSeedHelper.id }, { providerId: existingSeedHelper.id }] } });
     await prisma.urgentOffer.deleteMany({ where: { providerId: existingSeedHelper.id } });
     await prisma.urgentRequest.deleteMany({ where: { requesterId: existingSeedHelper.id } });
+    await prisma.availabilitySlot.deleteMany({ where: { userId: existingSeedHelper.id } });
     const helperServiceIds = (await prisma.service.findMany({ where: { providerId: existingSeedHelper.id }, select: { id: true } })).map((s) => s.id);
     await prisma.booking.deleteMany({ where: { OR: [{ clientId: existingSeedHelper.id }, { serviceId: { in: helperServiceIds } }] } });
     await prisma.service.deleteMany({ where: { providerId: existingSeedHelper.id } });
@@ -1048,6 +1056,112 @@ async function main() {
     urgentCount++;
   }
   console.log(`  ✓ ${urgentCount} demandes urgentes créées`);
+  console.log("");
+
+  // ─── Step 12: Create demo messages for unread tracking ─────────────────
+  console.log("💬 Création des messages de démonstration...");
+
+  let msgCount = 0;
+
+  type MessageData = {
+    serviceTitle: string;
+    authorEmail: string;
+    content: string;
+    type: string;
+    createdAt: Date;
+    readAt?: Date;
+  };
+
+  const DEMO_MESSAGES: MessageData[] = [
+    // Maths collège — in progress, demo is client, Sarah is provider
+    // Sarah sent 2 messages that demo hasn't read yet
+    {
+      serviceTitle: "Maths collège — niveau 6e/5e",
+      authorEmail: "sarah.demo@timeheroes.fr",
+      content: "Bonjour ! Je suis dispo demain après-midi pour la séance de maths. On se retrouve à 14h ?",
+      type: "USER",
+      createdAt: daysAgo(1),
+    },
+    {
+      serviceTitle: "Maths collège — niveau 6e/5e",
+      authorEmail: "sarah.demo@timeheroes.fr",
+      content: "N'oublie pas le cahier d'exercices, on travaillera les fractions 😊",
+      type: "USER",
+      createdAt: daysAgo(1),
+    },
+    // Configurer WhatsApp — completed, demo is provider, all messages read
+    {
+      serviceTitle: "Configurer WhatsApp sur Android",
+      authorEmail: "nadia.demo@timeheroes.fr",
+      content: "Merci beaucoup pour votre aide, tout fonctionne parfaitement ! 📱",
+      type: "USER",
+      createdAt: daysAgo(12),
+      readAt: daysAgo(11),
+    },
+    {
+      serviceTitle: "Configurer WhatsApp sur Android",
+      authorEmail: "demo@timeheroes.fr",
+      content: "Avec plaisir ! N'hésitez pas si vous avez d'autres questions.",
+      type: "USER",
+      createdAt: daysAgo(12),
+      readAt: daysAgo(11),
+    },
+    // Pending booking — Anglaiss professionnel (demo not involved directly)
+    // Instead, add messages for a booking where demo is actually involved as client provider
+  ];
+
+  for (const m of DEMO_MESSAGES) {
+    const serviceId = serviceMap.get(m.serviceTitle);
+    if (!serviceId) {
+      console.log(`  ⚠️ Service not found for message: ${m.serviceTitle}`);
+      continue;
+    }
+    const authorId = createdUsers.get(m.authorEmail);
+    if (!authorId) {
+      console.log(`  ⚠️ Author not found: ${m.authorEmail}`);
+      continue;
+    }
+    // Find the booking for this service + client
+    // For "Maths collège — niveau 6e/5e": client is demo@
+    // For "Configurer WhatsApp": client is nadia.demo@
+    let clientEmail = "";
+    if (m.serviceTitle === "Maths collège — niveau 6e/5e") {
+      clientEmail = "demo@timeheroes.fr";
+    } else if (m.serviceTitle === "Configurer WhatsApp sur Android") {
+      clientEmail = "nadia.demo@timeheroes.fr";
+    }
+    const clientId = createdUsers.get(clientEmail);
+    if (!clientId) continue;
+
+    const booking = await prisma.booking.findFirst({
+      where: { serviceId, clientId },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!booking) {
+      console.log(`  ⚠️ Booking not found for: ${m.serviceTitle}`);
+      continue;
+    }
+
+    await prisma.bookingMessage.create({
+      data: {
+        bookingId: booking.id,
+        authorId: m.authorEmail !== "SYSTEM" ? authorId : null,
+        content: m.content,
+        type: m.type,
+        readAt: m.readAt ?? null,
+        createdAt: m.createdAt,
+      },
+    });
+    msgCount++;
+
+    // Update lastMessageAt on the booking
+    await prisma.booking.update({
+      where: { id: booking.id },
+      data: { lastMessageAt: m.createdAt },
+    });
+  }
+
+  console.log(`  ✓ ${msgCount} messages de démonstration créés`);
   console.log("");
 
   // ─── Summary ──────────────────────────────────────────────────────────────

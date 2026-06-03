@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "./DashboardClient";
 import { getTotalXp, getLevelFromXp } from "@/lib/gamification";
+import { getDashboardStats } from "@/lib/dashboard";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -24,7 +25,7 @@ export default async function DashboardPage() {
   const activeCount = services.filter((s) => s.status === "active").length;
   const inactiveCount = services.filter((s) => s.status === "inactive").length;
 
-  const [myBookingsCount, missionsCount, recentTransactions, ratingsReceivedCount] = await Promise.all([
+  const [myBookingsCount, missionsCount, recentTransactions, ratingsReceivedCount, dashboardStats] = await Promise.all([
     prisma.booking.count({ where: { clientId: user.id, status: "pending" } }),
     prisma.booking.count({
       where: { service: { providerId: user.id }, status: "pending" },
@@ -38,6 +39,7 @@ export default async function DashboardPage() {
       take: 3,
     }),
     prisma.rating.count({ where: { toId: user.id } }),
+    getDashboardStats(user.id),
   ]);
 
   const totalXp = await getTotalXp(user.id);
@@ -59,6 +61,7 @@ export default async function DashboardPage() {
       heroLevel={heroLevel}
       badgesCount={badgesCount}
       userEmail={session.user.email}
+      dashboardStats={dashboardStats}
     />
   );
 }
