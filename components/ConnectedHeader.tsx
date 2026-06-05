@@ -19,21 +19,16 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const PRIMARY_NAV = [
+const ALL_NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/services", label: "Missions", icon: Search },
   { href: "/bookings", label: "Bookings", icon: Calendar },
-];
-
-const SECONDARY_NAV = [
   { href: "/agenda", label: "Agenda", icon: CalendarCheck },
   { href: "/wallet", label: "Wallet", icon: Wallet },
   { href: "/rewards", label: "Rewards", icon: Award },
   { href: "/impact", label: "Impact", icon: BarChart3 },
   { href: "/profile", label: "Profil", icon: User },
 ];
-
-const ALL_NAV = [...PRIMARY_NAV, ...SECONDARY_NAV];
 
 export default function ConnectedHeader() {
   const { data: session } = useSession();
@@ -50,20 +45,6 @@ export default function ConnectedHeader() {
             TimeHeroes
           </span>
         </Link>
-
-        {/* Desktop nav — primaires visibles */}
-        <nav className="hidden md:flex items-center gap-1">
-          {PRIMARY_NAV.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#a3a3a3] hover:text-[#f5f5f5] hover:bg-[#181818] transition-colors"
-            >
-              <link.icon className="w-4 h-4" />
-              <span>{link.label}</span>
-            </Link>
-          ))}
-        </nav>
 
         {/* Desktop right side — nom + Menu ▼ */}
         <div className="hidden md:flex items-center gap-3">
@@ -93,7 +74,7 @@ export default function ConnectedHeader() {
                   onClick={() => setDesktopMoreOpen(false)}
                 />
                 <div className="absolute top-full right-0 mt-1 w-56 bg-[#111111] border border-[#262626] rounded-xl shadow-xl z-20 py-2">
-                  {SECONDARY_NAV.map((link) => (
+                  {ALL_NAV.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}

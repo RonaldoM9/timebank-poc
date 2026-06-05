@@ -18,8 +18,6 @@ import type { HeroLevel } from "@/lib/gamification";
 import HeroLevelBadge from "@/components/HeroLevelBadge";
 import XpProgressBar from "@/components/XpProgressBar";
 import ConnectedHeader from "@/components/ConnectedHeader";
-import DemoChecklist from "@/components/DemoChecklist";
-import OnboardingBlock from "@/components/OnboardingBlock";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import type { DashboardStats as DashboardStatsType } from "@/lib/dashboard";
 
@@ -54,7 +52,6 @@ export default function DashboardClient({
   ratingsReceivedCount = 0,
   heroLevel,
   badgesCount = 0,
-  userEmail = "",
   dashboardStats,
 }: {
   user: DashboardUser;
@@ -66,11 +63,8 @@ export default function DashboardClient({
   ratingsReceivedCount: number;
   heroLevel: HeroLevel;
   badgesCount: number;
-  userEmail?: string;
   dashboardStats: DashboardStatsType;
 }) {
-  const isDemoAccount = userEmail === "demo@timeheroes.fr";
-
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <ConnectedHeader />
@@ -85,14 +79,6 @@ export default function DashboardClient({
             Bienvenue sur votre tableau de bord TimeHeroes
           </p>
         </div>
-
-        {/* Demo: Checklist + Onboarding */}
-        {isDemoAccount && (
-          <>
-            <DemoChecklist />
-            <OnboardingBlock />
-          </>
-        )}
 
         {/* Activity widgets */}
         <DashboardStats stats={dashboardStats} />
