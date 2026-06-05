@@ -51,7 +51,7 @@ export default function ConnectedHeader() {
           </span>
         </Link>
 
-        {/* Desktop nav — allégé : 3 primaires + dropdown "Menu" */}
+        {/* Desktop nav — primaires visibles */}
         <nav className="hidden md:flex items-center gap-1">
           {PRIMARY_NAV.map((link) => (
             <Link
@@ -63,8 +63,16 @@ export default function ConnectedHeader() {
               <span>{link.label}</span>
             </Link>
           ))}
+        </nav>
 
-          {/* Desktop "Menu ▼" dropdown */}
+        {/* Desktop right side — nom + Menu ▼ */}
+        <div className="hidden md:flex items-center gap-3">
+          {session?.user?.name && (
+            <span className="text-xs text-[#5c5c5c] truncate max-w-[120px]">
+              {session.user.name}
+            </span>
+          )}
+
           <div className="relative">
             <button
               onClick={() => setDesktopMoreOpen((prev) => !prev)}
@@ -80,7 +88,6 @@ export default function ConnectedHeader() {
 
             {desktopMoreOpen && (
               <>
-                {/* Backdrop pour fermer au clic extérieur */}
                 <div
                   className="fixed inset-0 z-10"
                   onClick={() => setDesktopMoreOpen(false)}
@@ -112,15 +119,6 @@ export default function ConnectedHeader() {
               </>
             )}
           </div>
-        </nav>
-
-        {/* Desktop right side — nom utilisateur uniquement */}
-        <div className="hidden md:flex items-center gap-3">
-          {session?.user?.name && (
-            <span className="text-xs text-[#5c5c5c] truncate max-w-[120px]">
-              {session.user.name}
-            </span>
-          )}
         </div>
 
         {/* Mobile hamburger */}
