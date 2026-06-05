@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Clock, User, Shield, Calendar, CheckCircle, XCircle, Hourglass, AlertTriangle, QrCode, RefreshCw, Smartphone, Copy } from "lucide-react";
+import { ArrowLeft, Clock, User, Shield, Calendar, CheckCircle, XCircle, Hourglass, AlertTriangle, QrCode, RefreshCw, Smartphone, Copy, HeartHandshake } from "lucide-react";
 import { completeBooking, cancelBooking } from "@/app/services/actions";
 import { generateQRToken } from "@/app/services/qr-actions";
 import { generateNFCToken } from "@/app/services/nfc-actions";
@@ -63,6 +63,8 @@ interface BookingDetailData {
     status: string;
     createdAt: string;
   } | null;
+  fundedByCommunityPot: boolean;
+  communityPotAmount: number;
 }
 
 const statusConfig: Record<string, { label: string; bg: string; text: string; icon: React.ReactNode }> = {
@@ -412,6 +414,24 @@ export default function BookingDetailClient({
               </p>
             </div>
           </div>
+
+          {/* Community Pot indicator */}
+          {booking.fundedByCommunityPot && (
+            <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-2xl p-4 flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#00d4aa]/10 flex items-center justify-center shrink-0">
+                <HeartHandshake className="w-5 h-5 text-[#00d4aa]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[#00d4aa]">
+                  Mission financée par le pot commun
+                </p>
+                <p className="text-xs text-[#a3a3a3] mt-0.5">
+                  Cette mission est financée par le pot commun TimeHeroes
+                  ({booking.communityPotAmount} TIME).
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Dates de complétion / annulation */}
           {(booking.completedAt || booking.cancelledAt) && (

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import WalletClient from "./WalletClient";
+import { getCommunityPot, getPotTransactions } from "@/lib/community-pot";
 
 export default async function WalletPage() {
   const session = await getServerSession(authOptions);
@@ -10,7 +11,7 @@ export default async function WalletPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, name: true, timeBalance: true, walletAddress: true },
+    select: { id: true, name: true, timeBalance: true, walletAddress: true, role: true },
   });
 
   if (!user) redirect("/auth/signin");
@@ -28,5 +29,15 @@ export default async function WalletPage() {
     createdAt: tx.createdAt.toISOString(),
   }));
 
-  return <WalletClient user={user} transactions={transactions} />;
+  const pot = await getCommunityPot();
+  const potTransactions = await getPotTransactions(5);
+
+  return (
+    <WalletClient
+      user={user}
+      transactions={transactions}
+      pot={pot}
+      potTransactions={potTransactions}
+    />
+  );
 }

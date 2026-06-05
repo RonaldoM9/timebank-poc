@@ -103,15 +103,17 @@ export default async function BookingDetailPage({
       : null,
     providerReputation: booking.service.provider.reputation,
     proofOfCompletion: booking.proofOfCompletion
-      ? {
-          id: booking.proofOfCompletion.id,
-          method: booking.proofOfCompletion.method,
-          validatorName: booking.proofOfCompletion.validator.name,
-          providerName: booking.proofOfCompletion.provider.name,
-          status: booking.proofOfCompletion.status,
-          createdAt: booking.proofOfCompletion.createdAt.toISOString(),
-        }
-      : null,
+    ? {
+        id: booking.proofOfCompletion.id,
+        method: booking.proofOfCompletion.method,
+        validatorName: booking.proofOfCompletion.validator.name,
+        providerName: booking.proofOfCompletion.provider.name,
+        status: booking.proofOfCompletion.status,
+        createdAt: booking.proofOfCompletion.createdAt.toISOString(),
+      }
+    : null,
+    fundedByCommunityPot: booking.fundedByCommunityPot,
+    communityPotAmount: booking.communityPotAmount,
   };
 
   return (

@@ -13,6 +13,7 @@ import {
   Zap,
   Shield,
   Award,
+  HeartHandshake,
 } from "lucide-react";
 import type { HeroLevel } from "@/lib/gamification";
 import HeroLevelBadge from "@/components/HeroLevelBadge";
@@ -53,6 +54,7 @@ export default function DashboardClient({
   heroLevel,
   badgesCount = 0,
   dashboardStats,
+  communityPotBalance = 0,
 }: {
   user: DashboardUser;
   activeServices: number;
@@ -64,6 +66,7 @@ export default function DashboardClient({
   heroLevel: HeroLevel;
   badgesCount: number;
   dashboardStats: DashboardStatsType;
+  communityPotBalance?: number;
 }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -319,6 +322,26 @@ export default function DashboardClient({
             </div>
           )}
         </div>
+
+        {/* Community Pot widget */}
+        {communityPotBalance > 0 && (
+          <Link
+            href="/wallet"
+            className="block bg-[#111111] border border-[#262626] rounded-2xl p-4 hover:border-[#00d4aa]/30 transition-all group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <HeartHandshake className="w-4 h-4 text-[#00d4aa]" />
+                <span className="text-sm font-medium text-[#a3a3a3]">
+                  Pot commun
+                </span>
+              </div>
+              <span className="text-sm font-bold text-[#00d4aa]">
+                {communityPotBalance} TIME
+              </span>
+            </div>
+          </Link>
+        )}
 
         {/* Action cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

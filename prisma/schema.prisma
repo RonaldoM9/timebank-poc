@@ -43,6 +43,9 @@ model User {
   achievements     AchievementEvent[]
   userQuests       UserQuest[]
   heroPassport     HeroPassport?
+  role             String   @default("user")
+
+  communityPotDonations CommunityPotTransaction[]
 }
 
 model HeroPassport {
@@ -103,6 +106,9 @@ model Booking {
   lastMessageAt DateTime?
 
   messages BookingMessage[]
+
+  fundedByCommunityPot Boolean @default(false)
+  communityPotAmount   Int     @default(0)
 }
 
 model ProofOfCompletion {
@@ -181,6 +187,40 @@ model UrgentOffer {
 
   urgentRequest UrgentRequest @relation(fields: [urgentRequestId], references: [id])
   provider      User          @relation("ProviderOffers", fields: [providerId], references: [id])
+}
+
+// ─── Lot 17 — Community Pot / Pot Commun TIME ────────────────────────────────
+
+model CommunityPot {
+  id        String   @id @default(cuid())
+  name      String   @default("Pot commun TimeHeroes")
+  balance   Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions CommunityPotTransaction[]
+}
+
+model CommunityPotTransaction {
+  id        String   @id @default(cuid())
+  potId     String
+  pot       CommunityPot @relation(fields: [potId], references: [id], onDelete: Cascade)
+
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  bookingId String?
+  amount    Int
+  type      String   // DONATION, FUNDING, ADJUSTMENT
+  reason    String?
+
+  createdAt DateTime @default(now())
+
+  @@index([potId])
+  @@index([userId])
+  @@index([type])
+  @@map("CommunityPotTransaction")
 }
 
 // ─── Lot 13 — Availability & Calendar ────────────────────────────────────────

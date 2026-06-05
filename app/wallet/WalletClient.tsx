@@ -1,14 +1,23 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowUpRight,
   ArrowDownRight,
   Gift,
   Wallet,
+  HeartHandshake,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  History,
+  Users,
 } from "lucide-react";
 import ConnectedHeader from "@/components/ConnectedHeader";
 import EmptyState from "@/components/EmptyState";
+import { donateToCommunityPot, type DonateResult } from "@/lib/community-pot";
 
 interface Transaction {
   id: string;
@@ -25,6 +34,23 @@ interface WalletUser {
   name: string;
   timeBalance: number;
   walletAddress: string;
+  role: string;
+}
+
+interface PotInfo {
+  id: string;
+  balance: number;
+}
+
+interface PotTx {
+  id: string;
+  userId: string | null;
+  userName: string | null;
+  bookingId: string | null;
+  amount: number;
+  type: string;
+  reason: string | null;
+  createdAt: string;
 }
 
 const typeLabels: Record<string, string> = {
@@ -35,13 +61,41 @@ const typeLabels: Record<string, string> = {
   refund: "Remboursement",
 };
 
+const potTypeLabels: Record<string, string> = {
+  DONATION: "Don au pot commun",
+  FUNDING: "Financement de mission",
+  ADJUSTMENT: "Ajustement",
+};
+
+const QUICK_AMOUNTS = [1, 2, 5, 10];
+
 export default function WalletClient({
   user,
   transactions,
+  pot,
+  potTransactions,
 }: {
   user: WalletUser;
   transactions: Transaction[];
+  pot: PotInfo;
+  potTransactions: PotTx[];
 }) {
+  const router = useRouter();
+  const [customAmount, setCustomAmount] = useState("");
+  const [result, setResult] = useState<DonateResult | null>(null);
+  const [pending, setPending] = useState<number | "custom" | null>(null);
+
+  async function handleDonate(amount: number) {
+    setPending(amount);
+    setResult(null);
+    const res = await donateToCommunityPot(user.id, amount);
+    setResult(res);
+    setPending(null);
+    if ("success" in res && res.success) {
+      setTimeout(() => router.refresh(), 1200);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
@@ -73,13 +127,199 @@ export default function WalletClient({
           </div>
         </div>
 
+        {/* ─── Community Pot Section ──────────────────────────────── */}
+        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <HeartHandshake className="w-5 h-5 text-[#00d4aa]" />
+              <span className="font-semibold text-[#f5f5f5]">
+                Pot commun TimeHeroes
+              </span>
+            </div>
+            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+              ~ solidarité ~
+            </span>
+          </div>
+
+          {/* Pot balance */}
+          <div className="flex items-baseline gap-1 mb-2">
+            <span className="text-3xl font-bold text-[#f5f5f5]">
+              {pot.balance}
+            </span>
+            <span className="text-sm text-[#a3a3a3]">
+              TIME disponibles pour la communauté
+            </span>
+          </div>
+
+          {/* Impact message */}
+          <p className="text-xs text-[#a3a3a3] mb-4 leading-relaxed">
+            Le pot commun permet de financer des missions solidaires pour les
+            membres qui ont besoin d&apos;aide mais pas assez de TIME. Tes TIME
+            peuvent aider une personne à recevoir un coup de main.
+          </p>
+
+          {/* Quick donate buttons */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {QUICK_AMOUNTS.map((amt) => (
+              <button
+                key={amt}
+                type="button"
+                disabled={pending !== null || user.timeBalance < amt}
+                onClick={() => handleDonate(amt)}
+                className="flex items-center gap-1 rounded-lg border border-[#262626] bg-[#181818] hover:bg-[#222222] hover:border-[#00d4aa]/30 disabled:opacity-30 disabled:cursor-not-allowed text-[#f5f5f5] text-sm font-medium px-3 py-2 transition-colors"
+              >
+                <Gift className="w-3.5 h-3.5 text-[#00d4aa]" />
+                +{amt} TIME
+              </button>
+            ))}
+          </div>
+
+          {/* Custom amount field */}
+          <div className="flex items-center gap-2 mb-3">
+            <input
+              type="number"
+              min="1"
+              max={user.timeBalance}
+              value={customAmount}
+              onChange={(e) => setCustomAmount(e.target.value)}
+              placeholder="Montant libre..."
+              className="flex-1 rounded-lg border border-[#262626] bg-[#181818] px-3 py-2 text-sm text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] focus:ring-1 focus:ring-[#00d4aa]/30 transition-colors"
+            />
+            <button
+              type="button"
+              disabled={
+                pending !== null ||
+                !customAmount ||
+                parseInt(customAmount) <= 0 ||
+                parseInt(customAmount) > user.timeBalance
+              }
+              onClick={() => {
+                const amt = parseInt(customAmount);
+                if (amt > 0) handleDonate(amt);
+              }}
+              className="flex items-center gap-1 rounded-lg bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-30 disabled:cursor-not-allowed text-[#0a0a0a] font-bold text-sm px-4 py-2 transition-colors"
+            >
+              {pending === "custom" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Gift className="w-3.5 h-3.5" />
+              )}
+              Donner
+            </button>
+          </div>
+
+          {/* Result feedback */}
+          {result && (
+            <div
+              className={`rounded-xl border p-3 mb-3 ${
+                result.success
+                  ? "bg-[#00d4aa]/5 border-[#00d4aa]/20"
+                  : "bg-red-500/5 border-red-500/20"
+              }`}
+            >
+              {result.success ? (
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[#00d4aa] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-[#00d4aa]">
+                      Don réussi&nbsp;!
+                    </p>
+                    <p className="text-xs text-[#a3a3a3]">
+                      Tu as donné {result.amount} TIME au pot commun. Solde du
+                      pot : {result.potBalance} TIME.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-red-400">Erreur</p>
+                    <p className="text-xs text-[#a3a3a3]">{result.error}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Recent pot transactions */}
+          {potTransactions.length > 0 && (
+            <div className="pt-3 border-t border-[#262626]">
+              <div className="flex items-center gap-2 mb-2">
+                <History className="w-3.5 h-3.5 text-[#a3a3a3]" />
+                <span className="text-xs font-medium text-[#a3a3a3]">
+                  Dernières transactions du pot
+                </span>
+              </div>
+              <div className="space-y-1.5">
+                {potTransactions.map((tx) => {
+                  const isDonation = tx.type === "DONATION";
+                  const label = potTypeLabels[tx.type] || tx.type;
+                  return (
+                    <div
+                      key={tx.id}
+                      className="flex items-center justify-between text-xs"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-6 h-6 rounded-lg flex items-center justify-center ${
+                            isDonation
+                              ? "bg-[#00d4aa]/10"
+                              : tx.type === "FUNDING"
+                              ? "bg-yellow-500/10"
+                              : "bg-[#5c5c5c]/10"
+                          }`}
+                        >
+                          {isDonation ? (
+                            <Gift className="w-3 h-3 text-[#00d4aa]" />
+                          ) : tx.type === "FUNDING" ? (
+                            <Users className="w-3 h-3 text-yellow-400" />
+                          ) : (
+                            <ArrowDownRight className="w-3 h-3 text-[#a3a3a3]" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-[#f5f5f5] font-medium">{label}</p>
+                          <p className="text-[#5c5c5c]">
+                            {tx.userName && tx.type === "DONATION"
+                              ? `Don de ${tx.userName}`
+                              : tx.reason || ""}
+                            {" · "}
+                            {new Date(tx.createdAt).toLocaleDateString(
+                              "fr-FR",
+                              {
+                                day: "numeric",
+                                month: "short",
+                              }
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className={`font-semibold ${
+                          isDonation
+                            ? "text-[#00d4aa]"
+                            : "text-yellow-400"
+                        }`}
+                      >
+                        {isDonation ? "+" : "-"}
+                        {tx.amount} TIME
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Donner du TIME button */}
         <Link
           href="/wallet/transfer"
           className="flex items-center justify-center gap-2 rounded-xl bg-[#00d4aa] hover:bg-[#00b894] text-[#0a0a0a] font-bold text-sm px-4 py-3 transition-colors w-full"
         >
           <Gift className="w-4 h-4" />
-          Donner du TIME
+          Transférer du TIME à un héros
         </Link>
 
         {/* Transactions */}
