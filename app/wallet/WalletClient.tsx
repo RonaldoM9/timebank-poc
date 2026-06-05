@@ -58,8 +58,19 @@ const typeLabels: Record<string, string> = {
   mint: "Crédit de bienvenue",
   transfer: "Transfert",
   escrow: "Réservation en attente",
+  escrow_hold: "Réservation en attente",
+  escrow_release: "Service terminé",
+  escrow_refund: "Remboursement",
   release: "Service terminé",
   refund: "Remboursement",
+  bonus: "Bonus",
+};
+
+const statusLabels: Record<string, string> = {
+  completed: "Terminé",
+  pending: "En attente",
+  cancelled: "Annulé",
+  refunded: "Remboursé",
 };
 
 const potTypeLabels: Record<string, string> = {
@@ -466,7 +477,7 @@ export default function WalletClient({
                             : "text-yellow-500"
                         }`}
                       >
-                        {tx.status}
+                        {statusLabels[tx.status] || tx.status}
                       </div>
                     </div>
                   </div>
