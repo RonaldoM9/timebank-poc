@@ -86,31 +86,6 @@ export default function DashboardClient({
         {/* Activity widgets */}
         <DashboardStats stats={dashboardStats} />
 
-        {/* Balance card */}
-        <Link
-          href="/wallet"
-          className="block bg-[#111111] border border-[#262626] rounded-2xl p-6 hover:border-[#00d4aa]/30 transition-all group"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-[#a3a3a3] text-sm font-medium group-hover:text-[#00d4aa] transition-colors">
-              Solde TIME
-            </span>
-            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
-              ~ crédit temps ~
-            </span>
-          </div>
-          <div className="text-4xl font-bold text-[#f5f5f5] group-hover:text-[#00d4aa] transition-colors mb-1">
-            {user.timeBalance}{" "}
-            <span className="text-lg text-[#a3a3a3] font-normal group-hover:text-[#00d4aa]/70">TIME</span>
-          </div>
-          <div className="text-[#5c5c5c] text-xs font-mono mt-2">
-            {user.walletAddress}
-          </div>
-          <div className="text-xs text-[#00d4aa]/0 group-hover:text-[#00d4aa] transition-colors mt-2 font-medium">
-            Voir mon wallet →
-          </div>
-        </Link>
-
         {/* Hero Level card */}
         <Link
           href="/rewards"
