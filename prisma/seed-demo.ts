@@ -37,6 +37,7 @@ interface HeroProfile {
   xp: number;
   reputation: number;
   missionsCompleted: number;
+  role?: string;
 }
 
 const HEROES: HeroProfile[] = [
@@ -50,6 +51,7 @@ const HEROES: HeroProfile[] = [
     xp: 250,
     reputation: 4.8,
     missionsCompleted: 5,
+    role: "ADMIN",
   },
   {
     name: "Sarah Martin",
@@ -61,6 +63,7 @@ const HEROES: HeroProfile[] = [
     xp: 320,
     reputation: 4.9,
     missionsCompleted: 8,
+    role: "FACILITATOR",
   },
   {
     name: "Karim Benali",
@@ -528,6 +531,7 @@ async function main() {
         bio: hero.bio,
         city: hero.city,
         reputation: hero.reputation,
+        ...(hero.role ? { role: hero.role } : {}),
       },
     });
     createdUsers.set(hero.email, user.id);

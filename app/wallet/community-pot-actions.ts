@@ -101,7 +101,7 @@ export async function fundBookingFromCommunityPot(
     where: { email: session.user.email },
     select: { id: true, role: true },
   });
-  if (!admin || (admin.role !== "admin" && admin.role !== "facilitator")) {
+  if (!admin || (admin.role !== "ADMIN" && admin.role !== "FACILITATOR")) {
     return { error: "Seul un admin ou facilitateur peut utiliser le pot commun." };
   }
 

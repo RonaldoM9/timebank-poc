@@ -16,24 +16,37 @@ import {
   Menu,
   X,
   ChevronDown,
+  ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
 
-const ALL_NAV = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/services", label: "Missions", icon: Search },
-  { href: "/bookings", label: "Bookings", icon: Calendar },
-  { href: "/agenda", label: "Agenda", icon: CalendarCheck },
-  { href: "/wallet", label: "Wallet", icon: Wallet },
-  { href: "/rewards", label: "Rewards", icon: Award },
-  { href: "/impact", label: "Impact", icon: BarChart3 },
-  { href: "/profile", label: "Profil", icon: User },
-];
+type NavItem = { href: string; label: string; icon: any; role?: string };
+
+function buildNav(isFacilitator: boolean): NavItem[] {
+  const base: NavItem[] = [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/services", label: "Missions", icon: Search },
+    { href: "/bookings", label: "Bookings", icon: Calendar },
+    { href: "/agenda", label: "Agenda", icon: CalendarCheck },
+    { href: "/wallet", label: "Wallet", icon: Wallet },
+    { href: "/rewards", label: "Rewards", icon: Award },
+    { href: "/impact", label: "Impact", icon: BarChart3 },
+    { href: "/profile", label: "Profil", icon: User },
+  ];
+  if (isFacilitator) {
+    base.splice(1, 0, { href: "/facilitator/community-pot", label: "Facilitateur", icon: ShieldCheck });
+  }
+  return base;
+}
 
 export default function ConnectedHeader() {
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopMoreOpen, setDesktopMoreOpen] = useState(false);
+
+  const role = (session?.user as any)?.role;
+  const isFacilitator = role === "FACILITATOR" || role === "ADMIN";
+  const ALL_NAV = buildNav(isFacilitator);
 
   return (
     <header className="border-b border-[#262626] bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-50">

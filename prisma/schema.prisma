@@ -43,9 +43,11 @@ model User {
   achievements     AchievementEvent[]
   userQuests       UserQuest[]
   heroPassport     HeroPassport?
-  role             String   @default("user")
+  role             String   @default("USER")
 
   communityPotDonations CommunityPotTransaction[]
+  communityPotRequests   CommunityPotRequest[]
+  communityPotDecisions  CommunityPotRequest[] @relation("DecidedBy")
 }
 
 model HeroPassport {
@@ -200,6 +202,8 @@ model CommunityPot {
   updatedAt DateTime @updatedAt
 
   transactions CommunityPotTransaction[]
+
+  requests CommunityPotRequest[]
 }
 
 model CommunityPotTransaction {
@@ -222,6 +226,38 @@ model CommunityPotTransaction {
   @@index([type])
   @@map("CommunityPotTransaction")
 }
+
+// ─── Lot 17 bis — Facilitator / Gardien des TIME ──────────────────────────
+
+model CommunityPotRequest {
+  id        String   @id @default(cuid())
+  potId     String
+  pot       CommunityPot @relation(fields: [potId], references: [id], onDelete: Cascade)
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bookingId String?
+  amount    Int
+  reason    String?
+  message   String?
+
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  decidedById String?
+  decidedBy   User?    @relation("DecidedBy", fields: [decidedById], references: [id])
+  decidedAt   DateTime?
+  decisionNote String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([potId])
+  @@index([userId])
+  @@index([status])
+  @@map("CommunityPotRequest")
+}
+
+// ─── End Lot 17 bis ───────────────────────────────────────────────────────
 
 // ─── Lot 13 — Availability & Calendar ────────────────────────────────────────
 
