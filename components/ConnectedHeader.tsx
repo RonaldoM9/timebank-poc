@@ -79,7 +79,8 @@ export default function ConnectedHeader() {
         <button
           className="md:hidden text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menu"
+          aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-expanded={menuOpen}
         >
           {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
