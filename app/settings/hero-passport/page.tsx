@@ -18,14 +18,14 @@ export default async function HeroPassportPage() {
   const passport = await getHeroPassport(user.id);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-tb-bg">
       <main className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-anton tracking-wide text-[#f5f5f5] mb-1">
+          <h1 className="text-3xl font-anton tracking-wide text-tb-text-primary mb-1">
             Hero Passport
           </h1>
-          <p className="text-[#a3a3a3] text-sm">
+          <p className="text-tb-text-secondary text-sm">
             Complète ton profil pour aider les autres héros à mieux te connaître
           </p>
         </div>

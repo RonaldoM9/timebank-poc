@@ -82,7 +82,7 @@ const statusConfig: Record<string, { label: string; bg: string; text: string; ic
   },
   cancelled: {
     label: "ANNULÉ",
-    bg: "bg-[#5c5c5c]/10",
+    bg: "bg-tb-surface-elevated",
     text: "text-tb-text-secondary",
     icon: <XCircle className="w-3.5 h-3.5" />,
   },
@@ -375,7 +375,7 @@ export default function BookingDetailClient({
 
           {/* Détails */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <div className="bg-[#181818] border border-tb-border rounded-xl p-4">
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4">
               <span className="text-tb-text-secondary text-xs uppercase tracking-wider font-semibold">
                 Heures réservées
               </span>
@@ -383,7 +383,7 @@ export default function BookingDetailClient({
                 {booking.hours}h
               </p>
             </div>
-            <div className="bg-[#181818] border border-tb-border rounded-xl p-4">
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4">
               <span className="text-tb-text-secondary text-xs uppercase tracking-wider font-semibold">
                 Tarif horaire
               </span>
@@ -391,7 +391,7 @@ export default function BookingDetailClient({
                 {booking.service.ratePerHour} TIME/h
               </p>
             </div>
-            <div className="bg-[#181818] border border-tb-border rounded-xl p-4">
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4">
               <span className="text-tb-text-secondary text-xs uppercase tracking-wider font-semibold">
                 Total
               </span>
@@ -399,7 +399,7 @@ export default function BookingDetailClient({
                 {booking.totalTime} TIME
               </p>
             </div>
-            <div className="bg-[#181818] border border-tb-border rounded-xl p-4">
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4">
               <span className="text-tb-text-secondary text-xs uppercase tracking-wider font-semibold">
                 Date de réservation
               </span>
@@ -435,7 +435,7 @@ export default function BookingDetailClient({
 
           {/* Dates de complétion / annulation */}
           {(booking.completedAt || booking.cancelledAt) && (
-            <div className="bg-[#181818] border border-tb-border rounded-xl p-4 mb-6">
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6">
               {booking.completedAt && (
                 <div className="flex items-center gap-2 text-sm">
                   <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
@@ -536,7 +536,7 @@ export default function BookingDetailClient({
 
           {/* ─── QR PROVIDER BLOCK (pending, user is provider) ─── */}
           {isPending && isProvider && !hasProof && (
-            <div className="bg-[#181818] border border-tb-border rounded-xl p-4 mb-6">
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <QrCode className="w-5 h-5 text-tb-accent" />
                 <h2 className="text-sm font-semibold text-tb-text-primary uppercase tracking-wider">
@@ -590,7 +590,7 @@ export default function BookingDetailClient({
                   <button
                     onClick={handleGenerateQR}
                     disabled={qrGenerating}
-                    className="bg-[#262626] hover:bg-[#333333] text-tb-text-primary font-semibold rounded-xl py-2 px-4 text-xs transition-colors"
+                    className="bg-tb-surface border border-tb-border text-tb-text-primary hover:bg-tb-surface-elevated font-semibold rounded-xl py-2 px-4 text-xs transition-colors"
                   >
                     <span className="flex items-center justify-center gap-1.5">
                       <RefreshCw className="w-3.5 h-3.5" />
@@ -604,7 +604,7 @@ export default function BookingDetailClient({
 
           {/* ─── NFC PROVIDER BLOCK (pending, user is provider) ─── */}
           {isPending && isProvider && !hasProof && (
-            <div className="bg-[#181818] border border-tb-border rounded-xl p-4 mb-6">
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <Smartphone className="w-5 h-5 text-tb-accent" />
                 <h2 className="text-sm font-semibold text-tb-text-primary uppercase tracking-wider">
@@ -650,7 +650,7 @@ export default function BookingDetailClient({
                   {/* Copy button */}
                   <button
                     onClick={handleCopyNFC}
-                    className="w-full bg-[#262626] hover:bg-[#333333] text-tb-text-primary font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors mb-2"
+                    className="w-full bg-tb-surface border border-tb-border text-tb-text-primary hover:bg-tb-surface-elevated font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors mb-2"
                   >
                     <span className="flex items-center justify-center gap-2">
                       <Copy className="w-4 h-4" />
@@ -678,7 +678,7 @@ export default function BookingDetailClient({
                     <button
                       onClick={handleGenerateNFC}
                       disabled={nfcGenerating}
-                      className="bg-[#262626] hover:bg-[#333333] text-tb-text-primary font-semibold rounded-xl py-2 px-3 text-xs transition-colors"
+                      className="bg-tb-surface border border-tb-border text-tb-text-primary hover:bg-tb-surface-elevated font-semibold rounded-xl py-2 px-3 text-xs transition-colors"
                     >
                       <span className="flex items-center justify-center gap-1.5">
                         <RefreshCw className="w-3 h-3" />
@@ -698,7 +698,7 @@ export default function BookingDetailClient({
               {/* QR is the primary action for client too when QR was generated */}
               <button
                 onClick={handleComplete}
-                className="flex-1 bg-[#262626] hover:bg-[#333333] text-tb-text-primary font-semibold rounded-xl py-3 text-center transition-colors text-sm border border-tb-border"
+                className="flex-1 bg-tb-surface border border-tb-border text-tb-text-primary hover:bg-tb-surface-elevated font-semibold rounded-xl py-3 text-center transition-colors text-sm border border-tb-border"
               >
                 <span className="flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4" />
@@ -718,7 +718,7 @@ export default function BookingDetailClient({
           )}
 
           {isPending && !isClient && !hasProof && !qrToken && (
-            <div className="bg-[#181818] border border-tb-border rounded-xl p-4 mb-6 text-center">
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6 text-center">
               <p className="text-tb-text-secondary text-sm">
                 Réservation en attente — utilisez le bloc "Validation QR" ci-dessus pour générer un QR, ou le client peut marquer comme terminée manuellement.
               </p>
@@ -790,7 +790,7 @@ export default function BookingDetailClient({
               </h2>
 
               {/* Provider reputation */}
-              <div className="bg-[#181818] border border-tb-border rounded-xl p-4 mb-4">
+              <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-4">
                 <p className="text-xs text-tb-text-secondary">
                   Réputation de {booking.service.provider.name} :{" "}
                   <span className="text-tb-text-primary font-semibold">

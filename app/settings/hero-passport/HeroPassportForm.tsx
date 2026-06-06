@@ -86,7 +86,7 @@ export default function HeroPassportForm({
             {liveCompletion}%
           </span>
         </div>
-        <div className="h-2 bg-[#262626] rounded-full overflow-hidden">
+        <div className="h-2 bg-tb-border rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${
               liveCompletion >= 80
@@ -126,7 +126,7 @@ export default function HeroPassportForm({
           placeholder="Parle un peu de toi... tes passions, ton quartier, ce qui te motive au quotidien."
           maxLength={500}
           rows={3}
-          className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
+          className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
         />
         <div className="text-right text-[10px] text-tb-text-muted">
           {bio.length}/500
@@ -150,7 +150,7 @@ export default function HeroPassportForm({
           placeholder="Ce que tu peux proposer aux autres héros. Ex: aide numérique, bricolage, cours, accompagnement..."
           maxLength={1000}
           rows={3}
-          className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
+          className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
         />
         <div className="text-right text-[10px] text-tb-text-muted">
           {offeredSkills.length}/1000
@@ -174,7 +174,7 @@ export default function HeroPassportForm({
           placeholder="De quoi tu aurais besoin ? Ex: aide pour un déménagement, cours de langue, conseils jardinage..."
           maxLength={1000}
           rows={3}
-          className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
+          className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
         />
         <div className="text-right text-[10px] text-tb-text-muted">
           {wantedHelp.length}/1000
@@ -198,7 +198,7 @@ export default function HeroPassportForm({
           placeholder="Pourquoi tu fais partie de TimeHeroes ? Ex: créer du lien, aider les autres, transmettre mes compétences..."
           maxLength={1000}
           rows={3}
-          className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
+          className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
         />
         <div className="text-right text-[10px] text-tb-text-muted">
           {motivations.length}/1000
