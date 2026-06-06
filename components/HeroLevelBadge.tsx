@@ -38,7 +38,7 @@ export default function HeroLevelBadge({ level }: HeroLevelBadgeProps) {
         <p className="font-bangers text-[10px] tracking-widest text-[#a3a3a3] uppercase">
           Niveau {level.level}
         </p>
-        <p className="font-anton text-base tracking-wide text-[#f5f5f5]">
+        <p className="font-anton text-base tracking-wide text-tb-text-primary">
           {level.name}
         </p>
       </div>
