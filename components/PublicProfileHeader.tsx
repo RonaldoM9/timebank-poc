@@ -33,17 +33,17 @@ export default function PublicProfileHeader({
       <div className="flex-1 text-center sm:text-left">
         {/* Nom + badge */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-          <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5]">
+          <h1 className="text-2xl font-anton tracking-wide text-tb-text-primary">
             {name}
           </h1>
           {isHero && hasRatings && (
-            <span className="inline-flex items-center gap-1 text-xs font-bangers tracking-wider text-[#00d4aa] bg-[#00d4aa]/5 rounded-full px-3 py-1 whitespace-nowrap">
+            <span className="inline-flex items-center gap-1 text-xs font-bangers tracking-wider text-tb-accent bg-tb-accent/5 rounded-full px-3 py-1 whitespace-nowrap">
               <Sparkles className="w-3 h-3" />
               HÉROS DU QUOTIDIEN
             </span>
           )}
           {!hasRatings && (
-            <span className="inline-flex items-center gap-1 text-xs font-bangers tracking-wider text-[#a3a3a3] bg-[#222] rounded-full px-3 py-1 whitespace-nowrap">
+            <span className="inline-flex items-center gap-1 text-xs font-bangers tracking-wider text-tb-text-secondary bg-tb-surface-elevated rounded-full px-3 py-1 whitespace-nowrap">
               NOUVEAU HÉROS
             </span>
           )}
@@ -55,16 +55,16 @@ export default function PublicProfileHeader({
             {hasRatings ? (
               <>
                 <span className="text-yellow-400">⭐</span>
-                <span className="text-[#f5f5f5] font-medium">
+                <span className="text-tb-text-primary font-medium">
                   {reputation.toFixed(1)}
                 </span>
-                <span className="text-[#5c5c5c]">/ 5</span>
-                <span className="text-[#5c5c5c]">
+                <span className="text-tb-text-muted">/ 5</span>
+                <span className="text-tb-text-muted">
                   — {ratingsCount} avis
                 </span>
               </>
             ) : (
-              <span className="text-[#5c5c5c] italic">
+              <span className="text-tb-text-muted italic">
                 Aucun avis pour le moment
               </span>
             )}
@@ -72,7 +72,7 @@ export default function PublicProfileHeader({
         </div>
 
         {/* Date + Wallet */}
-        <div className="flex flex-wrap items-center gap-4 text-xs text-[#5c5c5c]">
+        <div className="flex flex-wrap items-center gap-4 text-xs text-tb-text-muted">
           <div className="flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5" />
             <span>Membre depuis {joinDate}</span>

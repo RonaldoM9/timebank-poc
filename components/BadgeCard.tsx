@@ -70,47 +70,47 @@ export default function BadgeCard({
   };
 
   const borderClass = earned
-    ? "border-[#00d4aa]/30"
-    : "border-[#262626] opacity-45 grayscale";
+    ? "border-tb-accent/30"
+    : "border-tb-border opacity-45 grayscale";
 
   return (
     <div
       className={`rounded-2xl border p-4 transition-all duration-200 ${borderClass} ${
-        earned ? "bg-[#111111]" : "bg-[#111111]/60"
+        earned ? "bg-tb-surface" : "bg-tb-surface/60"
       }`}
     >
       <div className="flex items-start gap-3">
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
-            earned ? "bg-[#00d4aa]/10 border-[#00d4aa]/20" : "bg-[#181818] border-[#262626]"
+            earned ? "bg-tb-accent/10 border-tb-accent/20" : "bg-tb-surface border-tb-border"
           }`}
         >
           {earned ? (
-            <Icon className="h-5 w-5 text-[#00d4aa]" />
+            <Icon className="h-5 w-5 text-tb-accent" />
           ) : (
-            <Lock className="h-4 w-4 text-[#5c5c5c]" />
+            <Lock className="h-4 w-4 text-tb-text-muted" />
           )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <p
               className={`text-sm font-semibold truncate ${
-                earned ? "text-[#f5f5f5]" : "text-[#a3a3a3]"
+                earned ? "text-tb-text-primary" : "text-tb-text-secondary"
               }`}
             >
               {name}
             </p>
             {earned && (
-              <span className="text-[10px] font-bangers tracking-wider text-[#00d4aa] shrink-0">
+              <span className="text-[10px] font-bangers tracking-wider text-tb-accent shrink-0">
                 ~ débloqué ~
               </span>
             )}
           </div>
-          <p className="text-xs text-[#a3a3a3] mt-0.5 line-clamp-2">
+          <p className="text-xs text-tb-text-secondary mt-0.5 line-clamp-2">
             {description}
           </p>
           {earned && earnedAt && (
-            <p className="text-[10px] text-[#5c5c5c] mt-1">
+            <p className="text-[10px] text-tb-text-muted mt-1">
               Obtenu le{" "}
               {new Date(earnedAt).toLocaleDateString("fr-FR", {
                 day: "numeric",

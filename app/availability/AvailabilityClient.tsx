@@ -190,7 +190,7 @@ export default function AvailabilityClient({
 
   if (!hasAnySlots) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
+      <div className="min-h-screen bg-tb-bg flex flex-col">
         <ConnectedHeader />
         <div className="flex-1 flex items-center justify-center">
           <EmptyState
@@ -208,7 +208,7 @@ export default function AvailabilityClient({
   // ── Main UI ───────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-tb-bg">
       {/* Header */}
       <ConnectedHeader />
 
@@ -216,10 +216,10 @@ export default function AvailabilityClient({
         {/* Title */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5] mb-1">
+            <h1 className="text-2xl font-anton tracking-wide text-tb-text-primary mb-1">
               Disponibilités
             </h1>
-            <p className="text-[#a3a3a3] text-sm">
+            <p className="text-tb-text-secondary text-sm">
               {recurringSlots.length} récurrent
               {recurringSlots.length > 1 ? "s" : ""}
               {" — "}
@@ -229,7 +229,7 @@ export default function AvailabilityClient({
           </div>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 bg-[#181818] hover:bg-[#222] border border-[#262626] rounded-xl px-4 py-2 text-xs text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
+            className="inline-flex items-center gap-1.5 bg-tb-surface-elevated hover:bg-tb-border border border-tb-border rounded-xl px-4 py-2 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Dashboard
@@ -238,19 +238,19 @@ export default function AvailabilityClient({
 
         {/* Error banner */}
         {error && (
-          <div className="bg-red-900/20 border border-red-800/40 rounded-2xl px-5 py-3 text-sm text-red-400">
+          <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-3 text-sm text-red-600">
             {error}
           </div>
         )}
 
         {/* Tabs */}
-        <div className="flex gap-2 border-b border-[#262626] pb-2">
+        <div className="flex gap-2 border-b border-tb-border pb-2">
           <button
             onClick={() => setActiveTab("recurring")}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
               activeTab === "recurring"
-                ? "bg-[#00d4aa]/10 text-[#00d4aa] border border-[#00d4aa]/30"
-                : "text-[#a3a3a3] hover:text-[#f5f5f5] border border-transparent"
+                ? "bg-tb-accent/10 text-tb-accent border border-tb-accent/30"
+                : "text-tb-text-secondary hover:text-tb-text-primary border border-transparent"
             }`}
           >
             <Repeat className="w-4 h-4" />
@@ -260,8 +260,8 @@ export default function AvailabilityClient({
             onClick={() => setActiveTab("oneoff")}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
               activeTab === "oneoff"
-                ? "bg-[#00d4aa]/10 text-[#00d4aa] border border-[#00d4aa]/30"
-                : "text-[#a3a3a3] hover:text-[#f5f5f5] border border-transparent"
+                ? "bg-tb-accent/10 text-tb-accent border border-tb-accent/30"
+                : "text-tb-text-secondary hover:text-tb-text-primary border border-transparent"
             }`}
           >
             <Calendar className="w-4 h-4" />
@@ -271,17 +271,17 @@ export default function AvailabilityClient({
 
         {/* Recurring form */}
         {activeTab === "recurring" && (
-          <section className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-[#f5f5f5] mb-4">
+          <section className="bg-white border border-tb-border rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-tb-text-primary mb-4">
               Ajouter un créneau récurrent
             </h2>
             <form onSubmit={handleCreateRecurring} className="space-y-4">
               <div>
-                <label className="block text-sm text-[#a3a3a3] mb-1">Jour</label>
+                <label className="block text-sm text-tb-text-secondary mb-1">Jour</label>
                 <select
                   value={recDay}
                   onChange={(e) => setRecDay(e.target.value)}
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-[#f5f5f5] focus:outline-none focus:border-[#00d4aa]/50 transition-colors"
+                  className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-tb-text-primary focus:outline-none focus:border-tb-accent/50 transition-colors"
                 >
                   <option value="1">Lundi</option>
                   <option value="2">Mardi</option>
@@ -292,39 +292,39 @@ export default function AvailabilityClient({
                   <option value="7">Dimanche</option>
                 </select>
                 {recErrors.dayOfWeek && (
-                  <p className="text-red-400 text-xs mt-1">{recErrors.dayOfWeek[0]}</p>
+                  <p className="text-red-600 text-xs mt-1">{recErrors.dayOfWeek[0]}</p>
                 )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-[#a3a3a3] mb-1">Début</label>
+                  <label className="block text-sm text-tb-text-secondary mb-1">Début</label>
                   <input
                     type="time"
                     value={recStart}
                     onChange={(e) => setRecStart(e.target.value)}
-                    className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-[#f5f5f5] focus:outline-none focus:border-[#00d4aa]/50 transition-colors"
+                    className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-tb-text-primary focus:outline-none focus:border-tb-accent/50 transition-colors"
                   />
                   {recErrors.startTime && (
-                    <p className="text-red-400 text-xs mt-1">{recErrors.startTime[0]}</p>
+                    <p className="text-red-600 text-xs mt-1">{recErrors.startTime[0]}</p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm text-[#a3a3a3] mb-1">Fin</label>
+                  <label className="block text-sm text-tb-text-secondary mb-1">Fin</label>
                   <input
                     type="time"
                     value={recEnd}
                     onChange={(e) => setRecEnd(e.target.value)}
-                    className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-[#f5f5f5] focus:outline-none focus:border-[#00d4aa]/50 transition-colors"
+                    className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-tb-text-primary focus:outline-none focus:border-tb-accent/50 transition-colors"
                   />
                   {recErrors.endTime && (
-                    <p className="text-red-400 text-xs mt-1">{recErrors.endTime[0]}</p>
+                    <p className="text-red-600 text-xs mt-1">{recErrors.endTime[0]}</p>
                   )}
                 </div>
               </div>
               <button
                 type="submit"
                 disabled={recSubmitting}
-                className="inline-flex items-center gap-2 bg-[#00d4aa] hover:bg-[#00b894] text-black font-bold rounded-xl px-5 py-3 transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 bg-tb-accent hover:bg-tb-accent-hover text-white font-bold rounded-xl px-5 py-3 transition-colors disabled:opacity-50"
               >
                 <Plus className="w-4 h-4" />
                 {recSubmitting ? "Création…" : "Ajouter le créneau"}
@@ -335,43 +335,43 @@ export default function AvailabilityClient({
 
         {/* One-off form */}
         {activeTab === "oneoff" && (
-          <section className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-[#f5f5f5] mb-4">
+          <section className="bg-white border border-tb-border rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-tb-text-primary mb-4">
               Ajouter un créneau ponctuel
             </h2>
             <form onSubmit={handleCreateOneOff} className="space-y-4">
               <div>
-                <label className="block text-sm text-[#a3a3a3] mb-1">
+                <label className="block text-sm text-tb-text-secondary mb-1">
                   Date et heure de début
                 </label>
                 <input
                   type="datetime-local"
                   value={oneOffStart}
                   onChange={(e) => setOneOffStart(e.target.value)}
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-[#f5f5f5] focus:outline-none focus:border-[#00d4aa]/50 transition-colors"
+                  className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-tb-text-primary focus:outline-none focus:border-tb-accent/50 transition-colors"
                 />
                 {oneOffErrors.startAt && (
-                  <p className="text-red-400 text-xs mt-1">{oneOffErrors.startAt[0]}</p>
+                  <p className="text-red-600 text-xs mt-1">{oneOffErrors.startAt[0]}</p>
                 )}
               </div>
               <div>
-                <label className="block text-sm text-[#a3a3a3] mb-1">
+                <label className="block text-sm text-tb-text-secondary mb-1">
                   Date et heure de fin
                 </label>
                 <input
                   type="datetime-local"
                   value={oneOffEnd}
                   onChange={(e) => setOneOffEnd(e.target.value)}
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-[#f5f5f5] focus:outline-none focus:border-[#00d4aa]/50 transition-colors"
+                  className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl px-4 py-3 text-tb-text-primary focus:outline-none focus:border-tb-accent/50 transition-colors"
                 />
                 {oneOffErrors.endAt && (
-                  <p className="text-red-400 text-xs mt-1">{oneOffErrors.endAt[0]}</p>
+                  <p className="text-red-600 text-xs mt-1">{oneOffErrors.endAt[0]}</p>
                 )}
               </div>
               <button
                 type="submit"
                 disabled={oneOffSubmitting}
-                className="inline-flex items-center gap-2 bg-[#00d4aa] hover:bg-[#00b894] text-black font-bold rounded-xl px-5 py-3 transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 bg-tb-accent hover:bg-tb-accent-hover text-white font-bold rounded-xl px-5 py-3 transition-colors disabled:opacity-50"
               >
                 <Plus className="w-4 h-4" />
                 {oneOffSubmitting ? "Création…" : "Ajouter le créneau"}
@@ -383,21 +383,21 @@ export default function AvailabilityClient({
         {/* Recurring slots list */}
         {recurringSlots.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold text-[#f5f5f5] mb-4">
+            <h2 className="text-lg font-semibold text-tb-text-primary mb-4">
               Créneaux récurrents ({recurringSlots.length})
             </h2>
             <div className="space-y-3">
               {recurringSlots.map((slot) => (
                 <div
                   key={slot.id}
-                  className="bg-[#111111] border border-[#262626] rounded-2xl p-4 flex items-center justify-between gap-4 hover:border-[#333] transition-colors"
+                  className="bg-white border border-tb-border rounded-2xl p-4 flex items-center justify-between gap-4 hover:border-[#d1d5db] transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <Repeat className="w-5 h-5 text-[#5c5c5c] shrink-0" />
+                    <Repeat className="w-5 h-5 text-tb-text-muted shrink-0" />
                     <div>
                       <span
                         className={`font-medium text-sm ${
-                          slot.isActive ? "text-[#f5f5f5]" : "text-[#5c5c5c] line-through"
+                          slot.isActive ? "text-tb-text-primary" : "text-tb-text-muted line-through"
                         }`}
                       >
                         {formatSlot(slot)}
@@ -405,8 +405,8 @@ export default function AvailabilityClient({
                       <span
                         className={`ml-3 text-xs font-bangers tracking-wider px-2 py-0.5 rounded-full ${
                           slot.isActive
-                            ? "bg-[#00d4aa]/10 text-[#00d4aa]"
-                            : "bg-[#5c5c5c]/10 text-[#5c5c5c]"
+                            ? "bg-tb-accent/10 text-tb-accent"
+                            : "bg-[#5c5c5c]/10 text-tb-text-muted"
                         }`}
                       >
                         {slot.isActive ? "ACTIF" : "INACTIF"}
@@ -419,8 +419,8 @@ export default function AvailabilityClient({
                       disabled={togglingId === slot.id}
                       className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs transition-colors disabled:opacity-50 ${
                         slot.isActive
-                          ? "bg-amber-900/20 hover:bg-amber-900/30 text-amber-400 border border-amber-800/50"
-                          : "bg-[#00d4aa]/10 hover:bg-[#00d4aa]/20 text-[#00d4aa] border border-[#00d4aa]/30"
+                          ? "bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200"
+                          : "bg-tb-accent/10 hover:bg-tb-accent/20 text-tb-accent border border-tb-accent/30"
                       }`}
                       title={slot.isActive ? "Désactiver" : "Activer"}
                     >
@@ -434,7 +434,7 @@ export default function AvailabilityClient({
                     <button
                       onClick={() => handleDelete(slot.id)}
                       disabled={deletingId === slot.id}
-                      className="inline-flex items-center justify-center gap-1.5 bg-red-900/20 hover:bg-red-900/30 text-red-400 border border-red-800/50 rounded-xl px-3 py-2 text-xs transition-colors disabled:opacity-50"
+                      className="inline-flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl px-3 py-2 text-xs transition-colors disabled:opacity-50"
                       title="Supprimer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -450,21 +450,21 @@ export default function AvailabilityClient({
         {/* One-off slots list */}
         {oneOffSlots.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold text-[#f5f5f5] mb-4">
+            <h2 className="text-lg font-semibold text-tb-text-primary mb-4">
               Créneaux ponctuels ({oneOffSlots.length})
             </h2>
             <div className="space-y-3">
               {oneOffSlots.map((slot) => (
                 <div
                   key={slot.id}
-                  className="bg-[#111111] border border-[#262626] rounded-2xl p-4 flex items-center justify-between gap-4 hover:border-[#333] transition-colors"
+                  className="bg-white border border-tb-border rounded-2xl p-4 flex items-center justify-between gap-4 hover:border-[#d1d5db] transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <Calendar className="w-5 h-5 text-[#5c5c5c] shrink-0" />
+                    <Calendar className="w-5 h-5 text-tb-text-muted shrink-0" />
                     <div>
                       <span
                         className={`font-medium text-sm ${
-                          slot.isActive ? "text-[#f5f5f5]" : "text-[#5c5c5c] line-through"
+                          slot.isActive ? "text-tb-text-primary" : "text-tb-text-muted line-through"
                         }`}
                       >
                         {formatSlot(slot)}
@@ -472,8 +472,8 @@ export default function AvailabilityClient({
                       <span
                         className={`ml-3 text-xs font-bangers tracking-wider px-2 py-0.5 rounded-full ${
                           slot.isActive
-                            ? "bg-[#00d4aa]/10 text-[#00d4aa]"
-                            : "bg-[#5c5c5c]/10 text-[#5c5c5c]"
+                            ? "bg-tb-accent/10 text-tb-accent"
+                            : "bg-[#5c5c5c]/10 text-tb-text-muted"
                         }`}
                       >
                         {slot.isActive ? "ACTIF" : "INACTIF"}
@@ -486,8 +486,8 @@ export default function AvailabilityClient({
                       disabled={togglingId === slot.id}
                       className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs transition-colors disabled:opacity-50 ${
                         slot.isActive
-                          ? "bg-amber-900/20 hover:bg-amber-900/30 text-amber-400 border border-amber-800/50"
-                          : "bg-[#00d4aa]/10 hover:bg-[#00d4aa]/20 text-[#00d4aa] border border-[#00d4aa]/30"
+                          ? "bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200"
+                          : "bg-tb-accent/10 hover:bg-tb-accent/20 text-tb-accent border border-tb-accent/30"
                       }`}
                       title={slot.isActive ? "Désactiver" : "Activer"}
                     >
@@ -501,7 +501,7 @@ export default function AvailabilityClient({
                     <button
                       onClick={() => handleDelete(slot.id)}
                       disabled={deletingId === slot.id}
-                      className="inline-flex items-center justify-center gap-1.5 bg-red-900/20 hover:bg-red-900/30 text-red-400 border border-red-800/50 rounded-xl px-3 py-2 text-xs transition-colors disabled:opacity-50"
+                      className="inline-flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl px-3 py-2 text-xs transition-colors disabled:opacity-50"
                       title="Supprimer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -517,12 +517,12 @@ export default function AvailabilityClient({
         {/* Absence of one type but empty */}
         {!hasAnySlots && activeTab === "recurring" && (
           <section>
-            <h2 className="text-lg font-semibold text-[#f5f5f5] mb-4">
+            <h2 className="text-lg font-semibold text-tb-text-primary mb-4">
               Créneaux récurrents
             </h2>
-            <div className="text-center py-10 bg-[#111111] border border-[#262626] rounded-2xl">
-              <Repeat className="w-8 h-8 text-[#5c5c5c] mx-auto mb-3" />
-              <p className="text-[#a3a3a3] text-sm">
+            <div className="text-center py-10 bg-white border border-tb-border rounded-2xl">
+              <Repeat className="w-8 h-8 text-tb-text-muted mx-auto mb-3" />
+              <p className="text-tb-text-secondary text-sm">
                 Aucun créneau récurrent pour le moment.
               </p>
             </div>
@@ -531,7 +531,7 @@ export default function AvailabilityClient({
 
         {/* Footer */}
         <div className="text-center pt-4">
-          <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-40">
+          <span className="font-bangers text-tb-accent text-xs tracking-wider opacity-40">
             ~ sois disponible quand les autres ont besoin de toi ~
           </span>
         </div>

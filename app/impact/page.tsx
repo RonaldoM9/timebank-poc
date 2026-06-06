@@ -16,7 +16,7 @@ export default async function ImpactPage() {
   const emptyMessage = getEmptyMessage(stats);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <>
       {/* Header minimal */}
       <ConnectedHeader />
 
@@ -69,16 +69,16 @@ export default async function ImpactPage() {
             />
 
             {/* Section 5 — Récit d'impact */}
-            <section className="border-t border-[#262626] pt-12 mt-16">
+            <section className="border-t border-tb-border pt-12 mt-16">
               <div className="max-w-3xl mx-auto text-center">
-                <h2 className="text-xl md:text-2xl font-bold text-[#f5f5f5] mb-4 font-anton tracking-wide">
+                <h2 className="text-xl md:text-2xl font-bold text-tb-text-primary mb-4 font-anton tracking-wide">
                   Pourquoi ces chiffres comptent
                 </h2>
-                <p className="text-[#a3a3a3] text-sm leading-relaxed mb-4">
+                <p className="text-tb-text-secondary text-sm leading-relaxed mb-4">
                   TimeHeroes rend visible ce qui reste souvent invisible : le temps donné,
                   les services rendus, les échanges de confiance et l&apos;engagement local.
                 </p>
-                <p className="text-[#a3a3a3] text-sm leading-relaxed">
+                <p className="text-tb-text-secondary text-sm leading-relaxed">
                   Grâce au wallet TIME, aux réservations planifiées, aux preuves QR/NFC,
                   aux discussions sécurisées et aux badges, chaque contribution devient
                   traçable et valorisable.
@@ -90,13 +90,13 @@ export default async function ImpactPage() {
       </main>
 
       {/* Footer minimal */}
-      <footer className="border-t border-[#262626] py-8 mt-8">
+      <footer className="border-t border-tb-border py-8 mt-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <p className="text-xs text-[#5c5c5c]">
+          <p className="text-xs text-tb-text-muted">
             TimeHeroes — Banque du temps des héros du quotidien.
           </p>
         </div>
       </footer>
-    </div>
+    </>
   );
 }

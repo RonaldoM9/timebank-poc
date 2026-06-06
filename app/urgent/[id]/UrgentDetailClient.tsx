@@ -95,19 +95,19 @@ export default function UrgentDetailClient({
   const isMatched = request.status === "matched";
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-gray-50">
       <ConnectedHeader />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         <Link
           href="/urgent"
-          className="inline-flex items-center gap-2 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm mb-6"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors text-sm mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour aux demandes urgentes
         </Link>
 
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6 sm:p-8">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8">
           {/* Header */}
           <div className="flex items-start justify-between gap-4 mb-6">
             <div className="flex-1">
@@ -127,18 +127,18 @@ export default function UrgentDetailClient({
                   </span>
                 )}
                 {isMatched && (
-                  <span className="text-xs font-bangers tracking-wider text-[#00d4aa] bg-[#00d4aa]/10 rounded-full px-2.5 py-0.5 flex items-center gap-1">
+                  <span className="text-xs font-bangers tracking-wider text-tb-accent bg-tb-accent/10 rounded-full px-2.5 py-0.5 flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" />
                     HÉROS TROUVÉ
                   </span>
                 )}
               </div>
-              <h1 className="text-2xl sm:text-3xl font-anton tracking-wide text-[#f5f5f5] mb-1">
+              <h1 className="text-2xl sm:text-3xl font-anton tracking-wide text-gray-900 mb-1">
                 {request.title}
               </h1>
-              <div className="flex items-center gap-4 text-sm text-[#a3a3a3] mt-2 flex-wrap">
+              <div className="flex items-center gap-4 text-sm text-gray-500 mt-2 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-[#5c5c5c]" />
+                  <User className="w-3.5 h-3.5 text-gray-400" />
                   <Link
                     href={`/profile/${request.requester.id}`}
                     className="hover:text-[#f59e0b] transition-colors"
@@ -147,7 +147,7 @@ export default function UrgentDetailClient({
                   </Link>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-[#5c5c5c]" />
+                  <MapPin className="w-3.5 h-3.5 text-gray-400" />
                   {request.online
                     ? "En ligne"
                     : [request.city, request.department, request.region]
@@ -155,7 +155,7 @@ export default function UrgentDetailClient({
                         .join(" / ") || "Non spécifié"}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#5c5c5c]" />
+                  <Clock className="w-3.5 h-3.5 text-gray-400" />
                   {new Date(request.createdAt).toLocaleDateString("fr-FR", {
                     year: "numeric",
                     month: "long",
@@ -168,42 +168,42 @@ export default function UrgentDetailClient({
               <div className="text-2xl font-bold text-[#f59e0b]">
                 {request.totalTime}
               </div>
-              <div className="text-xs text-[#5c5c5c]">TIME</div>
+              <div className="text-xs text-gray-400">TIME</div>
             </div>
           </div>
 
-          <div className="border-t border-[#262626] mb-6" />
+          <div className="border-t border-gray-200 mb-6" />
 
           {/* Description */}
           <div className="mb-6">
-            <h2 className="text-sm font-semibold text-[#a3a3a3] mb-2 uppercase tracking-wider">
+            <h2 className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wider">
               Description du besoin
             </h2>
-            <p className="text-[#f5f5f5] leading-relaxed whitespace-pre-wrap text-sm">
+            <p className="text-gray-900 leading-relaxed whitespace-pre-wrap text-sm">
               {request.description}
             </p>
           </div>
 
           {/* Détails */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="bg-[#181818] border border-[#262626] rounded-xl p-4">
-              <span className="text-[#a3a3a3] text-xs uppercase tracking-wider font-semibold">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">
                 Heures estimées
               </span>
-              <p className="text-[#f5f5f5] text-lg font-semibold mt-1">
+              <p className="text-gray-900 text-lg font-semibold mt-1">
                 {request.hours}h
               </p>
             </div>
-            <div className="bg-[#181818] border border-[#262626] rounded-xl p-4">
-              <span className="text-[#a3a3a3] text-xs uppercase tracking-wider font-semibold">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">
                 Tarif horaire
               </span>
-              <p className="text-[#f5f5f5] text-lg font-semibold mt-1">
+              <p className="text-gray-900 text-lg font-semibold mt-1">
                 {request.ratePerHour} TIME/h
               </p>
             </div>
-            <div className="bg-[#181818] border border-[#262626] rounded-xl p-4">
-              <span className="text-[#a3a3a3] text-xs uppercase tracking-wider font-semibold">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">
                 Total
               </span>
               <p className="text-[#f59e0b] text-lg font-semibold mt-1">
@@ -216,7 +216,7 @@ export default function UrgentDetailClient({
           <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-3 mb-6">
             <div className="flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />
-              <p className="text-[#a3a3a3] text-xs">
+              <p className="text-gray-500 text-xs">
                 Pour les urgences médicales ou de sécurité, contactez les services d&apos;urgence.
               </p>
             </div>
@@ -236,8 +236,8 @@ export default function UrgentDetailClient({
 
           {/* Proposer son aide (si autre user connecté) */}
           {session && !isRequester && isOpen && !hasOffered && (
-            <div className="border-t border-[#262626] pt-6 mb-6">
-              <h2 className="text-sm font-semibold text-[#a3a3a3] mb-3 uppercase tracking-wider">
+            <div className="border-t border-gray-200 pt-6 mb-6">
+              <h2 className="text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wider">
                 Proposer mon aide
               </h2>
               <div className="space-y-3">
@@ -247,9 +247,9 @@ export default function UrgentDetailClient({
                   maxLength={500}
                   rows={3}
                   placeholder="Dis au demandeur quand tu es disponible…"
-                  className="w-full bg-[#0a0a0a] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#f59e0b] transition-colors text-sm resize-none"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors text-sm resize-none"
                 />
-                <p className="text-[10px] text-[#5c5c5c] text-right">{message.length}/500</p>
+                <p className="text-[10px] text-gray-400 text-right">{message.length}/500</p>
                 <button
                   onClick={handleProposeHelp}
                   disabled={submitting}
@@ -271,7 +271,7 @@ export default function UrgentDetailClient({
               <p className="text-[#f59e0b] text-sm font-semibold">
                 ✅ Vous avez déjà proposé votre aide
               </p>
-              <p className="text-[#a3a3a3] text-xs mt-1">
+              <p className="text-gray-500 text-xs mt-1">
                 En attente de la réponse du demandeur.
               </p>
             </div>
@@ -279,7 +279,7 @@ export default function UrgentDetailClient({
 
           {/* Non connecté */}
           {!session && (
-            <div className="text-center border-t border-[#262626] pt-6 mb-6">
+            <div className="text-center border-t border-gray-200 pt-6 mb-6">
               <Link
                 href="/auth/signin"
                 className="inline-flex items-center gap-2 bg-[#f59e0b] hover:bg-[#d97706] text-black font-semibold rounded-xl px-6 py-2.5 transition-colors text-sm"
@@ -291,16 +291,16 @@ export default function UrgentDetailClient({
 
           {/* Offres reçues (requester only) */}
           {isRequester && (
-            <div className="border-t border-[#262626] pt-6">
+            <div className="border-t border-gray-200 pt-6">
               <div className="flex items-center gap-2 mb-4">
-                <Users className="w-4 h-4 text-[#a3a3a3]" />
-                <h2 className="text-sm font-semibold text-[#a3a3a3] uppercase tracking-wider">
+                <Users className="w-4 h-4 text-gray-500" />
+                <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
                   Offres reçues ({request.offers.length})
                 </h2>
               </div>
 
               {request.offers.length === 0 && (
-                <p className="text-[#5c5c5c] text-sm text-center py-4">
+                <p className="text-gray-400 text-sm text-center py-4">
                   Aucune offre pour le moment. Les héros arrivent bientôt !
                 </p>
               )}
@@ -309,38 +309,38 @@ export default function UrgentDetailClient({
                 {request.offers.map((offer) => (
                   <div
                     key={offer.id}
-                    className={`bg-[#181818] border rounded-xl p-4 ${
+                    className={`bg-gray-50 border rounded-xl p-4 ${
                       offer.status === "accepted"
-                        ? "border-[#00d4aa]"
+                        ? "border-tb-accent"
                         : offer.status === "declined"
-                          ? "border-[#5c5c5c] opacity-60"
-                          : "border-[#262626]"
+                          ? "border-gray-300 opacity-60"
+                          : "border-gray-200"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <User className="w-4 h-4 text-[#5c5c5c]" />
+                          <User className="w-4 h-4 text-gray-400" />
                           <Link
                             href={`/profile/${offer.provider.id}`}
-                            className="text-[#f5f5f5] font-semibold hover:text-[#00d4aa] transition-colors text-sm"
+                            className="text-gray-900 font-semibold hover:text-tb-accent transition-colors text-sm"
                           >
                             {offer.provider.name}
                           </Link>
                           <span className={`text-xs font-bangers tracking-wider ${
                             offer.status === "accepted"
-                              ? "text-[#00d4aa]"
+                              ? "text-tb-accent"
                               : offer.status === "declined"
-                                ? "text-[#5c5c5c]"
+                                ? "text-gray-400"
                                 : "text-[#f59e0b]"
                           }`}>
                             {offer.status === "accepted" ? "✓ Accepté" : offer.status === "declined" ? "✗ Décliné" : "En attente"}
                           </span>
                         </div>
                         {offer.message && (
-                          <p className="text-[#a3a3a3] text-sm mt-1">{offer.message}</p>
+                          <p className="text-gray-500 text-sm mt-1">{offer.message}</p>
                         )}
-                        <p className="text-[10px] text-[#5c5c5c] mt-1">
+                        <p className="text-[10px] text-gray-400 mt-1">
                           {new Date(offer.createdAt).toLocaleDateString("fr-FR", {
                             day: "numeric",
                             month: "short",
@@ -353,7 +353,7 @@ export default function UrgentDetailClient({
                         <button
                           onClick={() => handleAcceptOffer(offer.id)}
                           disabled={accepting === offer.id}
-                          className="shrink-0 bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-50 text-black font-semibold rounded-xl px-4 py-2 text-xs transition-colors flex items-center gap-1"
+                          className="shrink-0 bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 text-black font-semibold rounded-xl px-4 py-2 text-xs transition-colors flex items-center gap-1"
                         >
                           {accepting === offer.id ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
@@ -372,15 +372,15 @@ export default function UrgentDetailClient({
 
           {/* Liens vers dashboard */}
           {isMatched && (
-            <div className="border-t border-[#262626] pt-6 mt-6 text-center">
-              <p className="text-[#a3a3a3] text-sm mb-3">
+            <div className="border-t border-gray-200 pt-6 mt-6 text-center">
+              <p className="text-gray-500 text-sm mb-3">
                 {isRequester
                   ? "Un héros a été sélectionné. Rendez-vous dans le tableau de bord pour suivre la mission."
                   : "Cette demande a été attribuée."}
               </p>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 text-[#00d4aa] hover:text-[#00b894] transition-colors text-sm font-semibold"
+                className="inline-flex items-center gap-2 text-tb-accent hover:text-tb-accent-hover transition-colors text-sm font-semibold"
               >
                 Voir le tableau de bord →
               </Link>

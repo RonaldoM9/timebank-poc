@@ -54,19 +54,19 @@ export default function ProfileImpactCards({
       {cards.map((card) => (
         <div
           key={card.label}
-          className={`bg-[#111111] border border-[#262626] rounded-2xl p-4 text-center ${
-            card.accent ? "border-[#00d4aa]/20" : ""
+          className={`bg-tb-surface border border-tb-border rounded-2xl p-4 text-center ${
+            card.accent ? "border-tb-accent/20" : ""
           }`}
         >
           <p
             className={`text-2xl font-anton tracking-wide mb-0.5 ${
-              card.accent ? "text-[#00d4aa]" : "text-[#f5f5f5]"
+              card.accent ? "text-tb-accent" : "text-tb-text-primary"
             }`}
           >
             {card.value}
           </p>
-          <p className="text-xs text-[#a3a3a3] font-medium">{card.label}</p>
-          <p className="text-[10px] text-[#5c5c5c] mt-0.5">{card.subtext}</p>
+          <p className="text-xs text-tb-text-secondary font-medium">{card.label}</p>
+          <p className="text-[10px] text-tb-text-muted mt-0.5">{card.subtext}</p>
         </div>
       ))}
     </div>

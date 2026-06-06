@@ -3,14 +3,14 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { getImpactStats } from "@/lib/impact";
 import PublicHeader from "@/components/landing/PublicHeader";
-import LandingHero from "@/components/landing/LandingHero";
-import ProblemSection from "@/components/landing/ProblemSection";
-import SolutionSection from "@/components/landing/SolutionSection";
+import SocialProofBar from "@/components/landing/SocialProofBar";
+import HeroSection from "@/components/landing/HeroSection";
+import TrustRow from "@/components/landing/TrustRow";
+import ActionCards from "@/components/landing/ActionCards";
+import MissionsSolidaires from "@/components/landing/MissionsSolidaires";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
-import FeatureGrid from "@/components/landing/FeatureGrid";
-import ComparisonSection from "@/components/landing/ComparisonSection";
-import ImpactStatsSection from "@/components/landing/ImpactStatsSection";
-import UseCasesSection from "@/components/landing/UseCasesSection";
+import PotCommunSection from "@/components/landing/PotCommunSection";
+import ImpactSection from "@/components/landing/ImpactSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import LandingFooter from "@/components/landing/LandingFooter";
 
@@ -23,17 +23,17 @@ export default async function Home() {
   const stats = await getImpactStats();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-tb-bg">
       <PublicHeader />
+      <SocialProofBar />
       <main>
-        <LandingHero />
-        <ProblemSection />
-        <SolutionSection />
+        <HeroSection />
+        <TrustRow />
+        <ActionCards />
+        <MissionsSolidaires />
         <HowItWorksSection />
-        <FeatureGrid />
-        <ComparisonSection />
-        <ImpactStatsSection stats={stats} />
-        <UseCasesSection />
+        <PotCommunSection />
+        <ImpactSection stats={stats} />
         <FinalCTA />
       </main>
       <LandingFooter />

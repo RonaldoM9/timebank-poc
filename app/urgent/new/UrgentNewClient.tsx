@@ -48,21 +48,21 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-gray-50">
       <ConnectedHeader />
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <Link
           href="/urgent"
-          className="inline-flex items-center gap-2 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm mb-6"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors text-sm mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour aux demandes urgentes
         </Link>
 
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6 sm:p-8">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8">
           <div className="mb-6">
-            <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5] mb-1">
+            <h1 className="text-2xl font-anton tracking-wide text-gray-900 mb-1">
               Demander de l&apos;aide
             </h1>
             <span className="font-bangers text-[#f59e0b] text-xs tracking-wider">
@@ -72,7 +72,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
 
           {/* Disclaimer */}
           <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-3 mb-6">
-            <p className="text-[#a3a3a3] text-xs">
+            <p className="text-gray-500 text-xs">
               Pour les urgences médicales ou de sécurité, contactez les services d&apos;urgence (15, 17, 18, 112).
               TimeHeroes est un réseau d&apos;entraide locale, pas un service de secours.
             </p>
@@ -86,7 +86,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
             )}
 
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+              <label htmlFor="title" className="block text-sm font-medium text-gray-500 mb-1.5">
                 Titre du besoin
               </label>
               <input
@@ -94,7 +94,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
                 name="title"
                 type="text"
                 placeholder="Ex: Aide pour monter un meuble aujourd'hui"
-                className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#f59e0b] transition-colors"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
               />
               {errors?.title && (
                 <p className="text-red-400 text-xs mt-1">{errors.title[0]}</p>
@@ -102,7 +102,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-500 mb-1.5">
                 Description
               </label>
               <textarea
@@ -110,7 +110,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
                 name="description"
                 rows={4}
                 placeholder="Décris précisément ce dont tu as besoin…"
-                className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#f59e0b] transition-colors resize-vertical"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors resize-vertical"
               />
               {errors?.description && (
                 <p className="text-red-400 text-xs mt-1">{errors.description[0]}</p>
@@ -119,14 +119,14 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+                <label htmlFor="category" className="block text-sm font-medium text-gray-500 mb-1.5">
                   Catégorie
                 </label>
                 <select
                   id="category"
                   name="category"
                   defaultValue=""
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] focus:outline-none focus:border-[#f59e0b] transition-colors appearance-none"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 focus:outline-none focus:border-[#f59e0b] transition-colors appearance-none"
                 >
                   <option value="" disabled>Choisis une catégorie</option>
                   {CATEGORIES.map((cat) => (
@@ -139,14 +139,14 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
               </div>
 
               <div>
-                <label htmlFor="urgency" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+                <label htmlFor="urgency" className="block text-sm font-medium text-gray-500 mb-1.5">
                   Urgence
                 </label>
                 <select
                   id="urgency"
                   name="urgency"
                   defaultValue="today"
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] focus:outline-none focus:border-[#f59e0b] transition-colors appearance-none"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 focus:outline-none focus:border-[#f59e0b] transition-colors appearance-none"
                 >
                   <option value="today">Aujourd&apos;hui</option>
                   <option value="week">Cette semaine</option>
@@ -156,7 +156,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
 
             {/* Localisation */}
             <div>
-              <label className="block text-sm font-medium text-[#a3a3a3] mb-2">Zone</label>
+              <label className="block text-sm font-medium text-gray-500 mb-2">Zone</label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <input
                   id="city"
@@ -164,7 +164,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
                   type="text"
                   placeholder="Ville"
                   defaultValue={prefill.city || ""}
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#f59e0b] transition-colors"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
                 />
                 <input
                   id="department"
@@ -172,7 +172,7 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
                   type="text"
                   placeholder="Département"
                   defaultValue={prefill.department || ""}
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#f59e0b] transition-colors"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
                 />
                 <input
                   id="region"
@@ -180,23 +180,23 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
                   type="text"
                   placeholder="Région"
                   defaultValue={prefill.region || ""}
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#f59e0b] transition-colors"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
                 />
               </div>
               <label className="flex items-center gap-2 mt-2 cursor-pointer">
                 <input
                   type="checkbox"
                   name="online"
-                  className="w-4 h-4 rounded border-[#262626] bg-[#181818] text-[#f59e0b] focus:ring-[#f59e0b]"
+                  className="w-4 h-4 rounded border-gray-200 bg-white text-[#f59e0b] focus:ring-[#f59e0b]"
                 />
-                <span className="text-[#a3a3a3] text-sm">Disponible en ligne</span>
+                <span className="text-gray-500 text-sm">Disponible en ligne</span>
               </label>
             </div>
 
             {/* TIME */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="hours" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+                <label htmlFor="hours" className="block text-sm font-medium text-gray-500 mb-1.5">
                   Heures estimées
                 </label>
                 <input
@@ -207,14 +207,14 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
                   step="1"
                   placeholder="2"
                   onChange={calcTotal}
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#f59e0b] transition-colors"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
                 />
                 {errors?.hours && (
                   <p className="text-red-400 text-xs mt-1">{errors.hours[0]}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="ratePerHour" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+                <label htmlFor="ratePerHour" className="block text-sm font-medium text-gray-500 mb-1.5">
                   Tarif (TIME/h)
                 </label>
                 <input
@@ -226,9 +226,9 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
                   step="1"
                   placeholder="2"
                   onChange={calcTotal}
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#f59e0b] transition-colors"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
                 />
-                <p className="text-[10px] text-[#5c5c5c] mt-1">1, 2 ou 3 TIME/h max</p>
+                <p className="text-[10px] text-gray-400 mt-1">1, 2 ou 3 TIME/h max</p>
                 {errors?.ratePerHour && (
                   <p className="text-red-400 text-xs mt-1">{errors.ratePerHour[0]}</p>
                 )}
@@ -238,9 +238,9 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
             {/* Total */}
             {total > 0 && (
               <div className="bg-[#f59e0b]/5 border border-[#f59e0b]/20 rounded-xl p-4 text-center">
-                <span className="text-[#a3a3a3] text-sm">Total : </span>
+                <span className="text-gray-500 text-sm">Total : </span>
                 <span className="text-2xl font-bold text-[#f59e0b]">{total}</span>
-                <span className="text-[#a3a3a3] text-sm"> TIME</span>
+                <span className="text-gray-500 text-sm"> TIME</span>
               </div>
             )}
 

@@ -116,31 +116,31 @@ export default function WalletClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      <ConnectedHeader />
+    <>
+    <ConnectedHeader />
 
-      <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-        <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5]">
+    <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+        <h1 className="text-2xl font-anton tracking-wide text-tb-text-primary">
           Mon Wallet
         </h1>
 
         {/* Success overlay banner */}
         {showSuccess && result && result.success && (
-          <div className="bg-[#00d4aa]/10 border-2 border-[#00d4aa]/30 rounded-2xl p-5 animate-pulse">
+          <div className="bg-tb-accent/10 border-2 border-tb-accent/30 rounded-2xl p-5 animate-pulse">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-[#00d4aa]/20 flex items-center justify-center">
-                <CheckCircle2 className="w-7 h-7 text-[#00d4aa]" />
+              <div className="w-12 h-12 rounded-full bg-tb-accent/20 flex items-center justify-center">
+                <CheckCircle2 className="w-7 h-7 text-tb-accent" />
               </div>
               <div>
-                <p className="text-lg font-bold text-[#00d4aa]">
+                <p className="text-lg font-bold text-tb-accent">
                   ✅ Don réussi&nbsp;!
                 </p>
-                <p className="text-sm text-[#f5f5f5]">
+                <p className="text-sm text-tb-text-primary">
                   Tu as donné <strong>{result.amount} TIME</strong> au pot
                   commun. Nouveau solde du pot :{" "}
                   <strong>{result.potBalance} TIME</strong>.
                 </p>
-                <p className="text-xs text-[#a3a3a3] mt-1">
+                <p className="text-xs text-tb-text-secondary mt-1">
                   Merci pour ta générosité. Chaque don aide un membre de la
                   communauté.
                 </p>
@@ -150,21 +150,21 @@ export default function WalletClient({
         )}
 
         {/* Balance card */}
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6">
+        <div className="bg-tb-surface border border-tb-border rounded-2xl p-6">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[#a3a3a3] text-sm font-medium">
+            <span className="text-tb-text-secondary text-sm font-medium">
               Solde actuel
             </span>
-            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+            <span className="text-tb-accent text-xs font-bangers tracking-wider">
               ~ crédit temps ~
             </span>
           </div>
-          <div className="text-5xl font-bold text-[#f5f5f5] mb-2">
+          <div className="text-5xl font-bold text-tb-text-primary mb-2">
             {user.timeBalance}{" "}
-            <span className="text-lg text-[#a3a3a3] font-normal">TIME</span>
+            <span className="text-lg text-tb-text-secondary font-normal">TIME</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[#5c5c5c] text-xs font-mono">
+            <span className="text-tb-text-muted text-xs font-mono">
               {user.walletAddress}
             </span>
           </div>
@@ -173,46 +173,46 @@ export default function WalletClient({
         {/* ─── Community Pot Section ──────────────────────────────── */}
         <div
           id="pot-commun"
-          className="bg-[#111111] border border-[#262626] rounded-2xl p-6 scroll-mt-20"
+          className="bg-tb-surface border border-tb-border rounded-2xl p-6 scroll-mt-20"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Banknote className="w-5 h-5 text-[#00d4aa]" />
-              <span className="font-semibold text-[#f5f5f5]">
+              <Banknote className="w-5 h-5 text-tb-accent" />
+              <span className="font-semibold text-tb-text-primary">
                 Pot commun TimeHeroes
               </span>
             </div>
-            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+            <span className="text-tb-accent text-xs font-bangers tracking-wider">
               ~ solidarité ~
             </span>
           </div>
 
           {/* Pot balance - large and prominent */}
-          <div className="bg-gradient-to-r from-[#00d4aa]/5 to-transparent border border-[#00d4aa]/10 rounded-xl p-4 mb-4">
+          <div className="bg-gradient-to-r from-tb-accent/5 to-transparent border border-tb-accent/10 rounded-xl p-4 mb-4">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[#a3a3a3] text-xs uppercase tracking-wider font-semibold">
+                <span className="text-tb-text-secondary text-xs uppercase tracking-wider font-semibold">
                   Solde du pot commun
                 </span>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-4xl font-bold text-[#00d4aa]">
+                  <span className="text-4xl font-bold text-tb-accent">
                     {pot.balance}
                   </span>
-                  <span className="text-base text-[#a3a3a3] font-medium">
+                  <span className="text-base text-tb-text-secondary font-medium">
                     TIME
                   </span>
                 </div>
               </div>
-              <HeartHandshake className="w-10 h-10 text-[#00d4aa]/30" />
+              <HeartHandshake className="w-10 h-10 text-tb-accent/30" />
             </div>
-            <p className="text-xs text-[#a3a3a3] mt-2">
+            <p className="text-xs text-tb-text-secondary mt-2">
               disponibles pour financer des missions solidaires
             </p>
           </div>
 
           {/* Impact message */}
-          <p className="text-sm text-[#a3a3a3] mb-4 leading-relaxed bg-[#181818] rounded-xl p-3 border border-[#262626]">
-            <HeartHandshake className="w-4 h-4 text-[#00d4aa] inline-block mr-1" />
+          <p className="text-sm text-tb-text-secondary mb-4 leading-relaxed bg-[#181818] rounded-xl p-3 border border-tb-border">
+            <HeartHandshake className="w-4 h-4 text-tb-accent inline-block mr-1" />
             Le pot commun permet de financer des missions solidaires pour les
             membres qui ont besoin d&apos;aide mais pas assez de TIME. Tes TIME
             peuvent aider une personne à recevoir un coup de main.
@@ -220,7 +220,7 @@ export default function WalletClient({
 
           {/* Quick donate buttons */}
           <div className="mb-3">
-            <p className="text-xs text-[#a3a3a3] font-medium mb-2">
+            <p className="text-xs text-tb-text-secondary font-medium mb-2">
               Faire un don rapide
             </p>
             <div className="flex flex-wrap gap-2">
@@ -236,14 +236,14 @@ export default function WalletClient({
                     onClick={() => handleDonate(amt)}
                     className={`flex items-center gap-1.5 rounded-lg border ${
                       isDisabled
-                        ? "border-[#1a1a1a] bg-[#111111] text-[#3a3a3a] cursor-not-allowed"
-                        : "border-[#00d4aa]/20 bg-[#00d4aa]/5 hover:bg-[#00d4aa]/10 hover:border-[#00d4aa]/40 text-[#f5f5f5] cursor-pointer"
+                        ? "border-[#1a1a1a] bg-tb-surface text-[#3a3a3a] cursor-not-allowed"
+                        : "border-tb-accent/20 bg-tb-accent/5 hover:bg-tb-accent/10 hover:border-tb-accent/40 text-tb-text-primary cursor-pointer"
                     } text-sm font-medium px-4 py-2.5 transition-all`}
                   >
                     {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin text-[#00d4aa]" />
+                      <Loader2 className="w-4 h-4 animate-spin text-tb-accent" />
                     ) : (
-                      <Gift className="w-3.5 h-3.5 text-[#00d4aa]" />
+                      <Gift className="w-3.5 h-3.5 text-tb-accent" />
                     )}
                     {isLoading ? "En cours..." : `+${amt} TIME`}
                   </button>
@@ -261,7 +261,7 @@ export default function WalletClient({
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
               placeholder="Montant libre..."
-              className="flex-1 rounded-lg border border-[#262626] bg-[#181818] px-4 py-2.5 text-sm text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] focus:ring-1 focus:ring-[#00d4aa]/30 transition-colors"
+              className="flex-1 rounded-lg border border-tb-border bg-[#181818] px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
             />
             <button
               type="button"
@@ -275,7 +275,7 @@ export default function WalletClient({
                 const amt = parseInt(customAmount);
                 if (amt > 0) handleDonate(amt);
               }}
-              className="flex items-center gap-1.5 rounded-lg bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-30 disabled:cursor-not-allowed text-[#0a0a0a] font-bold text-sm px-5 py-2.5 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold text-sm px-5 py-2.5 transition-colors"
             >
               {pending === "custom" ? (
                 <>
@@ -300,7 +300,7 @@ export default function WalletClient({
                   <p className="text-sm font-semibold text-red-400">
                     Don non effectué
                   </p>
-                  <p className="text-xs text-[#a3a3a3] mt-1">
+                  <p className="text-xs text-tb-text-secondary mt-1">
                     {result.error}
                   </p>
                 </div>
@@ -310,10 +310,10 @@ export default function WalletClient({
 
           {/* Recent pot transactions */}
           {potTransactions.length > 0 && (
-            <div className="pt-4 border-t border-[#262626]">
+            <div className="pt-4 border-t border-tb-border">
               <div className="flex items-center gap-2 mb-3">
-                <History className="w-4 h-4 text-[#a3a3a3]" />
-                <span className="text-xs font-medium text-[#a3a3a3] uppercase tracking-wider">
+                <History className="w-4 h-4 text-tb-text-secondary" />
+                <span className="text-xs font-medium text-tb-text-secondary uppercase tracking-wider">
                   Dernières transactions du pot
                 </span>
               </div>
@@ -330,25 +330,25 @@ export default function WalletClient({
                         <div
                           className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                             isDonation
-                              ? "bg-[#00d4aa]/10"
+                              ? "bg-tb-accent/10"
                               : tx.type === "FUNDING"
                               ? "bg-yellow-500/10"
                               : "bg-[#5c5c5c]/10"
                           }`}
                         >
                           {isDonation ? (
-                            <Gift className="w-4 h-4 text-[#00d4aa]" />
+                            <Gift className="w-4 h-4 text-tb-accent" />
                           ) : tx.type === "FUNDING" ? (
                             <HeartHandshake className="w-4 h-4 text-yellow-400" />
                           ) : (
-                            <ArrowDownRight className="w-4 h-4 text-[#a3a3a3]" />
+                            <ArrowDownRight className="w-4 h-4 text-tb-text-secondary" />
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-[#f5f5f5]">
+                          <p className="text-sm font-medium text-tb-text-primary">
                             {label}
                           </p>
-                          <p className="text-xs text-[#5c5c5c]">
+                          <p className="text-xs text-tb-text-muted">
                             {tx.userName && tx.type === "DONATION"
                               ? `Don de ${tx.userName}`
                               : tx.reason || ""}
@@ -365,7 +365,7 @@ export default function WalletClient({
                       </div>
                       <span
                         className={`text-base font-bold ${
-                          isDonation ? "text-[#00d4aa]" : "text-yellow-400"
+                          isDonation ? "text-tb-accent" : "text-yellow-400"
                         }`}
                       >
                         {isDonation ? "+" : "-"}
@@ -381,9 +381,9 @@ export default function WalletClient({
 
           {/* Empty state for pot transactions */}
           {potTransactions.length === 0 && (
-            <div className="text-center py-6 border-t border-[#262626]">
-              <HeartHandshake className="w-8 h-8 text-[#5c5c5c] mx-auto mb-2" />
-              <p className="text-sm text-[#5c5c5c]">
+            <div className="text-center py-6 border-t border-tb-border">
+              <HeartHandshake className="w-8 h-8 text-tb-text-muted mx-auto mb-2" />
+              <p className="text-sm text-tb-text-muted">
                 Aucune transaction pour le moment.
               </p>
               <p className="text-xs text-[#3a3a3a] mt-1">
@@ -396,16 +396,16 @@ export default function WalletClient({
         {/* Donner du TIME button */}
         <Link
           href="/wallet/transfer"
-          className="flex items-center justify-center gap-2 rounded-xl bg-[#00d4aa] hover:bg-[#00b894] text-[#0a0a0a] font-bold text-sm px-4 py-3 transition-colors w-full"
+          className="flex items-center justify-center gap-2 rounded-xl bg-tb-accent hover:bg-tb-accent-hover text-white font-bold text-sm px-4 py-3 transition-colors w-full"
         >
           <Gift className="w-4 h-4" />
           Transférer du TIME à un héros
         </Link>
 
         {/* Transactions */}
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#262626]">
-            <h2 className="font-semibold text-[#f5f5f5]">
+        <div className="bg-tb-surface border border-tb-border rounded-2xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-tb-border">
+            <h2 className="font-semibold text-tb-text-primary">
               Historique des transactions
             </h2>
           </div>
@@ -419,7 +419,7 @@ export default function WalletClient({
               actionHref="/services"
             />
           ) : (
-            <div className="divide-y divide-[#262626]">
+            <div className="divide-y divide-tb-border">
               {transactions.map((tx) => {
                 const isCredit =
                   tx.type === "mint" || tx.toId === user.id;
@@ -434,21 +434,21 @@ export default function WalletClient({
                       <div
                         className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                           isCredit
-                            ? "bg-[#00d4aa]/10"
+                            ? "bg-tb-accent/10"
                             : "bg-red-500/10"
                         }`}
                       >
                         {isCredit ? (
-                          <ArrowDownRight className="w-4 h-4 text-[#00d4aa]" />
+                          <ArrowDownRight className="w-4 h-4 text-tb-accent" />
                         ) : (
                           <ArrowUpRight className="w-4 h-4 text-red-400" />
                         )}
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-[#f5f5f5]">
+                        <div className="text-sm font-medium text-tb-text-primary">
                           {label}
                         </div>
-                        <div className="text-xs text-[#5c5c5c]">
+                        <div className="text-xs text-tb-text-muted">
                           {new Date(tx.createdAt).toLocaleDateString("fr-FR", {
                             day: "numeric",
                             month: "short",
@@ -463,7 +463,7 @@ export default function WalletClient({
                       <div
                         className={`text-sm font-semibold ${
                           isCredit
-                            ? "text-[#00d4aa]"
+                            ? "text-tb-accent"
                             : "text-red-400"
                         }`}
                       >
@@ -473,7 +473,7 @@ export default function WalletClient({
                       <div
                         className={`text-xs ${
                           tx.status === "completed"
-                            ? "text-[#00d4aa]"
+                            ? "text-tb-accent"
                             : "text-yellow-500"
                         }`}
                       >
@@ -489,11 +489,11 @@ export default function WalletClient({
 
         {/* Comics footer */}
         <div className="text-center pt-4">
-          <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-40">
+          <span className="font-bangers text-tb-accent text-xs tracking-wider opacity-40">
             ~ chaque minute compte ~
           </span>
         </div>
-      </main>
-    </div>
+    </main>
+    </>
   );
 }

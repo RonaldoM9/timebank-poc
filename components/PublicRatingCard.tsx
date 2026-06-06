@@ -27,7 +27,7 @@ export default function PublicRatingCard({
   });
 
   return (
-    <div className="bg-[#111111] border border-[#262626] rounded-2xl p-4">
+    <div className="bg-tb-surface border border-tb-border rounded-2xl p-4">
       {/* Score stars */}
       <div className="flex items-center gap-1 mb-2">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -36,11 +36,11 @@ export default function PublicRatingCard({
             className={`w-4 h-4 ${
               star <= score
                 ? "fill-yellow-400 text-yellow-400"
-                : "text-[#333]"
+                : "text-tb-border"
             }`}
           />
         ))}
-        <span className="text-sm text-[#a3a3a3] ml-1">
+        <span className="text-sm text-tb-text-secondary ml-1">
           {score}/5
         </span>
       </div>
@@ -48,20 +48,20 @@ export default function PublicRatingCard({
       {/* Commentaire */}
       {comment && (
         <div className="flex items-start gap-2 mb-2">
-          <MessageSquare className="w-3.5 h-3.5 text-[#5c5c5c] mt-0.5 flex-shrink-0" />
-          <p className="text-sm text-[#d4d4d4] italic leading-relaxed">
+          <MessageSquare className="w-3.5 h-3.5 text-tb-text-muted mt-0.5 flex-shrink-0" />
+          <p className="text-sm text-tb-text-primary italic leading-relaxed">
             &ldquo;{comment}&rdquo;
           </p>
         </div>
       )}
 
       {/* Client + date + service */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#5c5c5c] mt-2 pt-2 border-t border-[#262626]">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-tb-text-muted mt-2 pt-2 border-t border-tb-border">
         <div className="flex items-center gap-1">
           <User className="w-3 h-3" />
           <Link
             href={`/profile/${clientId}`}
-            className="text-[#a3a3a3] hover:text-[#00d4aa] transition-colors"
+            className="text-tb-text-secondary hover:text-tb-accent transition-colors"
           >
             {clientName}
           </Link>

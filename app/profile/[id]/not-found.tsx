@@ -3,15 +3,15 @@ import { ArrowLeft, SearchX } from "lucide-react";
 
 export default function ProfileNotFound() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <div className="w-20 h-20 bg-[#111111] border border-[#262626] rounded-full flex items-center justify-center mx-auto mb-6">
-          <SearchX className="w-10 h-10 text-[#5c5c5c]" />
+        <div className="w-20 h-20 bg-white border border-[#e5e7eb] rounded-full flex items-center justify-center mx-auto mb-6">
+          <SearchX className="w-10 h-10 text-[#9ca3af]" />
         </div>
-        <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5] mb-2">
+        <h1 className="text-2xl font-anton tracking-wide text-[#111827] mb-2">
           Héros introuvable
         </h1>
-        <p className="text-sm text-[#a3a3a3] mb-8">
+        <p className="text-sm text-[#6b7280] mb-8">
           Ce profil n&apos;existe pas ou n&apos;est plus disponible.
         </p>
         <Link

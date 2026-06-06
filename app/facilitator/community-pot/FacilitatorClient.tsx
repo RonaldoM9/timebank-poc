@@ -89,14 +89,14 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5]">
+    <div className="text-tb-text-primary">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
-          <ShieldCheck className="w-8 h-8 text-[#00d4aa]" />
+          <ShieldCheck className="w-8 h-8 text-tb-accent" />
           <div>
             <h1 className="text-2xl font-bold">Espace Facilitateur</h1>
-            <p className="text-[#a3a3a3] text-sm">
+            <p className="text-tb-text-secondary text-sm">
               {user.role === "ADMIN" ? "Administrateur" : "Gardien des TIME"} · Gestion du pot commun
             </p>
           </div>
@@ -118,32 +118,32 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
         {/* A. Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
           {/* Pot Balance */}
-          <div className="rounded-2xl bg-[#111] border border-[#262626] p-4">
-            <div className="flex items-center gap-2 text-[#a3a3a3] text-xs mb-2">
-              <HeartHandshake className="w-4 h-4 text-[#00d4aa]" />
+          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
+            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
+              <HeartHandshake className="w-4 h-4 text-tb-accent" />
               Solde du pot
             </div>
             <p className="text-2xl font-bold">{dashboard.potBalance} TIME</p>
           </div>
           {/* Donations this month */}
-          <div className="rounded-2xl bg-[#111] border border-[#262626] p-4">
-            <div className="flex items-center gap-2 text-[#a3a3a3] text-xs mb-2">
+          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
+            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
               <TrendingUp className="w-4 h-4 text-emerald-400" />
               Dons (mois)
             </div>
             <p className="text-2xl font-bold">{dashboard.donationsThisMonth}</p>
           </div>
           {/* Fundings this month */}
-          <div className="rounded-2xl bg-[#111] border border-[#262626] p-4">
-            <div className="flex items-center gap-2 text-[#a3a3a3] text-xs mb-2">
+          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
+            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
               <TrendingDown className="w-4 h-4 text-amber-400" />
               TIME utilisés
             </div>
             <p className="text-2xl font-bold">{dashboard.fundingsThisMonth} TIME</p>
           </div>
           {/* Pending requests */}
-          <div className="rounded-2xl bg-[#111] border border-[#262626] p-4">
-            <div className="flex items-center gap-2 text-[#a3a3a3] text-xs mb-2">
+          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
+            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
               <Clock className="w-4 h-4 text-blue-400" />
               Demandes
             </div>
@@ -155,8 +155,8 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
             </p>
           </div>
           {/* Funded missions */}
-          <div className="rounded-2xl bg-[#111] border border-[#262626] p-4">
-            <div className="flex items-center gap-2 text-[#a3a3a3] text-xs mb-2">
+          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
+            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
               <Users className="w-4 h-4 text-purple-400" />
               Missions
             </div>
@@ -177,7 +177,7 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
           </h2>
 
           {pendingRequests.length === 0 ? (
-            <div className="rounded-2xl bg-[#111] border border-[#262626] p-8 text-center text-[#a3a3a3]">
+            <div className="rounded-2xl bg-tb-surface border border-tb-border p-8 text-center text-tb-text-secondary">
               <CheckCircle className="w-10 h-10 mx-auto mb-2 text-emerald-500/50" />
               <p>Aucune demande en attente.</p>
               <p className="text-xs mt-1">Les nouvelles demandes apparaîtront ici.</p>
@@ -187,13 +187,13 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
               {pendingRequests.map((req) => (
                 <div
                   key={req.id}
-                  className="rounded-2xl bg-[#111] border border-[#262626] p-4"
+                  className="rounded-2xl bg-tb-surface border border-tb-border p-4"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="font-medium">{req.userName}</span>
-                        <span className="text-[#00d4aa] font-bold">{req.amount} TIME</span>
+                        <span className="text-tb-accent font-bold">{req.amount} TIME</span>
                         {req.bookingId && (
                           <a
                             href={`/bookings/${req.bookingId}`}
@@ -205,16 +205,16 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
                         )}
                       </div>
                       {req.reason && (
-                        <p className="text-sm text-[#a3a3a3]">
-                          <span className="text-[#f5f5f5]">Raison :</span> {req.reason}
+                        <p className="text-sm text-tb-text-secondary">
+                          <span className="text-tb-text-primary">Raison :</span> {req.reason}
                         </p>
                       )}
                       {req.message && (
-                        <p className="text-sm text-[#a3a3a3] mt-1">
-                          <span className="text-[#f5f5f5]">Message :</span> {req.message}
+                        <p className="text-sm text-tb-text-secondary mt-1">
+                          <span className="text-tb-text-primary">Message :</span> {req.message}
                         </p>
                       )}
-                      <p className="text-xs text-[#a3a3a3] mt-1">
+                      <p className="text-xs text-tb-text-secondary mt-1">
                         {new Date(req.createdAt).toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "short",
@@ -252,12 +252,12 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
         {/* C. History */}
         <section>
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#a3a3a3]" />
+            <FileText className="w-5 h-5 text-tb-text-secondary" />
             Historique des décisions
           </h2>
 
           {historyRequests.length === 0 ? (
-            <div className="rounded-2xl bg-[#111] border border-[#262626] p-8 text-center text-[#a3a3a3]">
+            <div className="rounded-2xl bg-tb-surface border border-tb-border p-8 text-center text-tb-text-secondary">
               <p>Aucune décision pour le moment.</p>
             </div>
           ) : (
@@ -265,7 +265,7 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
               {historyRequests.map((req) => (
                 <div
                   key={req.id}
-                  className="rounded-2xl bg-[#111] border border-[#262626] p-4"
+                  className="rounded-2xl bg-tb-surface border border-tb-border p-4"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
@@ -277,12 +277,12 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
                           {req.status === "APPROVED" ? "Approuvée" : "Refusée"}
                         </span>
                         <span className="font-medium">{req.userName}</span>
-                        <span className="text-[#a3a3a3]">{req.amount} TIME</span>
+                        <span className="text-tb-text-secondary">{req.amount} TIME</span>
                       </div>
                       {req.reason && (
-                        <p className="text-sm text-[#a3a3a3]">Raison : {req.reason}</p>
+                        <p className="text-sm text-tb-text-secondary">Raison : {req.reason}</p>
                       )}
-                      <p className="text-xs text-[#a3a3a3] mt-1">
+                      <p className="text-xs text-tb-text-secondary mt-1">
                         {new Date(req.createdAt).toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "short",
@@ -309,18 +309,18 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
       {/* Decision Modal */}
       {decisionModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#181818] border border-[#262626] rounded-2xl p-6 w-full max-w-md mx-4">
+          <div className="bg-tb-surface-elevated border border-tb-border rounded-2xl p-6 w-full max-w-md mx-4">
             <h3 className="text-lg font-semibold mb-2">
               {decisionModal.action === "approve" ? "✅ Valider la demande" : "❌ Refuser la demande"}
             </h3>
-            <p className="text-sm text-[#a3a3a3] mb-4">
+            <p className="text-sm text-tb-text-secondary mb-4">
               {decisionModal.action === "approve"
                 ? "Cette action débitera le pot commun et créera une transaction FUNDING."
                 : "Cette action marquera la demande comme refusée sans débiter le pot."}
             </p>
 
             <div className="mb-4">
-              <label className="text-sm text-[#a3a3a3] block mb-1">
+              <label className="text-sm text-tb-text-secondary block mb-1">
                 Note de décision (optionnelle)
               </label>
               <textarea
@@ -328,14 +328,14 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
                 onChange={(e) => setDecisionNote(e.target.value)}
                 placeholder="Pourquoi cette décision ?"
                 rows={3}
-                className="w-full rounded-xl bg-[#111] border border-[#262626] px-3 py-2 text-sm text-[#f5f5f5] placeholder:text-[#525252] focus:outline-none focus:border-[#00d4aa] transition resize-none"
+                className="w-full rounded-xl bg-tb-surface border border-tb-border px-3 py-2 text-sm text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition resize-none"
               />
             </div>
 
             <div className="flex items-center gap-3 justify-end">
               <button
                 onClick={() => setDecisionModal(null)}
-                className="px-4 py-2 rounded-lg text-sm text-[#a3a3a3] hover:text-[#f5f5f5] transition"
+                className="px-4 py-2 rounded-lg text-sm text-tb-text-secondary hover:text-tb-text-primary transition"
               >
                 Annuler
               </button>

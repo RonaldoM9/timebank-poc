@@ -46,19 +46,19 @@ export default function TransferPageClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <>
       {/* Header */}
-      <header className="border-b border-[#262626]">
+      <header className="border-b border-tb-border">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link
             href="/wallet"
-            className="text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
+            className="text-tb-text-secondary hover:text-tb-text-primary transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
+            <Clock className="w-6 h-6 text-tb-accent" />
+            <span className="font-anton text-lg tracking-wide text-tb-text-primary">
               TimeHeroes
             </span>
           </div>
@@ -68,34 +68,34 @@ export default function TransferPageClient({
       <main className="max-w-xl mx-auto px-4 py-8 space-y-6">
         {/* Page title */}
         <div>
-          <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5]">
+          <h1 className="text-2xl font-anton tracking-wide text-tb-text-primary">
             Transférer du TIME
           </h1>
-          <p className="text-sm text-[#a3a3a3] mt-1">
+          <p className="text-sm text-tb-text-secondary mt-1">
             Envoie du temps à un autre héros de la communauté
           </p>
         </div>
 
         {/* Balance card */}
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+        <div className="bg-tb-surface border border-tb-border rounded-2xl p-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[#a3a3a3] text-sm font-medium">
+            <span className="text-tb-text-secondary text-sm font-medium">
               Ton solde
             </span>
-            <span className="text-[#00d4aa] text-xs font-bangers tracking-wider">
+            <span className="text-tb-accent text-xs font-bangers tracking-wider">
               ~ disponible ~
             </span>
           </div>
-          <div className="text-3xl font-bold text-[#f5f5f5]">
+          <div className="text-3xl font-bold text-tb-text-primary">
             {timeBalance}{" "}
-            <span className="text-base text-[#a3a3a3] font-normal">TIME</span>
+            <span className="text-base text-tb-text-secondary font-normal">TIME</span>
           </div>
         </div>
 
         {/* Transfer form */}
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
-          <h2 className="font-semibold text-[#f5f5f5] mb-4 flex items-center gap-2">
-            <Send className="w-4 h-4 text-[#00d4aa]" />
+        <div className="bg-tb-surface border border-tb-border rounded-2xl p-5">
+          <h2 className="font-semibold text-tb-text-primary mb-4 flex items-center gap-2">
+            <Send className="w-4 h-4 text-tb-accent" />
             Formulaire de transfert
           </h2>
 
@@ -104,7 +104,7 @@ export default function TransferPageClient({
             <div>
               <label
                 htmlFor="recipientEmail"
-                className="block text-sm font-medium text-[#a3a3a3] mb-1.5"
+                className="block text-sm font-medium text-tb-text-secondary mb-1.5"
               >
                 Email du destinataire
               </label>
@@ -114,7 +114,7 @@ export default function TransferPageClient({
                 name="recipientEmail"
                 required
                 placeholder="hero@exemple.com"
-                className="w-full rounded-xl border border-[#262626] bg-[#181818] px-4 py-2.5 text-sm text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] focus:ring-1 focus:ring-[#00d4aa]/30 transition-colors"
+                className="w-full rounded-xl border border-tb-border bg-[#181818] px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
               />
             </div>
 
@@ -122,7 +122,7 @@ export default function TransferPageClient({
             <div>
               <label
                 htmlFor="amount"
-                className="block text-sm font-medium text-[#a3a3a3] mb-1.5"
+                className="block text-sm font-medium text-tb-text-secondary mb-1.5"
               >
                 Montant (TIME)
               </label>
@@ -134,9 +134,9 @@ export default function TransferPageClient({
                 min="1"
                 max={timeBalance}
                 placeholder="0"
-                className="w-full rounded-xl border border-[#262626] bg-[#181818] px-4 py-2.5 text-sm text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] focus:ring-1 focus:ring-[#00d4aa]/30 transition-colors"
+                className="w-full rounded-xl border border-tb-border bg-[#181818] px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
               />
-              <p className="text-[10px] text-[#5c5c5c] mt-1">
+              <p className="text-[10px] text-tb-text-muted mt-1">
                 Maximum : {timeBalance} TIME
               </p>
             </div>
@@ -145,7 +145,7 @@ export default function TransferPageClient({
             <button
               type="submit"
               disabled={pending}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-50 disabled:cursor-not-allowed text-[#0a0a0a] font-bold text-sm px-4 py-3 transition-colors"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm px-4 py-3 transition-colors"
             >
               {pending ? (
                 <>
@@ -167,21 +167,21 @@ export default function TransferPageClient({
           <div
             className={`rounded-2xl border p-4 ${
               "success" in result && result.success
-                ? "bg-[#00d4aa]/5 border-[#00d4aa]/20"
+                ? "bg-tb-accent/5 border-tb-accent/20"
                 : "bg-red-500/5 border-red-500/20"
             }`}
           >
             {"success" in result && result.success ? (
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-[#00d4aa] shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-tb-accent shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-[#00d4aa]">
+                  <p className="text-sm font-semibold text-tb-accent">
                     Transfert réussi&nbsp;!
                   </p>
-                  <p className="text-xs text-[#a3a3a3] mt-1">
+                  <p className="text-xs text-tb-text-secondary mt-1">
                     Tu as envoyé {result.amount} TIME à {result.recipientName}.
                   </p>
-                  <p className="text-xs text-[#5c5c5c] mt-1">
+                  <p className="text-xs text-tb-text-muted mt-1">
                     +30 XP gagnés pour ce don&nbsp;!
                   </p>
                 </div>
@@ -191,7 +191,7 @@ export default function TransferPageClient({
                 <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-semibold text-red-400">Erreur</p>
-                  <p className="text-xs text-[#a3a3a3] mt-1">
+                  <p className="text-xs text-tb-text-secondary mt-1">
                     {"error" in result ? result.error : "Erreur inconnue"}
                   </p>
                   {"errors" in result && result.errors && (
@@ -215,7 +215,7 @@ export default function TransferPageClient({
         <div className="text-center pt-4">
           <Link
             href="/wallet"
-            className="inline-flex items-center gap-1.5 text-sm text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-tb-text-secondary hover:text-tb-text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour au wallet
@@ -224,11 +224,11 @@ export default function TransferPageClient({
 
         {/* Comics footer */}
         <div className="text-center">
-          <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-40">
+          <span className="font-bangers text-tb-accent text-xs tracking-wider opacity-40">
             ~ donner, c&apos;est grandir ~
           </span>
         </div>
       </main>
-    </div>
+    </>
   );
 }

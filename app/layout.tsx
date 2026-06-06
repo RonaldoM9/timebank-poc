@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="fr"
       className={`${inter.variable} ${anton.variable} ${bangers.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#0a0a0a] text-[#f5f5f5] font-sans">
+      <body className="min-h-full bg-tb-bg text-tb-text-primary font-sans">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

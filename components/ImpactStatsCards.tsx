@@ -150,16 +150,16 @@ interface StatCardProps {
 
 export function StatCard({ icon: Icon, value, label, suffix, explanation }: StatCardProps) {
   return (
-    <div className="bg-gradient-to-br from-[#111111] to-[#0d1a15] border border-[#262626] rounded-2xl p-5 hover:border-[#00d4aa]/30 transition-all group">
-      <div className="w-10 h-10 rounded-xl bg-[#00d4aa]/10 border border-[#00d4aa]/20 flex items-center justify-center mb-3 group-hover:bg-[#00d4aa]/20 transition-colors">
-        <Icon className="w-5 h-5 text-[#00d4aa]" />
+    <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 hover:border-tb-accent/30 transition-all group">
+      <div className="w-10 h-10 rounded-xl bg-tb-accent/10 border border-tb-accent/20 flex items-center justify-center mb-3 group-hover:bg-tb-accent/20 transition-colors">
+        <Icon className="w-5 h-5 text-tb-accent" />
       </div>
-      <p className="text-3xl md:text-4xl font-bold text-[#f5f5f5] mb-1 font-anton tracking-wide">
+      <p className="text-3xl md:text-4xl font-bold text-tb-text-primary mb-1 font-anton tracking-wide">
         {value}
-        {suffix && <span className="text-lg md:text-xl text-[#a3a3a3] font-sans ml-1">{suffix}</span>}
+        {suffix && <span className="text-lg md:text-xl text-tb-text-secondary font-sans ml-1">{suffix}</span>}
       </p>
-      <p className="text-sm font-semibold text-[#f5f5f5] mb-1">{label}</p>
-      <p className="text-xs text-[#6b6b6b] leading-relaxed">{explanation}</p>
+      <p className="text-sm font-semibold text-tb-text-primary mb-1">{label}</p>
+      <p className="text-xs text-tb-text-muted leading-relaxed">{explanation}</p>
     </div>
   );
 }
@@ -176,16 +176,16 @@ interface StatCardLargeProps {
 
 export function StatCardLarge({ icon: Icon, value, label, suffix, explanation }: StatCardLargeProps) {
   return (
-    <div className="bg-gradient-to-br from-[#111111] to-[#0d1a15] border border-[#262626] rounded-2xl p-6 md:p-8 hover:border-[#00d4aa]/30 transition-all group">
-      <div className="w-12 h-12 rounded-xl bg-[#00d4aa]/10 border border-[#00d4aa]/20 flex items-center justify-center mb-4 group-hover:bg-[#00d4aa]/20 transition-colors">
-        <Icon className="w-6 h-6 text-[#00d4aa]" />
+    <div className="bg-tb-surface border border-tb-border rounded-2xl p-6 md:p-8 hover:border-tb-accent/30 transition-all group">
+      <div className="w-12 h-12 rounded-xl bg-tb-accent/10 border border-tb-accent/20 flex items-center justify-center mb-4 group-hover:bg-tb-accent/20 transition-colors">
+        <Icon className="w-6 h-6 text-tb-accent" />
       </div>
-      <p className="text-4xl md:text-5xl font-bold text-[#f5f5f5] mb-2 font-anton tracking-wide">
+      <p className="text-4xl md:text-5xl font-bold text-tb-text-primary mb-2 font-anton tracking-wide">
         {value}
-        {suffix && <span className="text-xl md:text-2xl text-[#a3a3a3] font-sans ml-1">{suffix}</span>}
+        {suffix && <span className="text-xl md:text-2xl text-tb-text-secondary font-sans ml-1">{suffix}</span>}
       </p>
-      <p className="text-base font-semibold text-[#f5f5f5] mb-1">{label}</p>
-      <p className="text-sm text-[#6b6b6b] leading-relaxed">{explanation}</p>
+      <p className="text-base font-semibold text-tb-text-primary mb-1">{label}</p>
+      <p className="text-sm text-tb-text-muted leading-relaxed">{explanation}</p>
     </div>
   );
 }
@@ -216,10 +216,10 @@ export function SectionHeroImpact({ stats }: SectionHeroImpactProps) {
 
   return (
     <section className="mb-16">
-      <h2 className="text-2xl md:text-3xl font-bold text-[#f5f5f5] mb-2">
+      <h2 className="text-2xl md:text-3xl font-bold text-tb-text-primary mb-2">
         L&apos;impact TimeHeroes en chiffres
       </h2>
-      <p className="text-[#a3a3a3] text-sm mb-8 max-w-xl">
+      <p className="text-tb-text-secondary text-sm mb-8 max-w-xl">
         Chaque mission, chaque heure donnée et chaque badge raconte une contribution concrète à l&apos;entraide locale.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -249,7 +249,7 @@ interface SectionGridProps {
 export function SectionGrid({ stats, title, keys }: SectionGridProps) {
   return (
     <section className="mb-16">
-      <h2 className="text-xl md:text-2xl font-bold text-[#f5f5f5] mb-2">{title}</h2>
+      <h2 className="text-xl md:text-2xl font-bold text-tb-text-primary mb-2">{title}</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {keys.map((key) => {
           const def = KPI_DEFINITIONS[key];

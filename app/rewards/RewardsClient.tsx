@@ -96,7 +96,7 @@ export default function RewardsClient({
       label: "Missions réalisées",
       value: `${stats.missionsCompleted}`,
       subtext: stats.missionsCompleted > 0 ? "Communauté servie" : "Encore aucune",
-      icon: <Target className="w-4 h-4 text-[#00d4aa]" />,
+      icon: <Target className="w-4 h-4 text-tb-accent" />,
     },
     {
       key: "timeEarned",
@@ -134,7 +134,7 @@ export default function RewardsClient({
   const completedQuests = quests.filter((q) => q.completed);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div>
       {/* Header */}
       <ConnectedHeader />
 
@@ -142,17 +142,17 @@ export default function RewardsClient({
         {/* Section 1: Hero Level Card */}
         <section>
           <div className="flex items-center gap-2 mb-5">
-            <Shield className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <Shield className="w-5 h-5 text-tb-accent" />
+            <h2 className="text-lg font-anton tracking-wide text-tb-text-primary">
               Ton niveau Hero
             </h2>
           </div>
-          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6 space-y-6">
+          <div className="bg-tb-surface border border-tb-border rounded-2xl p-6 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <HeroLevelBadge level={level} />
               <div className="text-right">
-                <p className="text-xs text-[#a3a3a3] font-medium">XP Total</p>
-                <p className="text-2xl font-anton tracking-wide text-[#00d4aa]">
+                <p className="text-xs text-tb-text-secondary font-medium">XP Total</p>
+                <p className="text-2xl font-anton tracking-wide text-tb-accent">
                   {totalXp}
                 </p>
               </div>
@@ -168,8 +168,8 @@ export default function RewardsClient({
         {/* Section 2: Impact Stats */}
         <section>
           <div className="flex items-center gap-2 mb-5">
-            <Sparkles className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <Sparkles className="w-5 h-5 text-tb-accent" />
+            <h2 className="text-lg font-anton tracking-wide text-tb-text-primary">
               Impact dans la communauté
             </h2>
           </div>
@@ -177,14 +177,14 @@ export default function RewardsClient({
             {statCards.map((card) => (
               <div
                 key={card.key}
-                className="bg-[#111111] border border-[#262626] rounded-2xl p-4 text-center"
+                className="bg-tb-surface border border-tb-border rounded-2xl p-4 text-center"
               >
                 <div className="flex justify-center mb-2">{card.icon}</div>
-                <p className="text-2xl font-anton tracking-wide text-[#f5f5f5] mb-0.5">
+                <p className="text-2xl font-anton tracking-wide text-tb-text-primary mb-0.5">
                   {card.value}
                 </p>
-                <p className="text-xs text-[#a3a3a3] font-medium">{card.label}</p>
-                <p className="text-[10px] text-[#5c5c5c] mt-0.5">{card.subtext}</p>
+                <p className="text-xs text-tb-text-secondary font-medium">{card.label}</p>
+                <p className="text-[10px] text-tb-text-muted mt-0.5">{card.subtext}</p>
               </div>
             ))}
           </div>
@@ -193,8 +193,8 @@ export default function RewardsClient({
         {/* Section 3: Badges */}
         <section>
           <div className="flex items-center gap-2 mb-5">
-            <Trophy className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <Trophy className="w-5 h-5 text-tb-accent" />
+            <h2 className="text-lg font-anton tracking-wide text-tb-text-primary">
               Badges
             </h2>
           </div>
@@ -202,11 +202,11 @@ export default function RewardsClient({
           {/* Earned badges */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <CheckCircle className="w-4 h-4 text-[#00d4aa]" />
-              <h3 className="text-sm font-bangers tracking-wider text-[#a3a3a3] uppercase">
+              <CheckCircle className="w-4 h-4 text-tb-accent" />
+              <h3 className="text-sm font-bangers tracking-wider text-tb-text-secondary uppercase">
                 Badges obtenus
               </h3>
-              <span className="text-xs text-[#5c5c5c]">({badges.earned.length})</span>
+              <span className="text-xs text-tb-text-muted">({badges.earned.length})</span>
             </div>
             {hasEarnedBadges ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -229,11 +229,11 @@ export default function RewardsClient({
           {/* Locked badges */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Lock className="w-4 h-4 text-[#5c5c5c]" />
-              <h3 className="text-sm font-bangers tracking-wider text-[#a3a3a3] uppercase">
+              <Lock className="w-4 h-4 text-tb-text-muted" />
+              <h3 className="text-sm font-bangers tracking-wider text-tb-text-secondary uppercase">
                 Badges à débloquer
               </h3>
-              <span className="text-xs text-[#5c5c5c]">({badges.locked.length})</span>
+              <span className="text-xs text-tb-text-muted">({badges.locked.length})</span>
             </div>
             {hasLockedBadges ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -248,7 +248,7 @@ export default function RewardsClient({
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-[#5c5c5c] italic">
+              <p className="text-sm text-tb-text-muted italic">
                 Tous les badges ont été débloqués&nbsp;!
               </p>
             )}
@@ -258,8 +258,8 @@ export default function RewardsClient({
         {/* Section 4: Quêtes actives */}
         <section>
           <div className="flex items-center gap-2 mb-5">
-            <Target className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <Target className="w-5 h-5 text-tb-accent" />
+            <h2 className="text-lg font-anton tracking-wide text-tb-text-primary">
               Quêtes actives
             </h2>
           </div>
@@ -279,12 +279,12 @@ export default function RewardsClient({
               ))}
             </div>
           ) : (
-            <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6 text-center">
-              <Flag className="w-8 h-8 text-[#5c5c5c] mx-auto mb-2" />
-              <p className="text-sm text-[#a3a3a3]">
+            <div className="bg-tb-surface border border-tb-border rounded-2xl p-6 text-center">
+              <Flag className="w-8 h-8 text-tb-text-muted mx-auto mb-2" />
+              <p className="text-sm text-tb-text-secondary">
                 Aucune quête active pour le moment
               </p>
-              <p className="text-xs text-[#5c5c5c] mt-1">
+              <p className="text-xs text-tb-text-muted mt-1">
                 De nouvelles quêtes arriveront bientôt&nbsp;!
               </p>
             </div>
@@ -294,10 +294,10 @@ export default function RewardsClient({
           {completedQuests.length > 0 && (
             <div className="mt-4">
               <details className="group">
-                <summary className="flex items-center gap-2 cursor-pointer text-sm text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors">
-                  <CheckCircle className="w-4 h-4 text-[#00d4aa]" />
+                <summary className="flex items-center gap-2 cursor-pointer text-sm text-tb-text-secondary hover:text-tb-text-primary transition-colors">
+                  <CheckCircle className="w-4 h-4 text-tb-accent" />
                   Quêtes accomplies ({completedQuests.length})
-                  <span className="ml-auto text-[10px] text-[#5c5c5c] group-open:rotate-180 transition-transform">
+                  <span className="ml-auto text-[10px] text-tb-text-muted group-open:rotate-180 transition-transform">
                     ▼
                   </span>
                 </summary>
@@ -322,8 +322,8 @@ export default function RewardsClient({
         {/* Section 5: Timeline */}
         <section>
           <div className="flex items-center gap-2 mb-5">
-            <Zap className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <Zap className="w-5 h-5 text-tb-accent" />
+            <h2 className="text-lg font-anton tracking-wide text-tb-text-primary">
               Chronologie des exploits
             </h2>
           </div>
@@ -332,12 +332,12 @@ export default function RewardsClient({
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#262626] mt-12">
+      <footer className="border-t border-tb-border mt-12">
         <div className="max-w-4xl mx-auto px-4 py-6 text-center">
-          <p className="font-bangers text-sm tracking-wider text-[#5c5c5c]">
+          <p className="font-bangers text-sm tracking-wider text-tb-text-muted">
             ~ chaque geste compte, chaque héros brille ~
           </p>
-          <p className="text-[10px] text-[#3a3a3a] mt-2">
+          <p className="text-[10px] text-tb-text-muted mt-2">
 TimeHeroes &mdash; L&apos;entraide qui fait grandir
           </p>
         </div>

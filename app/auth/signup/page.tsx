@@ -48,58 +48,58 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-3 mb-4">
-            <Clock className="w-8 h-8 text-[#00d4aa]" />
-            <h1 className="text-3xl font-anton tracking-wide text-[#f5f5f5]">
+            <Clock className="w-8 h-8 text-tb-accent" />
+            <h1 className="text-3xl font-anton tracking-wide text-tb-text-primary">
               TimeHeroes
             </h1>
           </div>
-          <p className="text-[#a3a3a3] text-sm">
+          <p className="text-tb-text-secondary text-sm">
             Rejoignez la communauté des super-héros du quotidien
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-8">
-          <h2 className="text-xl font-semibold mb-6">Créer un compte</h2>
+        <div className="bg-tb-surface border border-tb-border rounded-2xl p-8">
+          <h2 className="text-xl font-semibold mb-6 text-tb-text-primary">Créer un compte</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-[#a3a3a3] mb-1.5">
+              <label className="block text-sm text-tb-text-secondary mb-1.5">
                 Nom
               </label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
                 placeholder="Votre nom"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm text-[#a3a3a3] mb-1.5">
+              <label className="block text-sm text-tb-text-secondary mb-1.5">
                 Email
               </label>
               <input
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
                 placeholder="vous@exemple.com"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm text-[#a3a3a3] mb-1.5">
+              <label className="block text-sm text-tb-text-secondary mb-1.5">
                 Mot de passe
               </label>
               <input
                 type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
                 placeholder="6 caractères minimum"
                 minLength={6}
                 required
@@ -115,7 +115,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#00d4aa] hover:bg-[#00b894] text-[#0a0a0a] font-semibold rounded-xl px-4 py-3 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-tb-accent hover:bg-tb-accent-hover text-white font-semibold rounded-xl px-4 py-3 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -128,11 +128,11 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-[#a3a3a3] mt-6">
+          <p className="text-center text-sm text-tb-text-secondary mt-6">
             Déjà un compte ?{" "}
             <Link
               href="/auth/signin"
-              className="text-[#00d4aa] hover:text-[#00b894] transition-colors"
+              className="text-tb-accent hover:text-tb-accent-hover transition-colors"
             >
               Se connecter
             </Link>
@@ -141,7 +141,7 @@ export default function SignupPage() {
 
         {/* Comics badge */}
         <div className="text-center mt-6">
-          <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-60">
+          <span className="font-bangers text-tb-accent text-xs tracking-wider opacity-60">
             ~ nous sommes tous des super-héros ~
           </span>
         </div>

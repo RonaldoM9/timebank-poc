@@ -69,18 +69,18 @@ export default function HeroPassportForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Completion score */}
-      <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+      <div className="bg-tb-surface border border-tb-border rounded-2xl p-5">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-[#a3a3a3] font-medium">
+          <span className="text-sm text-tb-text-secondary font-medium">
             Complétion du profil
           </span>
           <span
             className={`text-lg font-bold font-anton tracking-wide ${
               liveCompletion >= 80
-                ? "text-[#00d4aa]"
+                ? "text-tb-accent"
                 : liveCompletion >= 50
                   ? "text-yellow-400"
-                  : "text-[#a3a3a3]"
+                  : "text-tb-text-secondary"
             }`}
           >
             {liveCompletion}%
@@ -90,33 +90,33 @@ export default function HeroPassportForm({
           <div
             className={`h-full rounded-full transition-all duration-500 ${
               liveCompletion >= 80
-                ? "bg-[#00d4aa]"
+                ? "bg-tb-accent"
                 : liveCompletion >= 50
                   ? "bg-yellow-400"
-                  : "bg-[#a3a3a3]"
+                  : "bg-tb-text-secondary"
             }`}
             style={{ width: `${liveCompletion}%` }}
           />
         </div>
         {liveCompletion >= 80 && (
-          <div className="mt-3 flex items-center gap-2 text-[#00d4aa] text-sm">
+          <div className="mt-3 flex items-center gap-2 text-tb-accent text-sm">
             <CheckCircle className="w-4 h-4" />
             <span className="font-medium">Profil complété</span>
           </div>
         )}
         {liveCompletion < 100 && (
-          <p className="mt-2 text-xs text-[#5c5c5c]">
+          <p className="mt-2 text-xs text-tb-text-muted">
             Complète ton profil pour être mieux visible par la communauté.
           </p>
         )}
       </div>
 
       {/* Bio */}
-      <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5 space-y-3">
+      <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 space-y-3">
         <div className="flex items-center gap-2">
-          <Shield className="w-4 h-4 text-[#00d4aa]" />
-          <label className="text-sm text-[#f5f5f5] font-medium">Bio</label>
-          <span className="text-[10px] text-[#5c5c5c]">
+          <Shield className="w-4 h-4 text-tb-accent" />
+          <label className="text-sm text-tb-text-primary font-medium">Bio</label>
+          <span className="text-[10px] text-tb-text-muted">
             +25% si rempli
           </span>
         </div>
@@ -126,21 +126,21 @@ export default function HeroPassportForm({
           placeholder="Parle un peu de toi... tes passions, ton quartier, ce qui te motive au quotidien."
           maxLength={500}
           rows={3}
-          className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-sm text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa]/50 transition-colors resize-none"
+          className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
         />
-        <div className="text-right text-[10px] text-[#5c5c5c]">
+        <div className="text-right text-[10px] text-tb-text-muted">
           {bio.length}/500
         </div>
       </div>
 
       {/* Compétences offertes */}
-      <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5 space-y-3">
+      <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 space-y-3">
         <div className="flex items-center gap-2">
-          <Shield className="w-4 h-4 text-[#00d4aa]" />
-          <label className="text-sm text-[#f5f5f5] font-medium">
+          <Shield className="w-4 h-4 text-tb-accent" />
+          <label className="text-sm text-tb-text-primary font-medium">
             Compétences offertes
           </label>
-          <span className="text-[10px] text-[#5c5c5c]">
+          <span className="text-[10px] text-tb-text-muted">
             +30% si rempli
           </span>
         </div>
@@ -150,21 +150,21 @@ export default function HeroPassportForm({
           placeholder="Ce que tu peux proposer aux autres héros. Ex: aide numérique, bricolage, cours, accompagnement..."
           maxLength={1000}
           rows={3}
-          className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-sm text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa]/50 transition-colors resize-none"
+          className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
         />
-        <div className="text-right text-[10px] text-[#5c5c5c]">
+        <div className="text-right text-[10px] text-tb-text-muted">
           {offeredSkills.length}/1000
         </div>
       </div>
 
       {/* Aides recherchées */}
-      <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5 space-y-3">
+      <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 space-y-3">
         <div className="flex items-center gap-2">
-          <Shield className="w-4 h-4 text-[#00d4aa]" />
-          <label className="text-sm text-[#f5f5f5] font-medium">
+          <Shield className="w-4 h-4 text-tb-accent" />
+          <label className="text-sm text-tb-text-primary font-medium">
             Aides recherchées
           </label>
-          <span className="text-[10px] text-[#5c5c5c]">
+          <span className="text-[10px] text-tb-text-muted">
             +20% si rempli
           </span>
         </div>
@@ -174,21 +174,21 @@ export default function HeroPassportForm({
           placeholder="De quoi tu aurais besoin ? Ex: aide pour un déménagement, cours de langue, conseils jardinage..."
           maxLength={1000}
           rows={3}
-          className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-sm text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa]/50 transition-colors resize-none"
+          className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
         />
-        <div className="text-right text-[10px] text-[#5c5c5c]">
+        <div className="text-right text-[10px] text-tb-text-muted">
           {wantedHelp.length}/1000
         </div>
       </div>
 
       {/* Motivations */}
-      <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5 space-y-3">
+      <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 space-y-3">
         <div className="flex items-center gap-2">
-          <Shield className="w-4 h-4 text-[#00d4aa]" />
-          <label className="text-sm text-[#f5f5f5] font-medium">
+          <Shield className="w-4 h-4 text-tb-accent" />
+          <label className="text-sm text-tb-text-primary font-medium">
             Motivations
           </label>
-          <span className="text-[10px] text-[#5c5c5c]">
+          <span className="text-[10px] text-tb-text-muted">
             +25% si rempli
           </span>
         </div>
@@ -198,9 +198,9 @@ export default function HeroPassportForm({
           placeholder="Pourquoi tu fais partie de TimeHeroes ? Ex: créer du lien, aider les autres, transmettre mes compétences..."
           maxLength={1000}
           rows={3}
-          className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-3 text-sm text-[#f5f5f5] placeholder-[#5c5c5c] focus:outline-none focus:border-[#00d4aa]/50 transition-colors resize-none"
+          className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-3 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent/50 transition-colors resize-none"
         />
-        <div className="text-right text-[10px] text-[#5c5c5c]">
+        <div className="text-right text-[10px] text-tb-text-muted">
           {motivations.length}/1000
         </div>
       </div>
@@ -209,7 +209,7 @@ export default function HeroPassportForm({
       <button
         type="submit"
         disabled={saving}
-        className="w-full flex items-center justify-center gap-2 bg-[#00d4aa] text-black font-semibold rounded-xl px-6 py-3 hover:bg-[#00b894] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 bg-tb-accent text-white font-semibold rounded-xl px-6 py-3 hover:bg-tb-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Save className="w-4 h-4" />
         {saving ? "Sauvegarde..." : "Sauvegarder"}
@@ -220,7 +220,7 @@ export default function HeroPassportForm({
         <div
           className={`flex items-center gap-2 text-sm rounded-xl px-4 py-3 ${
             message.type === "success"
-              ? "bg-[#00d4aa]/10 text-[#00d4aa] border border-[#00d4aa]/20"
+              ? "bg-tb-accent/10 text-tb-accent border border-tb-accent/20"
               : "bg-red-500/10 text-red-400 border border-red-500/20"
           }`}
         >

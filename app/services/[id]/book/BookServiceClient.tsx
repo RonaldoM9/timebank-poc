@@ -75,27 +75,27 @@ export default function BookServiceClient({
   // Si le client est le provider, on ne montre pas le formulaire
   if (isOwner) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a]">
+      <div className="min-h-screen bg-[#f5f5f5]">
         <ConnectedHeader />
         <main className="max-w-2xl mx-auto px-4 py-8">
           <Link
             href={`/services/${service.id}`}
-            className="inline-flex items-center gap-2 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm mb-6"
+            className="inline-flex items-center gap-2 text-[#6b7280] hover:text-[#111111] transition-colors text-sm mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour au service
           </Link>
-          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6 sm:p-8 text-center">
+          <div className="bg-[#ffffff] border border-[#e5e5e5] rounded-2xl p-6 sm:p-8 text-center">
             <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-xl p-4">
               <p className="text-[#00d4aa] text-sm font-semibold">
                 Vous êtes le héros de ce service
               </p>
-              <p className="text-[#a3a3a3] text-xs mt-1">
+              <p className="text-[#6b7280] text-xs mt-1">
                 Vous ne pouvez pas réserver votre propre service
               </p>
               <Link
                 href={`/services/${service.id}`}
-                className="inline-block mt-3 text-[#a3a3a3] hover:text-[#f5f5f5] text-sm underline transition-colors"
+                className="inline-block mt-3 text-[#6b7280] hover:text-[#111111] text-sm underline transition-colors"
               >
                 Retour aux détails
               </Link>
@@ -107,43 +107,43 @@ export default function BookServiceClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#f5f5f5]">
       <ConnectedHeader />
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <Link
           href={`/services/${service.id}`}
-          className="inline-flex items-center gap-2 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm mb-6"
+          className="inline-flex items-center gap-2 text-[#6b7280] hover:text-[#111111] transition-colors text-sm mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour au service
         </Link>
 
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6 sm:p-8">
+        <div className="bg-[#ffffff] border border-[#e5e5e5] rounded-2xl p-6 sm:p-8">
           {/* En-tête avec label comics */}
           <div className="mb-6">
             <span className="font-bangers text-[#00d4aa] text-xs tracking-wider">
               ~ réserve ton super-pouvoir ~
             </span>
-            <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5] mt-1">
+            <h1 className="text-2xl font-anton tracking-wide text-[#111111] mt-1">
               {service.title}
             </h1>
           </div>
 
           {/* Infos service */}
-          <div className="bg-[#181818] border border-[#262626] rounded-xl p-4 mb-6 space-y-3">
+          <div className="bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl p-4 mb-6 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#a3a3a3] text-sm">
-                <User className="w-4 h-4 text-[#5c5c5c]" />
+              <div className="flex items-center gap-2 text-[#6b7280] text-sm">
+                <User className="w-4 h-4 text-[#9ca3af]" />
                 Héros
               </div>
-              <span className="text-[#f5f5f5] font-semibold text-sm">
+              <span className="text-[#111111] font-semibold text-sm">
                 {service.provider.name}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#a3a3a3] text-sm">
-                <Zap className="w-4 h-4 text-[#5c5c5c]" />
+              <div className="flex items-center gap-2 text-[#6b7280] text-sm">
+                <Zap className="w-4 h-4 text-[#9ca3af]" />
                 Tarif
               </div>
               <span className="text-[#00d4aa] font-semibold text-sm">
@@ -151,13 +151,13 @@ export default function BookServiceClient({
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#a3a3a3] text-sm">
-                <Coins className="w-4 h-4 text-[#5c5c5c]" />
+              <div className="flex items-center gap-2 text-[#6b7280] text-sm">
+                <Coins className="w-4 h-4 text-[#9ca3af]" />
                 Ton solde
               </div>
               <span
                 className={`font-semibold text-sm ${
-                  insufficient ? "text-red-400" : "text-[#f5f5f5]"
+                  insufficient ? "text-red-600" : "text-[#111111]"
                 }`}
               >
                 {balance} TIME
@@ -167,8 +167,8 @@ export default function BookServiceClient({
 
           {/* Message d'erreur */}
           {error && (
-            <div className="bg-red-900/20 border border-red-800 rounded-xl p-3 mb-4">
-              <p className="text-red-400 text-sm">{error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
+              <p className="text-red-600 text-sm">{error}</p>
             </div>
           )}
 
@@ -177,7 +177,7 @@ export default function BookServiceClient({
             <div>
               <label
                 htmlFor="hours"
-                className="block text-sm font-medium text-[#a3a3a3] mb-1.5"
+                className="block text-sm font-medium text-[#6b7280] mb-1.5"
               >
                 Nombre d&apos;heures
               </label>
@@ -189,19 +189,19 @@ export default function BookServiceClient({
                 step="1"
                 value={hours}
                 onChange={(e) => setHours(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                className="w-full bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl px-4 py-2.5 text-[#111111] focus:outline-none focus:border-[#00d4aa] transition-colors"
               />
             </div>
 
             {/* Sélecteur de créneaux */}
             <div>
-              <label className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+              <label className="block text-sm font-medium text-[#6b7280] mb-1.5">
                 <Calendar className="w-4 h-4 inline mr-1.5 -mt-0.5" />
                 Créneau disponible
               </label>
               {loadingSlots ? (
                 <div className="flex items-center justify-center py-6">
-                  <Loader2 className="w-5 h-5 animate-spin text-[#a3a3a3]" />
+                  <Loader2 className="w-5 h-5 animate-spin text-[#6b7280]" />
                 </div>
               ) : slots.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -223,7 +223,7 @@ export default function BookServiceClient({
                         className={`text-left px-4 py-3 rounded-xl border text-sm transition-colors ${
                           isSelected
                             ? "border-[#00d4aa] bg-[#00d4aa]/10 text-[#00d4aa]"
-                            : "border-[#262626] bg-[#181818] text-[#f5f5f5] hover:border-[#404040]"
+                            : "border-[#e5e5e5] bg-[#f0f0f0] text-[#111111] hover:border-[#cccccc]"
                         }`}
                       >
                         {slot.label}
@@ -232,8 +232,8 @@ export default function BookServiceClient({
                   })}
                 </div>
               ) : (
-                <div className="bg-[#181818] border border-[#262626] rounded-xl p-3">
-                  <p className="text-[#a3a3a3] text-xs">
+                <div className="bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl p-3">
+                  <p className="text-[#6b7280] text-xs">
                     Ce Hero n&apos;a pas encore ajouté de disponibilité. La
                     réservation sans créneau reste possible.
                   </p>
@@ -250,17 +250,17 @@ export default function BookServiceClient({
             )}
 
             {/* Récapitulatif */}
-            <div className="bg-[#181818] border border-[#262626] rounded-xl p-4">
+            <div className="bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl p-4">
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-[#a3a3a3]">
+                <span className="text-[#6b7280]">
                   {service.ratePerHour} TIME × {hours}h
                 </span>
-                <span className="text-[#f5f5f5] font-semibold">
+                <span className="text-[#111111] font-semibold">
                   {totalTime} TIME
                 </span>
               </div>
-              <div className="border-t border-[#262626] pt-2 flex items-center justify-between">
-                <span className="text-[#a3a3a3] text-sm font-medium">
+              <div className="border-t border-[#e5e5e5] pt-2 flex items-center justify-between">
+                <span className="text-[#6b7280] text-sm font-medium">
                   Total
                 </span>
                 <span className="text-xl font-bold text-[#00d4aa]">
@@ -270,8 +270,8 @@ export default function BookServiceClient({
             </div>
 
             {insufficient && (
-              <div className="bg-yellow-900/20 border border-yellow-800 rounded-xl p-3">
-                <p className="text-yellow-400 text-xs">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3">
+                <p className="text-yellow-600 text-xs">
                   Solde insuffisant. Il te manque {totalTime - balance} TIME.
                 </p>
               </div>

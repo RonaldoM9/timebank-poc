@@ -31,19 +31,19 @@ export default function ProfileClient({
   const hasRatings = profile.recentRatings.length > 0;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#f9fafb]">
       {/* Header */}
-      <header className="border-b border-[#262626]">
+      <header className="border-b border-[#e5e7eb]">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
+            <span className="font-anton text-lg tracking-wide text-[#111827]">
               TimeHeroes
             </span>
           </div>
           <Link
             href="/services"
-            className="flex items-center gap-1.5 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
+            className="flex items-center gap-1.5 text-[#6b7280] hover:text-[#111827] transition-colors text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour aux services
@@ -67,22 +67,22 @@ export default function ProfileClient({
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Shield className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <h2 className="text-lg font-anton tracking-wide text-[#111827]">
               Niveau Hero
             </h2>
           </div>
-          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+          <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <HeroLevelBadge level={heroLevel} />
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <p className="text-xs text-[#a3a3a3] font-medium">XP Totale</p>
+                  <p className="text-xs text-[#6b7280] font-medium">XP Totale</p>
                   <p className="text-xl font-anton tracking-wide text-[#00d4aa]">
                     {totalXp}
                   </p>
                 </div>
                 {topBadges.length > 0 && (
-                  <div className="hidden sm:flex items-center gap-2 border-l border-[#262626] pl-4">
+                  <div className="hidden sm:flex items-center gap-2 border-l border-[#e5e7eb] pl-4">
                     {topBadges.slice(0, 3).map((badge) => (
                       <div
                         key={badge.code}
@@ -99,8 +99,8 @@ export default function ProfileClient({
             {/* Mobile badges */}
             {topBadges.length > 0 && (
               <div className="flex items-center gap-2 mt-3 sm:hidden">
-                <Zap className="w-3 h-3 text-[#5c5c5c]" />
-                <span className="text-[11px] text-[#a3a3a3]">
+                <Zap className="w-3 h-3 text-[#9ca3af]" />
+                <span className="text-[11px] text-[#6b7280]">
                   Badges&nbsp;: {topBadges.map((b) => b.name).join(", ")}
                 </span>
               </div>
@@ -112,11 +112,11 @@ export default function ProfileClient({
         <section>
           <div className="flex items-center gap-2 mb-4">
             <BadgeCheck className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <h2 className="text-lg font-anton tracking-wide text-[#111827]">
               Badges de confiance
             </h2>
           </div>
-          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+          <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5">
             <div className="flex flex-wrap gap-3">
               {[
                 { key: "localHero" as const, label: "Héros local", desc: "Localisation renseignée", color: "border-blue-500/30 bg-blue-500/10 text-blue-400" },
@@ -131,7 +131,7 @@ export default function ProfileClient({
                     className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-opacity ${
                       earned
                         ? `${b.color} opacity-100`
-                        : "border-[#262626] bg-transparent text-[#5c5c5c] opacity-50"
+                        : "border-[#e5e7eb] bg-transparent text-[#9ca3af] opacity-50"
                     }`}
                   >
                     <span className={earned ? "" : "grayscale"}>
@@ -139,7 +139,7 @@ export default function ProfileClient({
                     </span>
                     <span>{b.label}</span>
                     {!earned && (
-                      <span className="text-[10px] text-[#5c5c5c] ml-1">— à débloquer</span>
+                      <span className="text-[10px] text-[#9ca3af] ml-1">— à débloquer</span>
                     )}
                   </div>
                 );
@@ -152,7 +152,7 @@ export default function ProfileClient({
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Sparkles className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <h2 className="text-lg font-anton tracking-wide text-[#111827]">
               Impact dans la communauté
             </h2>
           </div>
@@ -169,11 +169,11 @@ export default function ProfileClient({
         <section>
           <div className="flex items-center gap-2 mb-4">
             <MapPin className="w-5 h-5 text-[#00d4aa]" />
-            <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+            <h2 className="text-lg font-anton tracking-wide text-[#111827]">
               Zone d&apos;intervention
             </h2>
           </div>
-          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+          <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5">
             {(() => {
               const vis = profile.locationVisibility;
               const city = profile.city;
@@ -182,7 +182,7 @@ export default function ProfileClient({
 
               if (vis === "hidden") {
                 return (
-                  <p className="text-sm text-[#5c5c5c] italic">
+                  <p className="text-sm text-[#9ca3af] italic">
                     Zone non affichée
                   </p>
                 );
@@ -191,12 +191,12 @@ export default function ProfileClient({
               if (vis === "city" && city) {
                 return (
                   <div>
-                    <p className="text-sm text-[#d4d4d4] font-medium">
+                    <p className="text-sm text-[#374151] font-medium">
                       {city}
                       {dept ? `, ${dept}` : ""}
                     </p>
                     {profile.serviceRadiusKm && (
-                      <p className="text-xs text-[#a3a3a3] mt-1">
+                      <p className="text-xs text-[#6b7280] mt-1">
                         Intervient dans un rayon de {profile.serviceRadiusKm} km
                       </p>
                     )}
@@ -206,7 +206,7 @@ export default function ProfileClient({
 
               if (vis === "department" && dept) {
                 return (
-                  <p className="text-sm text-[#d4d4d4] font-medium">
+                  <p className="text-sm text-[#374151] font-medium">
                     Zone : {dept}
                   </p>
                 );
@@ -214,14 +214,14 @@ export default function ProfileClient({
 
               if (vis === "region" && region) {
                 return (
-                  <p className="text-sm text-[#d4d4d4] font-medium">
+                  <p className="text-sm text-[#374151] font-medium">
                     Zone : {region}
                   </p>
                 );
               }
 
               return (
-                <p className="text-sm text-[#5c5c5c] italic">
+                <p className="text-sm text-[#9ca3af] italic">
                   Aucune zone renseignée
                 </p>
               );
@@ -236,16 +236,16 @@ export default function ProfileClient({
 
         {/* Section Bio */}
         <section>
-          <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5] mb-3">
+          <h2 className="text-lg font-anton tracking-wide text-[#111827] mb-3">
             À propos
           </h2>
-          <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+          <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5">
             {profile.bio ? (
-              <p className="text-sm text-[#d4d4d4] leading-relaxed whitespace-pre-line">
+              <p className="text-sm text-[#374151] leading-relaxed whitespace-pre-line">
                 {profile.bio}
               </p>
             ) : (
-              <p className="text-sm text-[#5c5c5c] italic">
+              <p className="text-sm text-[#9ca3af] italic">
                 Ce héros n&apos;a pas encore renseigné sa bio.
               </p>
             )}
@@ -257,24 +257,24 @@ export default function ProfileClient({
           <section>
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="w-5 h-5 text-[#00d4aa]" />
-              <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5]">
+              <h2 className="text-lg font-anton tracking-wide text-[#111827]">
                 Hero Passport
               </h2>
-              <span className="text-xs text-[#5c5c5c] ml-auto">
+              <span className="text-xs text-[#9ca3af] ml-auto">
                 {profile.passport.completionPercent}% complété
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Compétences offertes */}
               {profile.passport.offeredSkills && (
-                <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+                <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5">
                   <div className="flex items-center gap-2 mb-2">
                     <HeartHandshake className="w-4 h-4 text-[#00d4aa]" />
-                    <h3 className="text-sm font-semibold text-[#f5f5f5]">
+                    <h3 className="text-sm font-semibold text-[#111827]">
                       Compétences offertes
                     </h3>
                   </div>
-                  <p className="text-sm text-[#a3a3a3] leading-relaxed whitespace-pre-line">
+                  <p className="text-sm text-[#6b7280] leading-relaxed whitespace-pre-line">
                     {profile.passport.offeredSkills}
                   </p>
                 </div>
@@ -282,14 +282,14 @@ export default function ProfileClient({
 
               {/* Aides recherchées */}
               {profile.passport.wantedHelp && (
-                <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5">
+                <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5">
                   <div className="flex items-center gap-2 mb-2">
                     <Target className="w-4 h-4 text-yellow-400" />
-                    <h3 className="text-sm font-semibold text-[#f5f5f5]">
+                    <h3 className="text-sm font-semibold text-[#111827]">
                       Aides recherchées
                     </h3>
                   </div>
-                  <p className="text-sm text-[#a3a3a3] leading-relaxed whitespace-pre-line">
+                  <p className="text-sm text-[#6b7280] leading-relaxed whitespace-pre-line">
                     {profile.passport.wantedHelp}
                   </p>
                 </div>
@@ -298,7 +298,7 @@ export default function ProfileClient({
               {/* Motivations — full width */}
               {profile.passport.motivations && (
                 <div
-                  className={`bg-[#111111] border border-[#262626] rounded-2xl p-5 ${
+                  className={`bg-white border border-[#e5e7eb] rounded-2xl p-5 ${
                     profile.passport.offeredSkills && profile.passport.wantedHelp
                       ? "sm:col-span-2"
                       : ""
@@ -306,11 +306,11 @@ export default function ProfileClient({
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Sparkles className="w-4 h-4 text-purple-400" />
-                    <h3 className="text-sm font-semibold text-[#f5f5f5]">
+                    <h3 className="text-sm font-semibold text-[#111827]">
                       Motivations
                     </h3>
                   </div>
-                  <p className="text-sm text-[#a3a3a3] leading-relaxed whitespace-pre-line">
+                  <p className="text-sm text-[#6b7280] leading-relaxed whitespace-pre-line">
                     {profile.passport.motivations}
                   </p>
                 </div>
@@ -321,7 +321,7 @@ export default function ProfileClient({
 
         {/* Section Services actifs */}
         <section>
-          <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5] mb-3">
+          <h2 className="text-lg font-anton tracking-wide text-[#111827] mb-3">
             Super-pouvoirs proposés
           </h2>
           {hasServices ? (
@@ -338,9 +338,9 @@ export default function ProfileClient({
               ))}
             </div>
           ) : (
-            <div className="bg-[#111111] border border-[#262626] rounded-2xl p-8 text-center">
-              <ShieldQuestion className="w-10 h-10 text-[#5c5c5c] mx-auto mb-2" />
-              <p className="text-sm text-[#5c5c5c] italic">
+            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-8 text-center">
+              <ShieldQuestion className="w-10 h-10 text-[#9ca3af] mx-auto mb-2" />
+              <p className="text-sm text-[#9ca3af] italic">
                 Ce héros n&apos;a pas encore de service actif.
               </p>
             </div>
@@ -349,7 +349,7 @@ export default function ProfileClient({
 
         {/* Section Avis reçus */}
         <section>
-          <h2 className="text-lg font-anton tracking-wide text-[#f5f5f5] mb-3">
+          <h2 className="text-lg font-anton tracking-wide text-[#111827] mb-3">
             Avis de la communauté
           </h2>
           {hasRatings ? (
@@ -367,9 +367,9 @@ export default function ProfileClient({
               ))}
             </div>
           ) : (
-            <div className="bg-[#111111] border border-[#262626] rounded-2xl p-8 text-center">
-              <Sparkles className="w-10 h-10 text-[#5c5c5c] mx-auto mb-2" />
-              <p className="text-sm text-[#5c5c5c] italic">
+            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-8 text-center">
+              <Sparkles className="w-10 h-10 text-[#9ca3af] mx-auto mb-2" />
+              <p className="text-sm text-[#9ca3af] italic">
                 Aucun avis pour le moment.
               </p>
             </div>

@@ -35,9 +35,9 @@ const typeColors: Record<string, string> = {
   quest_complete: "bg-blue-500/10 border-blue-500/20 text-blue-400",
   mission_complete: "bg-yellow-500/10 border-yellow-500/20 text-yellow-400",
   rating_received: "bg-green-500/10 border-green-500/20 text-green-400",
-  impact_milestone: "bg-[#00d4aa]/10 border-[#00d4aa]/20 text-[#00d4aa]",
+  impact_milestone: "bg-tb-accent/10 border-tb-accent/20 text-tb-accent",
   community_milestone: "bg-cyan-500/10 border-cyan-500/20 text-cyan-400",
-  welcome: "bg-[#00d4aa]/10 border-[#00d4aa]/20 text-[#00d4aa]",
+  welcome: "bg-tb-accent/10 border-tb-accent/20 text-tb-accent",
 };
 
 interface AchievementEvent {
@@ -57,12 +57,12 @@ export default function AchievementTimeline({
 }: AchievementTimelineProps) {
   if (achievements.length === 0) {
     return (
-      <div className="rounded-2xl border border-[#262626] bg-[#111111] p-8 text-center">
-        <Trophy className="h-8 w-8 text-[#5c5c5c] mx-auto mb-3" />
-        <p className="text-sm text-[#a3a3a3]">
+      <div className="rounded-2xl border border-tb-border bg-tb-surface p-8 text-center">
+        <Trophy className="h-8 w-8 text-tb-text-muted mx-auto mb-3" />
+        <p className="text-sm text-tb-text-secondary">
           Aucun exploit pour le moment
         </p>
-        <p className="text-xs text-[#5c5c5c] mt-1">
+        <p className="text-xs text-tb-text-muted mt-1">
           Accomplis des actions pour débloquer des succès&nbsp;!
         </p>
       </div>
@@ -72,12 +72,12 @@ export default function AchievementTimeline({
   return (
     <div className="relative">
       {/* Timeline vertical line */}
-      <div className="absolute left-5 top-0 bottom-0 w-px bg-[#262626]" />
+      <div className="absolute left-5 top-0 bottom-0 w-px bg-tb-border" />
 
       <div className="space-y-3">
         {achievements.map((event, idx) => {
           const Icon = typeIconMap[event.type] ?? Star;
-          const colorClass = typeColors[event.type] ?? "bg-[#181818] border-[#262626] text-[#a3a3a3]";
+          const colorClass = typeColors[event.type] ?? "bg-tb-surface border-tb-border text-tb-text-secondary";
 
           return (
             <div key={event.id} className="relative flex items-start gap-4 pl-0">
@@ -91,16 +91,16 @@ export default function AchievementTimeline({
               </div>
 
               {/* Content */}
-              <div className="min-w-0 flex-1 rounded-2xl border border-[#262626] bg-[#111111] p-3.5">
-                <p className="text-sm font-semibold text-[#f5f5f5]">
+              <div className="min-w-0 flex-1 rounded-2xl border border-tb-border bg-tb-surface p-3.5">
+                <p className="text-sm font-semibold text-tb-text-primary">
                   {event.title}
                 </p>
                 {event.description && (
-                  <p className="text-xs text-[#a3a3a3] mt-0.5 line-clamp-2">
+                  <p className="text-xs text-tb-text-secondary mt-0.5 line-clamp-2">
                     {event.description}
                   </p>
                 )}
-                <p className="text-[10px] text-[#5c5c5c] mt-1.5">
+                <p className="text-[10px] text-tb-text-muted mt-1.5">
                   {new Date(event.createdAt).toLocaleDateString("fr-FR", {
                     day: "numeric",
                     month: "short",

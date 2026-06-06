@@ -40,12 +40,12 @@ export default function ServiceNewClient() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      <header className="border-b border-[#262626]">
+    <div className="min-h-screen">
+      <header className="border-b border-tb-border">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
+            <Clock className="w-6 h-6 text-tb-accent" />
+            <span className="font-anton text-lg tracking-wide text-tb-text-primary">
               TimeHeroes
             </span>
           </div>
@@ -55,18 +55,18 @@ export default function ServiceNewClient() {
       <main className="max-w-2xl mx-auto px-4 py-8">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm mb-6"
+          className="inline-flex items-center gap-2 text-tb-text-secondary hover:text-tb-text-primary transition-colors text-sm mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour au tableau de bord
         </Link>
 
-        <div className="bg-[#111111] border border-[#262626] rounded-2xl p-6 sm:p-8">
+        <div className="bg-tb-surface border border-tb-border rounded-2xl p-6 sm:p-8">
           <div className="mb-6">
-            <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5] mb-1">
+            <h1 className="text-2xl font-anton tracking-wide text-tb-text-primary mb-1">
               Proposer un service
             </h1>
-            <span className="font-bangers text-[#00d4aa] text-xs tracking-wider">
+            <span className="font-bangers text-tb-accent text-xs tracking-wider">
               ~ partage ton super-pouvoir avec la communauté et gagne des TIME ~
             </span>
           </div>
@@ -79,7 +79,7 @@ export default function ServiceNewClient() {
             )}
 
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+              <label htmlFor="title" className="block text-sm font-medium text-tb-text-secondary mb-1.5">
                 Titre du service
               </label>
               <input
@@ -87,7 +87,7 @@ export default function ServiceNewClient() {
                 name="title"
                 type="text"
                 placeholder="Aide Next.js pour débutant"
-                className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
               />
               {errors?.title && (
                 <p className="text-red-400 text-xs mt-1">{errors.title[0]}</p>
@@ -95,7 +95,7 @@ export default function ServiceNewClient() {
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+              <label htmlFor="description" className="block text-sm font-medium text-tb-text-secondary mb-1.5">
                 Description
               </label>
               <textarea
@@ -103,7 +103,7 @@ export default function ServiceNewClient() {
                 name="description"
                 rows={4}
                 placeholder="Décris ce que tu proposes en détail…"
-                className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors resize-vertical"
+                className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors resize-vertical"
               />
               {errors?.description && (
                 <p className="text-red-400 text-xs mt-1">{errors.description[0]}</p>
@@ -112,14 +112,14 @@ export default function ServiceNewClient() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+                <label htmlFor="category" className="block text-sm font-medium text-tb-text-secondary mb-1.5">
                   Catégorie
                 </label>
                 <select
                   id="category"
                   name="category"
                   defaultValue=""
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] focus:outline-none focus:border-[#00d4aa] transition-colors appearance-none"
+                  className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors appearance-none"
                 >
                   <option value="" disabled>Choisis une catégorie</option>
                   {CATEGORIES.map((cat) => (
@@ -132,7 +132,7 @@ export default function ServiceNewClient() {
               </div>
 
               <div>
-                <label htmlFor="ratePerHour" className="block text-sm font-medium text-[#a3a3a3] mb-1.5">
+                <label htmlFor="ratePerHour" className="block text-sm font-medium text-tb-text-secondary mb-1.5">
                   Tarif (TIME/h)
                 </label>
                 <input
@@ -142,7 +142,7 @@ export default function ServiceNewClient() {
                   min="1"
                   step="1"
                   placeholder="2"
-                  className="w-full bg-[#181818] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                  className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
                 />
                 {errors?.ratePerHour && (
                   <p className="text-red-400 text-xs mt-1">{errors.ratePerHour[0]}</p>
@@ -153,7 +153,7 @@ export default function ServiceNewClient() {
             <button
               type="submit"
               disabled={pending}
-              className="w-full bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl py-3 transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl py-3 transition-colors flex items-center justify-center gap-2"
             >
               {pending ? (
                 <>

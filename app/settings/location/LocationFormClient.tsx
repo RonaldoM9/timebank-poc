@@ -101,19 +101,19 @@ export default function LocationFormClient({
   const previewText = getPreview();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#f9fafb]">
       {/* Header */}
-      <header className="border-b border-[#262626]">
+      <header className="border-b border-[#e5e7eb]">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Clock className="w-6 h-6 text-[#00d4aa]" />
-            <span className="font-anton text-lg tracking-wide text-[#f5f5f5]">
+            <span className="font-anton text-lg tracking-wide text-[#111827]">
               TimeHeroes
             </span>
           </div>
           <Link
             href="/dashboard"
-            className="flex items-center gap-1.5 text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors text-sm"
+            className="flex items-center gap-1.5 text-[#6b7280] hover:text-[#111827] transition-colors text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour
@@ -127,10 +127,10 @@ export default function LocationFormClient({
             <MapPin className="w-5 h-5 text-[#00d4aa]" />
           </div>
           <div>
-            <h1 className="text-2xl font-anton tracking-wide text-[#f5f5f5]">
+            <h1 className="text-2xl font-anton tracking-wide text-[#111827]">
               Ma zone d&apos;intervention
             </h1>
-            <p className="text-[#a3a3a3] text-sm">
+            <p className="text-[#6b7280] text-sm">
               Renseigne ta localisation pour apparaître comme héros local
             </p>
           </div>
@@ -138,7 +138,7 @@ export default function LocationFormClient({
 
         {/* RGPD notice */}
         <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-xl p-4 mb-6">
-          <p className="text-[#a3a3a3] text-xs leading-relaxed">
+          <p className="text-[#6b7280] text-xs leading-relaxed">
             <span className="text-[#00d4aa] font-semibold">🔒 Vie privée :</span>{" "}
             Votre localisation reste approximative. Elle sert uniquement à aider les membres
             à trouver des héros proches. Votre adresse exacte n&apos;est jamais demandée ni
@@ -163,22 +163,22 @@ export default function LocationFormClient({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* City */}
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-1.5">
-              Ville <span className="text-[#5c5c5c]">(optionnel)</span>
+            <label className="block text-sm text-[#6b7280] mb-1.5">
+              Ville <span className="text-[#9ca3af]">(optionnel)</span>
             </label>
             <input
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="Ex: Écouen"
-              className="w-full bg-[#111111] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
             />
           </div>
 
           {/* Postal Code */}
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-1.5">
-              Code postal <span className="text-[#5c5c5c]">(optionnel)</span>
+            <label className="block text-sm text-[#6b7280] mb-1.5">
+              Code postal <span className="text-[#9ca3af]">(optionnel)</span>
             </label>
             <input
               type="text"
@@ -186,10 +186,10 @@ export default function LocationFormClient({
               onChange={(e) => setPostalCode(e.target.value)}
               placeholder="Ex: 95440"
               maxLength={5}
-              className="w-full bg-[#111111] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
             />
             {fieldErrors?.postalCode && (
-              <p className="text-red-400 text-xs mt-1">
+              <p className="text-red-600 text-xs mt-1">
                 {fieldErrors.postalCode[0]}
               </p>
             )}
@@ -197,46 +197,46 @@ export default function LocationFormClient({
 
           {/* Department */}
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-1.5">
-              Département <span className="text-[#5c5c5c]">(optionnel)</span>
+            <label className="block text-sm text-[#6b7280] mb-1.5">
+              Département <span className="text-[#9ca3af]">(optionnel)</span>
             </label>
             <input
               type="text"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               placeholder="Ex: Val-d'Oise"
-              className="w-full bg-[#111111] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
             />
           </div>
 
           {/* Region */}
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-1.5">
-              Région <span className="text-[#5c5c5c]">(optionnel)</span>
+            <label className="block text-sm text-[#6b7280] mb-1.5">
+              Région <span className="text-[#9ca3af]">(optionnel)</span>
             </label>
             <input
               type="text"
               value={region}
               onChange={(e) => setRegion(e.target.value)}
               placeholder="Ex: Île-de-France"
-              className="w-full bg-[#111111] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
             />
           </div>
 
           {/* Country */}
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-1.5">Pays</label>
+            <label className="block text-sm text-[#6b7280] mb-1.5">Pays</label>
             <input
               type="text"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="w-full bg-[#111111] border border-[#262626] rounded-xl px-4 py-2.5 text-[#f5f5f5] placeholder:text-[#5c5c5c] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
             />
           </div>
 
           {/* Service radius */}
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-1.5">
+            <label className="block text-sm text-[#6b7280] mb-1.5">
               Rayon d&apos;intervention
             </label>
             <div className="flex gap-2">
@@ -248,7 +248,7 @@ export default function LocationFormClient({
                   className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-all ${
                     serviceRadiusKm === r.toString()
                       ? "bg-[#00d4aa]/10 border-[#00d4aa] text-[#00d4aa]"
-                      : "bg-[#111111] border-[#262626] text-[#a3a3a3] hover:border-[#5c5c5c]"
+                      : "bg-white border-[#e5e7eb] text-[#6b7280] hover:border-[#9ca3af]"
                   }`}
                 >
                   {r} km
@@ -259,7 +259,7 @@ export default function LocationFormClient({
 
           {/* Location visibility */}
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-1.5">
+            <label className="block text-sm text-[#6b7280] mb-1.5">
               Visibilité publique
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -271,7 +271,7 @@ export default function LocationFormClient({
                   className={`py-2.5 rounded-xl border text-sm font-medium transition-all ${
                     locationVisibility === v.value
                       ? "bg-[#00d4aa]/10 border-[#00d4aa] text-[#00d4aa]"
-                      : "bg-[#111111] border-[#262626] text-[#a3a3a3] hover:border-[#5c5c5c]"
+                      : "bg-white border-[#e5e7eb] text-[#6b7280] hover:border-[#9ca3af]"
                   }`}
                 >
                   {v.label}
@@ -282,12 +282,12 @@ export default function LocationFormClient({
 
           {/* Preview */}
           {previewText !== "—" && (
-            <div className="bg-[#181818] border border-[#262626] rounded-xl p-4">
-              <p className="text-xs text-[#5c5c5c] mb-1">Aperçu public :</p>
-              <p className="text-sm text-[#f5f5f5] font-medium">
+            <div className="bg-white border border-[#e5e7eb] rounded-xl p-4">
+              <p className="text-xs text-[#9ca3af] mb-1">Aperçu public :</p>
+              <p className="text-sm text-[#111827] font-medium">
                 {previewText}
                 {locationVisibility === "city" && serviceRadiusKm && (
-                  <span className="text-[#a3a3a3] font-normal">
+                  <span className="text-[#6b7280] font-normal">
                     {" "}· {serviceRadiusKm} km
                   </span>
                 )}
@@ -304,7 +304,7 @@ export default function LocationFormClient({
               onChange={(e) => setAvailableOnline(e.target.checked)}
               className="w-4 h-4 accent-[#00d4aa]"
             />
-            <label htmlFor="availableOnline" className="text-sm text-[#f5f5f5]">
+            <label htmlFor="availableOnline" className="text-sm text-[#111827]">
               Disponible aussi en ligne
             </label>
           </div>

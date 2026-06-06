@@ -49,12 +49,12 @@ export default function ConnectedHeader() {
   const ALL_NAV = buildNav(isFacilitator);
 
   return (
-    <header className="border-b border-[#262626] bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-50">
+    <header className="border-b border-tb-border bg-tb-bg/80 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2 group shrink-0">
-          <Clock className="w-5 h-5 text-[#00d4aa] group-hover:text-[#00b894] transition-colors" />
-          <span className="font-anton text-lg tracking-wide text-[#f5f5f5] hidden sm:inline">
+          <Clock className="w-5 h-5 text-tb-accent group-hover:text-tb-accent-hover transition-colors" />
+          <span className="font-anton text-lg tracking-wide text-tb-text-primary hidden sm:inline">
             TimeHeroes
           </span>
         </Link>
@@ -62,7 +62,7 @@ export default function ConnectedHeader() {
         {/* Desktop right side — nom + Menu ▼ */}
         <div className="hidden md:flex items-center gap-3">
           {session?.user?.name && (
-            <span className="text-xs text-[#5c5c5c] truncate max-w-[120px]">
+            <span className="text-xs text-tb-text-muted truncate max-w-[120px]">
               {session.user.name}
             </span>
           )}
@@ -70,7 +70,7 @@ export default function ConnectedHeader() {
           <div className="relative">
             <button
               onClick={() => setDesktopMoreOpen((prev) => !prev)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#a3a3a3] hover:text-[#f5f5f5] hover:bg-[#181818] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-tb-text-secondary hover:text-tb-text-primary hover:bg-tb-surface-elevated transition-colors"
               aria-label="Plus de menus"
               aria-expanded={desktopMoreOpen}
             >
@@ -86,19 +86,19 @@ export default function ConnectedHeader() {
                   className="fixed inset-0 z-10"
                   onClick={() => setDesktopMoreOpen(false)}
                 />
-                <div className="absolute top-full right-0 mt-1 w-56 bg-[#111111] border border-[#262626] rounded-xl shadow-xl z-20 py-2">
+                <div className="absolute top-full right-0 mt-1 w-56 bg-tb-surface border border-tb-border rounded-xl shadow-xl z-20 py-2">
                   {ALL_NAV.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setDesktopMoreOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm text-[#a3a3a3] hover:text-[#f5f5f5] hover:bg-[#181818] transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-tb-text-secondary hover:text-tb-text-primary hover:bg-tb-surface-elevated transition-colors"
                     >
                       <link.icon className="w-4 h-4" />
                       <span>{link.label}</span>
                     </Link>
                   ))}
-                  <hr className="border-[#262626] my-2" />
+                  <hr className="border-tb-border my-2" />
                   <button
                     onClick={() => {
                       setDesktopMoreOpen(false);
@@ -117,7 +117,7 @@ export default function ConnectedHeader() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
+          className="md:hidden text-tb-text-secondary hover:text-tb-text-primary transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={mobileMenuOpen}
@@ -128,23 +128,23 @@ export default function ConnectedHeader() {
 
       {/* Mobile menu — tous les liens */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#262626] bg-[#111111] max-h-[80vh] overflow-y-auto">
+        <div className="md:hidden border-t border-tb-border bg-tb-surface max-h-[80vh] overflow-y-auto">
           <nav className="flex flex-col px-4 py-3 gap-1">
             {ALL_NAV.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-[#a3a3a3] hover:text-[#f5f5f5] hover:bg-[#181818] transition-colors"
+                className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-tb-text-secondary hover:text-tb-text-primary hover:bg-tb-surface-elevated transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <link.icon className="w-5 h-5" />
                 <span>{link.label}</span>
               </Link>
             ))}
-            <hr className="border-[#262626] my-2" />
+            <hr className="border-tb-border my-2" />
             <div className="px-3 py-2">
               {session?.user?.name && (
-                <p className="text-xs text-[#5c5c5c] mb-2">{session.user.name}</p>
+                <p className="text-xs text-tb-text-muted mb-2">{session.user.name}</p>
               )}
               <button
                 onClick={() => {

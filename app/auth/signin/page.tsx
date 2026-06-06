@@ -18,24 +18,24 @@ export default async function SigninPage(props: {
   const errorMsg = error ? errorMessages[error] || "Erreur inconnue" : null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: "#0a0a0a", color: "#f5f5f5" }}>
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-3 mb-4">
-            <Clock className="w-8 h-8" style={{ color: "#00d4aa" }} />
-            <h1 className="text-3xl tracking-wide" style={{ fontFamily: anton.style.fontFamily, color: "#f5f5f5" }}>
+            <Clock className="w-8 h-8 text-tb-accent" />
+            <h1 className="text-3xl tracking-wide text-tb-text-primary" style={{ fontFamily: anton.style.fontFamily }}>
               TimeHeroes
             </h1>
           </div>
-          <p className="text-sm" style={{ color: "#a3a3a3" }}>
+          <p className="text-sm text-tb-text-secondary">
             Content de vous revoir
           </p>
         </div>
 
         {/* Card */}
-        <div className="border rounded-2xl p-8" style={{ backgroundColor: "#111111", borderColor: "#262626" }}>
-          <h2 className="text-xl font-semibold mb-6">Connexion</h2>
+        <div className="bg-tb-surface border border-tb-border rounded-2xl p-8">
+          <h2 className="text-xl font-semibold mb-6 text-tb-text-primary">Connexion</h2>
 
           {errorMsg && (
             <div className="mb-4 border rounded-xl px-4 py-2.5 text-sm" style={{ backgroundColor: "rgba(220,38,38,0.2)", borderColor: "rgba(220,38,38,0.4)", color: "#f87171" }}>
@@ -46,71 +46,59 @@ export default async function SigninPage(props: {
           {/* Native HTML form — POST to custom login endpoint (no CSRF needed) */}
           <form action="/api/auth/login" method="POST" className="space-y-4">
             <div>
-              <label className="block text-sm mb-1.5" style={{ color: "#a3a3a3" }}>
+              <label className="block text-sm mb-1.5 text-tb-text-secondary">
                 Email
               </label>
               <input
                 type="email"
                 name="email"
                 required
-                className="w-full border rounded-xl px-4 py-2.5"
-                style={{
-                  backgroundColor: "#181818",
-                  borderColor: "#262626",
-                  color: "#f5f5f5",
-                }}
+                className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary"
                 placeholder="vous@exemple.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm mb-1.5" style={{ color: "#a3a3a3" }}>
+              <label className="block text-sm mb-1.5 text-tb-text-secondary">
                 Mot de passe
               </label>
               <input
                 type="password"
                 name="password"
                 required
-                className="w-full border rounded-xl px-4 py-2.5"
-                style={{
-                  backgroundColor: "#181818",
-                  borderColor: "#262626",
-                  color: "#f5f5f5",
-                }}
+                className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary"
                 placeholder="Votre mot de passe"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full font-semibold rounded-xl px-4 py-3 transition-colors"
-              style={{ backgroundColor: "#00d4aa", color: "#0a0a0a" }}
+              className="w-full font-semibold rounded-xl px-4 py-3 transition-colors bg-tb-accent text-white"
             >
               Se connecter
             </button>
           </form>
 
           {/* ─── Connexion démo 1-clic ── */}
-          <div className="mt-6 pt-6 border-t" style={{ borderColor: "#262626" }}>
+          <div className="mt-6 pt-6 border-t border-tb-border">
             <form action="/api/auth/login" method="POST" className="space-y-2">
               <input type="hidden" name="email" value="demo@timeheroes.fr" />
               <input type="hidden" name="password" value="TimeHeroes2026!" />
               <button
                 type="submit"
-                className="w-full font-semibold rounded-xl px-4 py-3 transition-colors text-sm"
-                style={{ backgroundColor: "#1a3a2a", border: "1px solid #00d4aa", color: "#00d4aa" }}
+                className="w-full font-semibold rounded-xl px-4 py-3 transition-colors text-sm bg-tb-surface border border-tb-accent text-tb-accent"
               >
                 ⚡ Connexion démo
               </button>
             </form>
-            <p className="text-xs mt-2 text-center" style={{ color: "#666" }}>
+            <p className="text-xs mt-2 text-center text-tb-text-muted">
               Compte démo : demo@timeheroes.fr / TimeHeroes2026!
             </p>
           </div>
 
-          <p className="text-center text-sm mt-6" style={{ color: "#a3a3a3" }}>
+          <p className="text-center text-sm mt-6 text-tb-text-secondary">
             Pas encore de compte ?{" "}
-            <a href="/auth/signup" style={{ color: "#00d4aa" }}>
+            <a href="/auth/signup" className="text-tb-accent hover:text-tb-accent-hover">
               S&apos;inscrire
             </a>
           </p>
@@ -119,10 +107,9 @@ export default async function SigninPage(props: {
         {/* Comics badge */}
         <div className="text-center mt-6">
           <span
-            className="text-xs tracking-wider"
+            className="text-xs tracking-wider text-tb-accent"
             style={{
               fontFamily: bangers.style.fontFamily,
-              color: "#00d4aa",
               opacity: 0.6,
             }}
           >

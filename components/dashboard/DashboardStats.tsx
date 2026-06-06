@@ -23,7 +23,7 @@ const WIDGETS: WidgetConfig[] = [
     shortLabel: "TIME",
     icon: <Clock className="w-5 h-5" />,
     href: "/wallet",
-    accent: "from-[#00d4aa]/20 to-[#00b894]/5 border-[#00d4aa]/30",
+    accent: "from-tb-accent/20 to-tb-accent-hover/5 border-tb-accent/30",
     emptyMessage: "Ton wallet est vide, propose un service pour gagner des TIME",
     formatValue: (v) => `${v} TIME`,
   },
@@ -71,7 +71,7 @@ const MOBILE_PRIMARY_KEYS: (keyof DashboardStatsType)[] = [
 ];
 
 const ICON_BG: Record<string, string> = {
-  "TIME disponible": "bg-[#00d4aa]/10 text-[#00d4aa]",
+  "TIME disponible": "bg-tb-accent/10 text-tb-accent",
   "Missions reçues": "bg-blue-500/10 text-blue-400",
   "Missions demandées": "bg-purple-500/10 text-purple-400",
   Messages: "bg-amber-500/10 text-amber-400",
@@ -102,7 +102,7 @@ export default function DashboardStats({
             <Link
               key={key}
               href={w.href}
-              className={`flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all ${value === 0 ? "opacity-70" : ""}`}
+              className={`flex items-center gap-3 bg-tb-surface border border-tb-border rounded-xl px-3 py-3 hover:border-tb-accent/30 transition-all ${value === 0 ? "opacity-70" : ""}`}
             >
               {/* Icon */}
               <div
@@ -112,10 +112,10 @@ export default function DashboardStats({
               </div>
               {/* Value + label */}
               <div className="min-w-0">
-                <div className="text-lg font-bold text-[#f5f5f5] leading-tight">
+                <div className="text-lg font-bold text-tb-text-primary leading-tight">
                   {displayValue}
                 </div>
-                <div className="text-[11px] text-[#a3a3a3] font-medium truncate">
+                <div className="text-[11px] text-tb-text-secondary font-medium truncate">
                   {w.shortLabel}
                   {key === "unreadMessagesCount" && value > 0 && (
                     <span className="text-amber-400 ml-1">
@@ -132,7 +132,7 @@ export default function DashboardStats({
       {/* ─── MOBILE: Activity summary (hidden on md+) ─── */}
       <div className="md:hidden">
         {hasActions ? (
-          <p className="text-sm text-[#a3a3a3]">
+          <p className="text-sm text-tb-text-secondary">
             Tu as{" "}
             {[
               stats.todoActionsCount > 0 &&
@@ -145,7 +145,7 @@ export default function DashboardStats({
             .
           </p>
         ) : (
-          <p className="text-sm text-[#5c5c5c]">
+          <p className="text-sm text-tb-text-muted">
             Tout est à jour. Tu peux explorer les missions proches de toi.
           </p>
         )}
@@ -155,7 +155,7 @@ export default function DashboardStats({
       <div className="md:hidden">
         <button
           onClick={() => setAccordionOpen(!accordionOpen)}
-          className="w-full flex items-center justify-between gap-2 bg-[#111111] border border-[#262626] rounded-xl px-4 py-2.5 text-sm text-[#a3a3a3] hover:text-[#f5f5f5] hover:border-[#00d4aa]/30 transition-all"
+          className="w-full flex items-center justify-between gap-2 bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-sm text-tb-text-secondary hover:text-tb-text-primary hover:border-tb-accent/30 transition-all"
         >
           <span>Voir plus de statistiques</span>
           <ChevronDown
@@ -173,14 +173,14 @@ export default function DashboardStats({
                 <Link
                   key="requestedBookingsCount"
                   href={w.href}
-                  className="flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all"
+                  className="flex items-center gap-3 bg-tb-surface border border-tb-border rounded-xl px-3 py-3 hover:border-tb-accent/30 transition-all"
                 >
                   <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center ${ICON_BG[w.title]}`}>
                     {w.icon}
                   </div>
                   <div className="min-w-0">
-                    <div className="text-lg font-bold text-[#f5f5f5] leading-tight">{value}</div>
-                    <div className="text-[11px] text-[#a3a3a3] font-medium truncate">{w.shortLabel}</div>
+                    <div className="text-lg font-bold text-tb-text-primary leading-tight">{value}</div>
+                    <div className="text-[11px] text-tb-text-secondary font-medium truncate">{w.shortLabel}</div>
                   </div>
                 </Link>
               );
@@ -189,42 +189,42 @@ export default function DashboardStats({
             {/* Lien vers le profil/récompenses */}
             <Link
               href="/rewards"
-              className="flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all"
+              className="flex items-center gap-3 bg-tb-surface border border-tb-border rounded-xl px-3 py-3 hover:border-tb-accent/30 transition-all"
             >
               <div className="w-8 h-8 shrink-0 rounded-lg bg-yellow-500/10 flex items-center justify-center">
                 <span className="text-yellow-400 text-sm font-bold">XP</span>
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-bold text-[#f5f5f5] leading-tight">Progression</div>
-                <div className="text-[11px] text-[#a3a3a3] font-medium truncate">Niveau & badges</div>
+                <div className="text-sm font-bold text-tb-text-primary leading-tight">Progression</div>
+                <div className="text-[11px] text-tb-text-secondary font-medium truncate">Niveau & badges</div>
               </div>
             </Link>
 
             {/* Lien vers les avis */}
             <Link
               href="/ratings"
-              className="flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all"
+              className="flex items-center gap-3 bg-tb-surface border border-tb-border rounded-xl px-3 py-3 hover:border-tb-accent/30 transition-all"
             >
               <div className="w-8 h-8 shrink-0 rounded-lg bg-yellow-400/10 flex items-center justify-center">
                 <span className="text-yellow-400 text-sm">⭐</span>
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-bold text-[#f5f5f5] leading-tight">Réputation</div>
-                <div className="text-[11px] text-[#a3a3a3] font-medium truncate">Avis reçus</div>
+                <div className="text-sm font-bold text-tb-text-primary leading-tight">Réputation</div>
+                <div className="text-[11px] text-tb-text-secondary font-medium truncate">Avis reçus</div>
               </div>
             </Link>
 
             {/* Lien vers l'impact */}
             <Link
               href="/impact"
-              className="flex items-center gap-3 bg-[#111111] border border-[#262626] rounded-xl px-3 py-3 hover:border-[#00d4aa]/30 transition-all"
+              className="flex items-center gap-3 bg-tb-surface border border-tb-border rounded-xl px-3 py-3 hover:border-tb-accent/30 transition-all"
             >
-              <div className="w-8 h-8 shrink-0 rounded-lg bg-[#00d4aa]/10 flex items-center justify-center">
-                <span className="text-[#00d4aa] text-sm font-bold">🌍</span>
+              <div className="w-8 h-8 shrink-0 rounded-lg bg-tb-accent/10 flex items-center justify-center">
+                <span className="text-tb-accent text-sm font-bold">🌍</span>
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-bold text-[#f5f5f5] leading-tight">Impact</div>
-                <div className="text-[11px] text-[#a3a3a3] font-medium truncate">Ton engagement</div>
+                <div className="text-sm font-bold text-tb-text-primary leading-tight">Impact</div>
+                <div className="text-[11px] text-tb-text-secondary font-medium truncate">Ton engagement</div>
               </div>
             </Link>
           </div>
@@ -243,7 +243,7 @@ export default function DashboardStats({
             <Link
               key={w.key}
               href={w.href}
-              className={`group relative bg-[#111111] border border-[#262626] rounded-xl p-4 hover:border-[#00d4aa]/30 transition-all overflow-hidden ${
+              className={`group relative bg-tb-surface border border-tb-border rounded-xl p-4 hover:border-tb-accent/30 transition-all overflow-hidden ${
                 value === 0 ? "opacity-70" : ""
               }`}
             >
@@ -263,18 +263,18 @@ export default function DashboardStats({
                 </div>
 
                 {/* Value */}
-                <div className="text-2xl font-bold text-[#f5f5f5] group-hover:text-[#00d4aa] transition-colors">
+                <div className="text-2xl font-bold text-tb-text-primary group-hover:text-tb-accent transition-colors">
                   {displayValue}
                 </div>
 
                 {/* Label */}
-                <div className="text-xs text-[#a3a3a3] font-medium">
+                <div className="text-xs text-tb-text-secondary font-medium">
                   {w.title}
                 </div>
 
                 {/* Empty state hint */}
                 {value === 0 && (
-                  <div className="text-[10px] text-[#5c5c5c] leading-tight pt-1">
+                  <div className="text-[10px] text-tb-text-muted leading-tight pt-1">
                     {w.emptyMessage}
                   </div>
                 )}
@@ -292,9 +292,9 @@ export default function DashboardStats({
       </div>
 
       {/* ─── DESKTOP: Activity summary (hidden on <md) ─── */}
-      <div className="hidden md:block bg-[#111111] border border-[#262626] rounded-xl px-4 py-3">
+      <div className="hidden md:block bg-tb-surface border border-tb-border rounded-xl px-4 py-3">
         {hasActions ? (
-          <p className="text-sm text-[#a3a3a3]">
+          <p className="text-sm text-tb-text-secondary">
             Tu as{" "}
             {[
               stats.todoActionsCount > 0 &&
@@ -307,7 +307,7 @@ export default function DashboardStats({
             .
           </p>
         ) : (
-          <p className="text-sm text-[#5c5c5c]">
+          <p className="text-sm text-tb-text-muted">
             Tout est à jour. Continue à proposer ton aide ou découvre les
             missions proches de toi.
           </p>
