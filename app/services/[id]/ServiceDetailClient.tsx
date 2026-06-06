@@ -102,7 +102,7 @@ export default function ServiceDetailClient({ service, isOwner }: { service: Ser
           </div>
 
           {/* Provider info */}
-          <div className="bg-[#181818] border border-tb-border rounded-xl p-4 mb-6">
+          <div className="bg-tb-surface border border-tb-border rounded-xl p-4 mb-6">
             <h2 className="text-xs font-semibold text-tb-text-secondary mb-2 uppercase tracking-wider flex items-center gap-1.5">
               <Shield className="w-3.5 h-3.5" />
               À propos du héros

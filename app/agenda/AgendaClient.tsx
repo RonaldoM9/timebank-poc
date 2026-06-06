@@ -75,7 +75,7 @@ function AgendaCard({
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold text-[#111827] truncate group-hover:text-[#00d4aa] transition-colors">
+              <h3 className="font-semibold text-[#111827] truncate group-hover:text-tb-accent transition-colors">
                 {booking.service.title}
               </h3>
               <StatusBadge status={booking.status} />
@@ -100,7 +100,7 @@ function AgendaCard({
               Date non définie
             </span>
           )}
-          <span className="text-[#00d4aa] font-semibold">
+          <span className="text-tb-accent font-semibold">
             {booking.totalTime} TIME
           </span>
         </div>
@@ -135,7 +135,7 @@ export default function AgendaClient({
           <p className="text-[#6b7280] text-sm">
             Retrouve toutes tes missions à venir et passées, {userName}.
           </p>
-          <span className="inline-block mt-2 font-bangers text-[#00d4aa] text-xs tracking-wider opacity-60">
+          <span className="inline-block mt-2 font-bangers text-tb-accent text-xs tracking-wider opacity-60">
             ~ organise ton temps de héros ~
           </span>
         </div>
@@ -156,7 +156,7 @@ export default function AgendaClient({
                 <h2 className="text-lg font-semibold text-[#111827]">
                   Missions à venir
                 </h2>
-                <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-60">
+                <span className="font-bangers text-tb-accent text-xs tracking-wider opacity-60">
                   ~ à l&apos;horizon ~
                 </span>
               </div>
@@ -176,7 +176,7 @@ export default function AgendaClient({
                 <h2 className="text-lg font-semibold text-[#111827]">
                   Missions passées
                 </h2>
-                <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-60">
+                <span className="font-bangers text-tb-accent text-xs tracking-wider opacity-60">
                   ~ accomplissements ~
                 </span>
               </div>
@@ -194,7 +194,7 @@ export default function AgendaClient({
 
         {/* Comics footer */}
         <div className="text-center pt-6">
-          <span className="font-bangers text-[#00d4aa] text-xs tracking-wider opacity-40">
+          <span className="font-bangers text-tb-accent text-xs tracking-wider opacity-40">
             ~ chaque mission accomplie rend le monde meilleur ~
           </span>
         </div>

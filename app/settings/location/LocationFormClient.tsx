@@ -106,7 +106,7 @@ export default function LocationFormClient({
       <header className="border-b border-[#e5e7eb]">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
+            <Clock className="w-6 h-6 text-tb-accent" />
             <span className="font-anton text-lg tracking-wide text-[#111827]">
               TimeHeroes
             </span>
@@ -123,8 +123,8 @@ export default function LocationFormClient({
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-[#00d4aa]/10 flex items-center justify-center">
-            <MapPin className="w-5 h-5 text-[#00d4aa]" />
+          <div className="w-10 h-10 rounded-xl bg-tb-accent/10 flex items-center justify-center">
+            <MapPin className="w-5 h-5 text-tb-accent" />
           </div>
           <div>
             <h1 className="text-2xl font-anton tracking-wide text-[#111827]">
@@ -137,9 +137,9 @@ export default function LocationFormClient({
         </div>
 
         {/* RGPD notice */}
-        <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-xl p-4 mb-6">
+        <div className="bg-[#00d4aa]/5 border border-tb-accent/20 rounded-xl p-4 mb-6">
           <p className="text-[#6b7280] text-xs leading-relaxed">
-            <span className="text-[#00d4aa] font-semibold">🔒 Vie privée :</span>{" "}
+            <span className="text-tb-accent font-semibold">🔒 Vie privée :</span>{" "}
             Votre localisation reste approximative. Elle sert uniquement à aider les membres
             à trouver des héros proches. Votre adresse exacte n&apos;est jamais demandée ni
             affichée.
@@ -147,8 +147,8 @@ export default function LocationFormClient({
         </div>
 
         {success && (
-          <div className="bg-[#00d4aa]/10 border border-[#00d4aa]/30 rounded-xl p-4 mb-6 text-center">
-            <p className="text-[#00d4aa] text-sm font-semibold">
+          <div className="bg-tb-accent/10 border border-tb-accent/30 rounded-xl p-4 mb-6 text-center">
+            <p className="text-tb-accent text-sm font-semibold">
               ✅ Localisation sauvegardée ! Redirection vers le tableau de bord…
             </p>
           </div>
@@ -171,7 +171,7 @@ export default function LocationFormClient({
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="Ex: Écouen"
-              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-tb-accent transition-colors text-sm"
             />
           </div>
 
@@ -186,7 +186,7 @@ export default function LocationFormClient({
               onChange={(e) => setPostalCode(e.target.value)}
               placeholder="Ex: 95440"
               maxLength={5}
-              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-tb-accent transition-colors text-sm"
             />
             {fieldErrors?.postalCode && (
               <p className="text-red-600 text-xs mt-1">
@@ -205,7 +205,7 @@ export default function LocationFormClient({
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               placeholder="Ex: Val-d'Oise"
-              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-tb-accent transition-colors text-sm"
             />
           </div>
 
@@ -219,7 +219,7 @@ export default function LocationFormClient({
               value={region}
               onChange={(e) => setRegion(e.target.value)}
               placeholder="Ex: Île-de-France"
-              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-tb-accent transition-colors text-sm"
             />
           </div>
 
@@ -230,7 +230,7 @@ export default function LocationFormClient({
               type="text"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#00d4aa] transition-colors text-sm"
+              className="w-full bg-white border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:border-tb-accent transition-colors text-sm"
             />
           </div>
 
@@ -247,7 +247,7 @@ export default function LocationFormClient({
                   onClick={() => setServiceRadiusKm(r.toString())}
                   className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-all ${
                     serviceRadiusKm === r.toString()
-                      ? "bg-[#00d4aa]/10 border-[#00d4aa] text-[#00d4aa]"
+                      ? "bg-tb-accent/10 border-tb-accent text-tb-accent"
                       : "bg-white border-[#e5e7eb] text-[#6b7280] hover:border-[#9ca3af]"
                   }`}
                 >
@@ -270,7 +270,7 @@ export default function LocationFormClient({
                   onClick={() => setLocationVisibility(v.value)}
                   className={`py-2.5 rounded-xl border text-sm font-medium transition-all ${
                     locationVisibility === v.value
-                      ? "bg-[#00d4aa]/10 border-[#00d4aa] text-[#00d4aa]"
+                      ? "bg-tb-accent/10 border-tb-accent text-tb-accent"
                       : "bg-white border-[#e5e7eb] text-[#6b7280] hover:border-[#9ca3af]"
                   }`}
                 >

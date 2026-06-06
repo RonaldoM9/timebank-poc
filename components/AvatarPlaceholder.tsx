@@ -21,7 +21,7 @@ export default function AvatarPlaceholder({ name, size = "xl" }: AvatarPlacehold
 
   return (
     <div
-      className={`${sizes[size]} rounded-full bg-gradient-to-br from-[#00d4aa]/20 to-[#00b894]/10 border border-[#00d4aa]/30 flex items-center justify-center font-anton tracking-wider text-[#00d4aa]`}
+      className={`${sizes[size]} rounded-full bg-gradient-to-br from-tb-accent/20 to-tb-accent-hover/10 border border-tb-accent/30 flex items-center justify-center font-anton tracking-wider text-tb-accent`}
     >
       {initials}
     </div>

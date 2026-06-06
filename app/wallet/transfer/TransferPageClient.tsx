@@ -114,7 +114,7 @@ export default function TransferPageClient({
                 name="recipientEmail"
                 required
                 placeholder="hero@exemple.com"
-                className="w-full rounded-xl border border-tb-border bg-[#181818] px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
+                className="w-full rounded-xl border border-tb-border bg-tb-bg px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
               />
             </div>
 
@@ -134,7 +134,7 @@ export default function TransferPageClient({
                 min="1"
                 max={timeBalance}
                 placeholder="0"
-                className="w-full rounded-xl border border-tb-border bg-[#181818] px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
+                className="w-full rounded-xl border border-tb-border bg-tb-bg px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
               />
               <p className="text-[10px] text-tb-text-muted mt-1">
                 Maximum : {timeBalance} TIME

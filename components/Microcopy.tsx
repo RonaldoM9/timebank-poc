@@ -22,8 +22,8 @@ export function Microcopy({ term }: { term: keyof typeof MICROCOPIES }) {
 
   return (
     <span className="group relative inline-flex items-center">
-      <Info className="w-3.5 h-3.5 text-[#5c5c5c] hover:text-[#00d4aa] cursor-help transition-colors ml-1" />
-      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2.5 rounded-xl bg-[#181818] border border-[#262626] text-[10px] leading-relaxed text-[#a3a3a3] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl whitespace-normal text-left">
+      <Info className="w-3.5 h-3.5 text-[#5c5c5c] hover:text-tb-accent cursor-help transition-colors ml-1" />
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2.5 rounded-xl bg-tb-surface border border-tb-border text-[10px] leading-relaxed text-tb-text-secondary opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl whitespace-normal text-left">
         {explanation}
       </span>
     </span>

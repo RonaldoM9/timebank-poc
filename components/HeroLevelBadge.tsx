@@ -8,7 +8,7 @@ const levelColors: Record<number, string> = {
   1: "text-blue-400 border-blue-500/30",
   2: "text-purple-400 border-purple-500/30",
   3: "text-orange-400 border-orange-500/30",
-  4: "text-[#00d4aa] border-[#00d4aa]/30",
+  4: "text-tb-accent border-tb-accent/30",
 };
 
 const levelBgColors: Record<number, string> = {
@@ -31,8 +31,8 @@ export default function HeroLevelBadge({ level }: HeroLevelBadgeProps) {
     <div
       className={`inline-flex items-center gap-3 rounded-2xl border px-4 py-3 ${borderColor} ${bgColor}`}
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#181818] border border-[#262626]">
-        <Shield className="h-5 w-5 text-[#00d4aa]" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-tb-surface-elevated border border-tb-border">
+        <Shield className="h-5 w-5 text-tb-accent" />
       </div>
       <div>
         <p className="font-bangers text-[10px] tracking-widest text-[#a3a3a3] uppercase">

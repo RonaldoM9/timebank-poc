@@ -57,7 +57,7 @@ export default function NFCCompleteClient({
       <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center p-4">
         <div className="bg-[#ffffff] border border-[#e5e5e5] rounded-2xl p-8 max-w-md w-full text-center">
           <div className="w-16 h-16 bg-[#00d4aa]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-[#00d4aa]" />
+            <CheckCircle className="w-8 h-8 text-tb-accent" />
           </div>
           <h1 className="text-2xl font-anton tracking-wide text-[#111111] mb-2">
             Mission validée par NFC
@@ -109,7 +109,7 @@ export default function NFCCompleteClient({
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-3">
-            <Smartphone className="w-6 h-6 text-[#00d4aa]" />
+            <Smartphone className="w-6 h-6 text-tb-accent" />
             <span className="font-anton text-lg tracking-wide text-[#111111]">
               Validation NFC
             </span>
@@ -131,8 +131,8 @@ export default function NFCCompleteClient({
           {booking && (
             <>
               <div className="flex items-center gap-2 mb-4">
-                <Smartphone className="w-4 h-4 text-[#00d4aa]" />
-                <span className="text-xs text-[#00d4aa] font-semibold uppercase tracking-wider">
+                <Smartphone className="w-4 h-4 text-tb-accent" />
+                <span className="text-xs text-tb-accent font-semibold uppercase tracking-wider">
                   Validation terrain par NFC
                 </span>
               </div>
@@ -160,7 +160,7 @@ export default function NFCCompleteClient({
                 <div className="flex items-center gap-3 text-sm">
                   <Hourglass className="w-4 h-4 text-[#9ca3af]" />
                   <span className="text-[#6b7280]">TIME à libérer :</span>
-                  <span className="text-[#00d4aa] font-bold">{booking.totalTime} TIME</span>
+                  <span className="text-tb-accent font-bold">{booking.totalTime} TIME</span>
                 </div>
               </div>
             </>

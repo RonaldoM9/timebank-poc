@@ -36,7 +36,7 @@ export default function ProfileClient({
       <header className="border-b border-[#e5e7eb]">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-[#00d4aa]" />
+            <Clock className="w-6 h-6 text-tb-accent" />
             <span className="font-anton text-lg tracking-wide text-[#111827]">
               TimeHeroes
             </span>
@@ -66,7 +66,7 @@ export default function ProfileClient({
         {/* Section Hero Level */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <Shield className="w-5 h-5 text-[#00d4aa]" />
+            <Shield className="w-5 h-5 text-tb-accent" />
             <h2 className="text-lg font-anton tracking-wide text-[#111827]">
               Niveau Hero
             </h2>
@@ -77,7 +77,7 @@ export default function ProfileClient({
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <p className="text-xs text-[#6b7280] font-medium">XP Totale</p>
-                  <p className="text-xl font-anton tracking-wide text-[#00d4aa]">
+                  <p className="text-xl font-anton tracking-wide text-tb-accent">
                     {totalXp}
                   </p>
                 </div>
@@ -86,10 +86,10 @@ export default function ProfileClient({
                     {topBadges.slice(0, 3).map((badge) => (
                       <div
                         key={badge.code}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00d4aa]/10 border border-[#00d4aa]/20"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-tb-accent/10 border border-tb-accent/20"
                         title={badge.name}
                       >
-                        <Award className="h-4 w-4 text-[#00d4aa]" />
+                        <Award className="h-4 w-4 text-tb-accent" />
                       </div>
                     ))}
                   </div>
@@ -111,7 +111,7 @@ export default function ProfileClient({
         {/* Section Trust Badges */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <BadgeCheck className="w-5 h-5 text-[#00d4aa]" />
+            <BadgeCheck className="w-5 h-5 text-tb-accent" />
             <h2 className="text-lg font-anton tracking-wide text-[#111827]">
               Badges de confiance
             </h2>
@@ -120,7 +120,7 @@ export default function ProfileClient({
             <div className="flex flex-wrap gap-3">
               {[
                 { key: "localHero" as const, label: "Héros local", desc: "Localisation renseignée", color: "border-blue-500/30 bg-blue-500/10 text-blue-400" },
-                { key: "firstMission" as const, label: "Première mission", desc: "Mission accomplie", color: "border-[#00d4aa]/30 bg-[#00d4aa]/10 text-[#00d4aa]" },
+                { key: "firstMission" as const, label: "Première mission", desc: "Mission accomplie", color: "border-tb-accent/30 bg-tb-accent/10 text-tb-accent" },
                 { key: "reliable" as const, label: "Héros fiable", desc: "Note positive", color: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400" },
                 { key: "profileComplete" as const, label: "Profil complété", desc: "Passport ≥ 80 %", color: "border-purple-500/30 bg-purple-500/10 text-purple-400" },
               ].map((b) => {
@@ -151,7 +151,7 @@ export default function ProfileClient({
         {/* Section Impact — KPIs */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-[#00d4aa]" />
+            <Sparkles className="w-5 h-5 text-tb-accent" />
             <h2 className="text-lg font-anton tracking-wide text-[#111827]">
               Impact dans la communauté
             </h2>
@@ -168,7 +168,7 @@ export default function ProfileClient({
         {/* Section Zone d'intervention */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <MapPin className="w-5 h-5 text-[#00d4aa]" />
+            <MapPin className="w-5 h-5 text-tb-accent" />
             <h2 className="text-lg font-anton tracking-wide text-[#111827]">
               Zone d&apos;intervention
             </h2>
@@ -227,7 +227,7 @@ export default function ProfileClient({
               );
             })()}
             {profile.availableOnline && (
-              <p className="text-xs text-[#00d4aa] mt-2 font-medium">
+              <p className="text-xs text-tb-accent mt-2 font-medium">
                 ✅ Disponible aussi en ligne
               </p>
             )}
@@ -256,7 +256,7 @@ export default function ProfileClient({
         {profile.passport && (
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="w-5 h-5 text-[#00d4aa]" />
+              <BookOpen className="w-5 h-5 text-tb-accent" />
               <h2 className="text-lg font-anton tracking-wide text-[#111827]">
                 Hero Passport
               </h2>
@@ -269,7 +269,7 @@ export default function ProfileClient({
               {profile.passport.offeredSkills && (
                 <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5">
                   <div className="flex items-center gap-2 mb-2">
-                    <HeartHandshake className="w-4 h-4 text-[#00d4aa]" />
+                    <HeartHandshake className="w-4 h-4 text-tb-accent" />
                     <h3 className="text-sm font-semibold text-[#111827]">
                       Compétences offertes
                     </h3>

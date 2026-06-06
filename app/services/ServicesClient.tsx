@@ -280,7 +280,7 @@ export default function ServicesClient({ initialServices }: { initialServices: S
                       </div>
                       <Link
                         href={`/services/${service.id}`}
-                        className="inline-flex items-center gap-1 bg-[#181818] hover:bg-[#222] border border-tb-border rounded-xl px-3 py-1.5 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors"
+                        className="inline-flex items-center gap-1 bg-tb-surface hover:bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-1.5 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors"
                       >
                         Voir
                         <ExternalLink className="w-3 h-3" />

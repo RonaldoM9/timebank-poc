@@ -57,7 +57,7 @@ export default function QRCompleteClient({
       <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center p-4">
         <div className="bg-[#ffffff] border border-[#e5e5e5] rounded-2xl p-8 max-w-md w-full text-center">
           <div className="w-16 h-16 bg-[#00d4aa]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-[#00d4aa]" />
+            <CheckCircle className="w-8 h-8 text-tb-accent" />
           </div>
           <h1 className="text-2xl font-anton tracking-wide text-[#111111] mb-2">
             Mission validée
@@ -109,7 +109,7 @@ export default function QRCompleteClient({
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-3">
-            <QrCode className="w-6 h-6 text-[#00d4aa]" />
+            <QrCode className="w-6 h-6 text-tb-accent" />
             <span className="font-anton text-lg tracking-wide text-[#111111]">
               Validation QR
             </span>
@@ -153,7 +153,7 @@ export default function QRCompleteClient({
                 <div className="flex items-center gap-3 text-sm">
                   <Hourglass className="w-4 h-4 text-[#9ca3af]" />
                   <span className="text-[#6b7280]">TIME à libérer :</span>
-                  <span className="text-[#00d4aa] font-bold">{booking.totalTime} TIME</span>
+                  <span className="text-tb-accent font-bold">{booking.totalTime} TIME</span>
                 </div>
               </div>
             </>

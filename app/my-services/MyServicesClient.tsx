@@ -96,7 +96,7 @@ export default function MyServicesClient({ services }: { services: Service[] }) 
                     {service.description}
                   </p>
                   <div className="flex items-center gap-3 text-xs text-tb-text-muted">
-                    <span className="bg-[#181818] border border-tb-border rounded-lg px-2 py-0.5">
+                    <span className="bg-tb-surface-elevated border border-tb-border rounded-lg px-2 py-0.5">
                       {service.category}
                     </span>
                     <span>{service.ratePerHour} TIME/h</span>
@@ -109,7 +109,7 @@ export default function MyServicesClient({ services }: { services: Service[] }) 
                 <div className="flex flex-col gap-2 shrink-0">
                   <Link
                     href={`/services/${service.id}`}
-                    className="inline-flex items-center justify-center gap-1.5 bg-[#181818] hover:bg-[#222] border border-tb-border rounded-xl px-3 py-2 text-tb-text-secondary hover:text-tb-text-primary text-xs transition-colors"
+                    className="inline-flex items-center justify-center gap-1.5 bg-tb-surface hover:bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-2 text-tb-text-secondary hover:text-tb-text-primary text-xs transition-colors"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     Voir

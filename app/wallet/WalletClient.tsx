@@ -211,7 +211,7 @@ export default function WalletClient({
           </div>
 
           {/* Impact message */}
-          <p className="text-sm text-tb-text-secondary mb-4 leading-relaxed bg-[#181818] rounded-xl p-3 border border-tb-border">
+          <p className="text-sm text-tb-text-secondary mb-4 leading-relaxed bg-tb-surface rounded-xl p-3 border border-tb-border">
             <HeartHandshake className="w-4 h-4 text-tb-accent inline-block mr-1" />
             Le pot commun permet de financer des missions solidaires pour les
             membres qui ont besoin d&apos;aide mais pas assez de TIME. Tes TIME
@@ -261,7 +261,7 @@ export default function WalletClient({
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
               placeholder="Montant libre..."
-              className="flex-1 rounded-lg border border-tb-border bg-[#181818] px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
+              className="flex-1 rounded-lg border border-tb-border bg-tb-bg px-4 py-2.5 text-sm text-tb-text-primary placeholder-tb-text-muted focus:outline-none focus:border-tb-accent focus:ring-1 focus:ring-tb-accent/30 transition-colors"
             />
             <button
               type="button"
@@ -324,7 +324,7 @@ export default function WalletClient({
                   return (
                     <div
                       key={tx.id}
-                      className="flex items-center justify-between bg-[#181818] rounded-xl px-4 py-3"
+                      className="flex items-center justify-between bg-tb-surface rounded-xl px-4 py-3"
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -428,7 +428,7 @@ export default function WalletClient({
                 return (
                   <div
                     key={tx.id}
-                    className="px-6 py-4 flex items-center justify-between hover:bg-[#181818] transition-colors"
+                    className="px-6 py-4 flex items-center justify-between hover:bg-tb-surface-elevated transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div

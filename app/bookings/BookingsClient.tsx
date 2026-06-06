@@ -158,7 +158,7 @@ function BookingCard({
       <div className="flex items-center justify-between pt-3 border-t border-tb-border">
         <Link
           href={`/bookings/${booking.id}`}
-          className="inline-flex items-center gap-1 bg-tb-surface-elevated hover:bg-[#222] border border-tb-border rounded-xl px-3 py-1.5 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors"
+          className="inline-flex items-center gap-1 bg-tb-surface-elevated hover:bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-1.5 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors"
         >
           Détails
           <ExternalLink className="w-3 h-3" />

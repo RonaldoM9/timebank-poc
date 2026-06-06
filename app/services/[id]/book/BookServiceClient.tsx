@@ -86,8 +86,8 @@ export default function BookServiceClient({
             Retour au service
           </Link>
           <div className="bg-[#ffffff] border border-[#e5e5e5] rounded-2xl p-6 sm:p-8 text-center">
-            <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/20 rounded-xl p-4">
-              <p className="text-[#00d4aa] text-sm font-semibold">
+            <div className="bg-[#00d4aa]/5 border border-tb-accent/20 rounded-xl p-4">
+              <p className="text-tb-accent text-sm font-semibold">
                 Vous êtes le héros de ce service
               </p>
               <p className="text-[#6b7280] text-xs mt-1">
@@ -122,7 +122,7 @@ export default function BookServiceClient({
         <div className="bg-[#ffffff] border border-[#e5e5e5] rounded-2xl p-6 sm:p-8">
           {/* En-tête avec label comics */}
           <div className="mb-6">
-            <span className="font-bangers text-[#00d4aa] text-xs tracking-wider">
+            <span className="font-bangers text-tb-accent text-xs tracking-wider">
               ~ réserve ton super-pouvoir ~
             </span>
             <h1 className="text-2xl font-anton tracking-wide text-[#111111] mt-1">
@@ -146,7 +146,7 @@ export default function BookServiceClient({
                 <Zap className="w-4 h-4 text-[#9ca3af]" />
                 Tarif
               </div>
-              <span className="text-[#00d4aa] font-semibold text-sm">
+              <span className="text-tb-accent font-semibold text-sm">
                 {service.ratePerHour} TIME / heure
               </span>
             </div>
@@ -189,7 +189,7 @@ export default function BookServiceClient({
                 step="1"
                 value={hours}
                 onChange={(e) => setHours(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-full bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl px-4 py-2.5 text-[#111111] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                className="w-full bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl px-4 py-2.5 text-[#111111] focus:outline-none focus:border-tb-accent transition-colors"
               />
             </div>
 
@@ -222,7 +222,7 @@ export default function BookServiceClient({
                         }
                         className={`text-left px-4 py-3 rounded-xl border text-sm transition-colors ${
                           isSelected
-                            ? "border-[#00d4aa] bg-[#00d4aa]/10 text-[#00d4aa]"
+                            ? "border-tb-accent bg-tb-accent/10 text-tb-accent"
                             : "border-[#e5e5e5] bg-[#f0f0f0] text-[#111111] hover:border-[#cccccc]"
                         }`}
                       >
@@ -263,7 +263,7 @@ export default function BookServiceClient({
                 <span className="text-[#6b7280] text-sm font-medium">
                   Total
                 </span>
-                <span className="text-xl font-bold text-[#00d4aa]">
+                <span className="text-xl font-bold text-tb-accent">
                   {totalTime} TIME
                 </span>
               </div>

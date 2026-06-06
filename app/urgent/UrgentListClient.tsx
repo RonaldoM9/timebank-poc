@@ -254,7 +254,7 @@ export default function UrgentListClient({ initialRequests }: { initialRequests:
                     </div>
                     <div className="text-xs text-gray-400">TIME</div>
                     {req.offersCount > 0 && (
-                      <div className="text-xs text-[#00d4aa] mt-1">
+                      <div className="text-xs text-tb-accent mt-1">
                         {req.offersCount} offre{req.offersCount > 1 ? "s" : ""}
                       </div>
                     )}

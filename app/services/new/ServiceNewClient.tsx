@@ -87,7 +87,7 @@ export default function ServiceNewClient() {
                 name="title"
                 type="text"
                 placeholder="Aide Next.js pour débutant"
-                className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
+                className="w-full bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
               />
               {errors?.title && (
                 <p className="text-red-400 text-xs mt-1">{errors.title[0]}</p>
@@ -103,7 +103,7 @@ export default function ServiceNewClient() {
                 name="description"
                 rows={4}
                 placeholder="Décris ce que tu proposes en détail…"
-                className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors resize-vertical"
+                className="w-full bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors resize-vertical"
               />
               {errors?.description && (
                 <p className="text-red-400 text-xs mt-1">{errors.description[0]}</p>
@@ -119,7 +119,7 @@ export default function ServiceNewClient() {
                   id="category"
                   name="category"
                   defaultValue=""
-                  className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors appearance-none"
+                  className="w-full bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors appearance-none"
                 >
                   <option value="" disabled>Choisis une catégorie</option>
                   {CATEGORIES.map((cat) => (
@@ -142,7 +142,7 @@ export default function ServiceNewClient() {
                   min="1"
                   step="1"
                   placeholder="2"
-                  className="w-full bg-[#181818] border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
+                  className="w-full bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
                 />
                 {errors?.ratePerHour && (
                   <p className="text-red-400 text-xs mt-1">{errors.ratePerHour[0]}</p>

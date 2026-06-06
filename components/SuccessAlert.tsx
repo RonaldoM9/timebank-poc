@@ -51,7 +51,7 @@ export default function SuccessAlert({
           <X className="w-4 h-4" />
         </button>
         <div className="flex items-start gap-3">
-          <CheckCircle className="w-5 h-5 text-[#00d4aa] shrink-0 mt-0.5" />
+          <CheckCircle className="w-5 h-5 text-tb-accent shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-[#f5f5f5]">{message}</p>
             {submessage && (
