@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Pitch Deck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bangers&family=Anton&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    font-family: 'Inter', sans-serif;
+    color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  .deck-container {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .slide-nav {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0a0a0a;
+    padding: 1rem 0;
+  }
+  .slide-nav a {
+    color: #a3a3a3;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid #262626;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .slide-nav a:hover {
+    border-color: #00d4aa;
+    color: #00d4aa;
+    background: rgba(0,212,170,0.08);
+  }
+
+  .slide {
+    width: 100%;
+    min-height: 90vh;
+    border-radius: 2rem;
+    padding: 3.5rem 3rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+    scroll-margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Background variations */
+  .slide-dark { background: radial-gradient(ellipse at 20% 50%, rgba(0,212,170,0.06), transparent 60%), linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 100%); }
+  .slide-accent { background: radial-gradient(ellipse at 80% 20%, rgba(0,212,170,0.15), transparent 50%), linear-gradient(180deg, #111 0%, #0a0a0a 100%); }
+  .slide-green { background: radial-gradient(ellipse at 50% 0%, rgba(0,212,170,0.12), transparent 55%), linear-gradient(180deg, #0d1a14 0%, #0a0a0a 100%); }
+  .slide-community { background: radial-gradient(ellipse at 20% 80%, rgba(0,212,170,0.08), transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.06), transparent 50%), linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 100%); }
+
+  /* Halftone texture */
+  .halftone {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(0, 212, 170, 0.07) 1px, transparent 1px);
+    background-size: 14px 14px;
+    pointer-events: none;
+  }
+
+  /* Comic burst corners */
+  .burst-top-right {
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(0,212,170,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .slide-number {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 2rem;
+    font-size: 0.75rem;
+    color: #525252;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  /* Typography */
+  h1 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 4rem; line-height: 1.1; letter-spacing: -0.02em; }
+  h2 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 2.5rem; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 1.5rem; }
+  h3 { font-family: 'Inter', sans-serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem; color: #00d4aa; }
+  h4 { font-family: 'Bangers', cursive; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 0.03em; color: #00d4aa; margin-bottom: 0.5rem; }
+  .accent-text { color: #00d4aa; }
+  .subtitle { font-size: 1.25rem; color: #a3a3a3; font-weight: 400; line-height: 1.6; max-width: 720px; }
+  .tagline { font-family: 'Bangers', cursive; text-transform: uppercase; font-size: 1.5rem; letter-spacing: 0.04em; color: #00d4aa; margin-top: 0.5rem; }
+
+  /* Cards */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+
+  .card {
+    background: linear-gradient(180deg, #181818 0%, #111111 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 1.5rem;
+    padding: 1.75rem;
+    transition: all 0.3s;
+  }
+  .card:hover { border-color: rgba(0,212,170,0.2); transform: translateY(-2px); }
+  .card-accent {
+    border: 1px solid rgba(0,212,170,0.25);
+    background: radial-gradient(circle at top right, rgba(0,212,170,0.12), transparent 40%), linear-gradient(180deg, #181818 0%, #111111 100%);
+  }
+  .card-icon { font-size: 1.8rem; margin-bottom: 0.75rem; display: block; }
+  .card-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; color: #f5f5f5; }
+  .card-desc { font-size: 0.85rem; color: #a3a3a3; line-height: 1.6; }
+
+  /* Timeline */
+  .timeline { margin-top: 2rem; position: relative; padding-left: 2rem; }
+  .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #00d4aa, rgba(0,212,170,0.1)); }
+  .tl-item { position: relative; padding: 0.75rem 0 0.75rem 1.5rem; }
+  .tl-item::before { content: '◆'; position: absolute; left: -2.1rem; top: 0.75rem; color: #00d4aa; font-size: 0.7rem; }
+  .tl-title { font-weight: 600; font-size: 1rem; }
+  .tl-desc { font-size: 0.85rem; color: #a3a3a3; margin-top: 0.2rem; }
+
+  /* Badge */
+  .badge-comic {
+    display: inline-block;
+    background: #00d4aa;
+    color: #020617;
+    font-family: 'Bangers', cursive;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    transform: rotate(-2deg);
+  }
+  .badge-outline {
+    display: inline-block;
+    border: 1px solid rgba(0,212,170,0.4);
+    color: #00d4aa;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Stat block */
+  .stat-block { text-align: center; }
+  .stat-number { font-family: 'Anton', sans-serif; font-size: 2.8rem; color: #00d4aa; line-height: 1; margin-bottom: 0.3rem; }
+  .stat-label { font-size: 0.75rem; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+
+  /* Hero section in slide */
+  .hero-flex { display: flex; align-items: center; gap: 4rem; margin-top: 1.5rem; }
+  .hero-left { flex: 1; }
+  .hero-right { flex: 1; display: flex; justify-content: center; }
+
+  .hero-shield {
+    width: 200px; height: 200px;
+    border: 3px solid rgba(0,212,170,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle, rgba(0,212,170,0.1), transparent 60%);
+    position: relative;
+  }
+  .hero-shield-text { font-family: 'Anton', sans-serif; font-size: 5rem; color: #00d4aa; line-height: 1; }
+  .hero-shield::after {
+    content: '⚡';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 8px rgba(0,212,170,0.5));
+  }
+
+  /* Testimonial / Quote */
+  .quote {
+    border-left: 3px solid #00d4aa;
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #d4d4d4;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  /* Comparison table */
+  .comp-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 1.5rem; }
+  .comp-table th { text-align: left; padding: 0.75rem 1rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: #a3a3a3; border-bottom: 1px solid #262626; }
+  .comp-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #181818; font-size: 0.9rem; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table .check { color: #00d4aa; }
+  .comp-table .cross { color: #ef4444; }
+
+  /* CTA Button */
+  .cta-btn {
+    display: inline-block;
+    background: #00d4aa;
+    color: #020617;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 0.9rem 2.5rem;
+    border-radius: 14px;
+    text-decoration: none;
+    margin-top: 1.5rem;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+  .cta-btn:hover { background: #00b894; transform: translateY(-1px); }
+  .cta-outline {
+    display: inline-block;
+    border: 1px solid rgba(0,212,170,0.5);
+    color: #f5f5f5;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.75rem 2rem;
+    border-radius: 14px;
+    text-decoration: none;
+    margin-top: 1.5rem;
+    transition: all 0.2s;
+    margin-left: 1rem;
+  }
+  .cta-outline:hover { background: rgba(0,212,170,0.08); border-color: #00d4aa; }
+
+  .flex-center { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 1.8rem; }
+    .slide { padding: 2rem 1.5rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero-flex { flex-direction: column; gap: 2rem; }
+    .subtitle { font-size: 1rem; }
+  }
+
+  .divider { width: 60px; height: 3px; background: #00d4aa; margin: 1.5rem 0; border-radius: 2px; }
+
+  /* Impact section */
+  .impact-row { display: flex; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; }
+  .impact-item { flex: 1; min-width: 120px; }
+  .impact-value { font-family: 'Anton', sans-serif; font-size: 2rem; }
+  .impact-label { font-size: 0.78rem; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.2rem; }
+
+  .roadmap-phase { margin-top: 1.5rem; }
+  .phase-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #525252; font-weight: 600; margin-bottom: 0.3rem; }
+  .phase-title { font-size: 1.1rem; font-weight: 700; color: #f5f5f5; }
+  .phase-items { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .phase-item { font-size: 0.82rem; color: #a3a3a3; background: rgba(255,255,255,0.03); border: 1px solid #1a1a1a; padding: 0.3rem 0.8rem; border-radius: 999px; }
+
+  .badges-preview { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+  .mini-badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.72rem; font-weight: 600; padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(0,212,170,0.1);
+    color: #00d4aa;
+    border: 1px solid rgba(0,212,170,0.2);
+  }
+  .mini-badge.locked { background: rgba(255,255,255,0.03); color: #525252; border-color: #1a1a1a; }
+  .mini-badge.earned { background: rgba(0,212,170,0.15); color: #00d4aa; border-color: rgba(0,212,170,0.35); }
+</style>
+</head>
+<body>
+
+<div class="deck-container">
+
+<!-- NAV -->
+<nav class="slide-nav">
+  <a href="#slide-1">TimeHeroes</a>
+  <a href="#slide-2">Problème</a>
+  <a href="#slide-3">Solution</a>
+  <a href="#slide-4">Fonctionnalités</a>
+  <a href="#slide-5">Gamification</a>
+  <a href="#slide-6">Parcours</a>
+  <a href="#slide-7">Chiffres</a>
+  <a href="#slide-8">Architecture</a>
+  <a href="#slide-9">Roadmap</a>
+  <a href="#slide-10">Vision</a>
+</nav>
+
+<!-- SLIDE 1 — Title -->
+<div class="slide slide-accent" id="slide-1">
+  <div class="halftone"></div>
+  <div class="burst-top-right"></div>
+  <div class="slide-number">01/10</div>
+
+  <div class="hero-flex" style="margin-top:0">
+    <div class="hero-left">
+      <h4 style="margin-bottom:0.5rem">TimeHeroes</h4>
+      <h1 style="font-size:5.5rem;line-height:1">Échangez<br><span class="accent-text">du temps</span>,<br>pas de l'argent</h1>
+      <div class="divider"></div>
+      <p class="subtitle" style="max-width:550px">
+        La plateforme de TimeBanking où chacun devient un super-héros du quotidien.<br>
+        Donnez du temps, recevez du temps, créez du lien.
+      </p>
+      <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
+        <a href="https://timeheroes.fr" target="_blank" class="cta-btn">🚀 Découvrir le POC</a>
+        <a href="#slide-3" class="cta-outline">Comment ça marche →</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-shield">
+        <span class="hero-shield-text">T</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — Problem -->
+<div class="slide slide-dark" id="slide-2">
+  <div class="halftone"></div>
+  <div class="slide-number">02/10</div>
+
+  <h2>Le <span class="accent-text">problème</span></h2>
+  <div class="divider"></div>
+
+  <div class="grid-3">
+    <div class="card card-accent">
+      <span class="card-icon">💰</span>
+      <div class="card-title">L'argent crée des barrières</div>
+      <div class="card-desc">Beaucoup de services utiles restent inaccessibles parce qu'ils ont un coût. Pourtant, les compétences existent autour de nous — elles ne demandent qu'à être partagées.</div>
+    </div>
+    <div class="card card-accent">
+      <span class="card-icon">🤝</span>
+      <div class="card-title">Le lien social s'affaiblit</div>
+      <div class="card-desc">Dans les quartiers et les communautés, on se connaît moins, on s'entraide moins. Le potentiel de solidarité de proximité est sous-exploité.</div>
+    </div>
+    <div class="card card-accent">
+      <span class="card-icon">📋</span>
+      <div class="card-title">Les compétences bénévoles ne sont pas valorisées</div>
+      <div class="card-desc">Des centaines d'heures de bénévolat et d'entraide ne laissent aucune trace — pas de CV, pas de portfolio, pas de reconnaissance.</div>
+    </div>
+  </div>
+
+  <div class="quote" style="margin-top:2rem">
+    "Et si votre temps avait autant de valeur que votre argent ?"
+  </div>
+</div>
+
+<!-- SLIDE 3 — Solution -->
+<div class="slide slide-green" id="slide-3">
+  <div class="halftone"></div>
+  <div class="slide-number">03/10</div>
+
+  <h2>La <span class="accent-text">solution</span> TimeHeroes</h2>
+  <div class="divider"></div>
+  <p class="subtitle">
+    Une plateforme d'échange de services basée sur le temps, pas sur l'argent.
+    Chaque compétence vaut une heure de votre temps.
+  </p>
+
+  <div class="grid-2" style="margin-top:2rem">
+    <div class="card">
+      <h3>🎯 Concept</h3>
+      <p class="card-desc" style="font-size:0.95rem;line-height:1.7">
+        Vous avez une compétence ? <strong>Proposez un service.</strong><br>
+        Vous avez besoin d'aide ? <strong>Réservez avec vos TIME.</strong><br><br>
+        <strong>1 heure de service = 1 TIME</strong> — une unité d'échange interne, simple et équitable.
+      </p>
+    </div>
+    <div class="card">
+      <h3>💎 Valeurs</h3>
+      <p class="card-desc" style="font-size:0.95rem;line-height:1.7">
+        → Équité : 1h de compétence = 1 TIME, quel que soit le service<br>
+        → Confiance : système d'avis, escrow, badges de fiabilité<br>
+        → Impact local : communautés, rayon de proximité<br>
+        → Reconnaissance : XP, niveaux, badges, futur passeport d'engagement
+      </p>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
+    <span class="badge-comic">Pas de crypto</span>
+    <span class="badge-outline">TIME ≠ monnaie</span>
+    <span class="badge-outline">100% solidaire</span>
+    <span class="badge-outline">Open data futur</span>
+  </div>
+</div>
+
+<!-- SLIDE 4 — Features -->
+<div class="slide slide-dark" id="slide-4">
+  <div class="halftone"></div>
+  <div class="slide-number">04/10</div>
+
+  <h2>Fonctionnalités <span class="accent-text">clés</span></h2>
+  <div class="divider"></div>
+
+  <div class="grid-3">
+    <div class="card">
+      <span class="card-icon">🛒</span>
+      <div class="card-title">Marketplace de services</div>
+      <div class="card-desc">Proposez et trouvez des services par catégorie : numérique, bricolage, soutien scolaire, cuisine, déménagement, etc.</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔒</span>
+      <div class="card-title">Système d'escrow TIME</div>
+      <div class="card-desc">Les TIME sont bloqués pendant la mission, libérés à la validation. Sécurité et confiance pour les deux parties.</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">⭐</span>
+      <div class="card-title">Avis & Réputation</div>
+      <div class="card-desc">Système d'évaluation après chaque mission. Construisez votre réputation pour être un Hero de confiance.</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">🎮</span>
+      <div class="card-title">Gamification Hero</div>
+      <div class="card-desc">XP, niveaux (Rookie → Community Legend), badges de compétences et de confiance, quêtes, chronologie des exploits.</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">👛</span>
+      <div class="card-title">Wallet TIME</div>
+      <div class="card-desc">Solde, historique des transactions, mint, escrow, release, refund. Don de TIME au pot solidaire.</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">🌍</span>
+      <div class="card-title">Communautés locales</div>
+      <div class="card-desc">Créez ou rejoignez des communautés géographiques ou thématiques. Missions communautaires et impact local.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5 — Gamification -->
+<div class="slide slide-green" id="slide-5">
+  <div class="halftone"></div>
+  <div class="slide-number">05/10</div>
+
+  <h2>Gamification <span class="accent-text">Hero</span></h2>
+  <div class="divider"></div>
+  <p class="subtitle" style="font-size:1rem">
+    Valoriser les comportements qui font vivre la plateforme — pas un jeu artificiel, une reconnaissance de l'impact réel.
+  </p>
+
+  <div class="grid-2" style="margin-top:1.5rem">
+    <div>
+      <h3>🏆 Niveaux Hero</h3>
+      <table class="comp-table">
+        <tr><th>Niveau</th><th>XP requis</th></tr>
+        <tr><td>Rookie Hero</td><td>0 XP</td></tr>
+        <tr><td>Active Hero</td><td>100 XP</td></tr>
+        <tr><td>Local Hero</td><td>300 XP</td></tr>
+        <tr><td>Guardian Hero</td><td>700 XP</td></tr>
+        <tr><td>Community Legend</td><td>1500 XP</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>🎖️ Badges</h3>
+      <div class="badges-preview">
+        <span class="mini-badge earned">🏅 First Mission</span>
+        <span class="mini-badge earned">🤝 Helping Hand</span>
+        <span class="mini-badge locked">🌍 Local Hero</span>
+        <span class="mini-badge earned">⏰ Time Giver</span>
+        <span class="mini-badge locked">💎 Generous Hero</span>
+        <span class="mini-badge locked">⭐ Trusted Hero</span>
+        <span class="mini-badge locked">🛡️ Reliable Hero</span>
+        <span class="mini-badge locked">💻 Tech Helper</span>
+        <span class="mini-badge locked">👥 Community Builder</span>
+        <span class="mini-badge locked">📊 Impact Maker</span>
+        <span class="mini-badge locked">🔧 DIY Helper</span>
+        <span class="mini-badge locked">📚 Learning Buddy</span>
+        <span class="mini-badge locked">🍳 Kitchen Hero</span>
+        <span class="mini-badge locked">💪 Strong Arms</span>
+        <span class="mini-badge locked">📋 Admin Ally</span>
+        <span class="mini-badge locked">👴 Senior Ally</span>
+      </div>
+      <p class="card-desc" style="margin-top:1rem;font-size:0.85rem">
+        <strong>XP ≠ TIME.</strong> L'XP mesure la progression, le TIME est l'unité d'échange.
+        Les badges sont attribués automatiquement selon les actions réelles.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 — User Journey -->
+<div class="slide slide-dark" id="slide-6">
+  <div class="halftone"></div>
+  <div class="slide-number">06/10</div>
+
+  <h2>Le parcours <span class="accent-text">Hero</span></h2>
+  <div class="divider"></div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-title">1️⃣ Inscription → 10 TIME offerts</div>
+      <div class="tl-desc">Créez votre compte, complétez votre profil, recevez vos premiers TIME pour commencer à échanger.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-title">2️⃣ Publier ou réserver un service</div>
+      <div class="tl-desc">Devenez aidant en proposant votre compétence, ou bénéficiaire en réservant avec vos TIME.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-title">3️⃣ Mission en escrow</div>
+      <div class="tl-desc">Les TIME sont bloqués pendant la mission. Sécurité garantie pour les deux parties.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-title">4️⃣ Validation + avis</div>
+      <div class="tl-desc">Mission terminée ? Validez, libérez les TIME, laissez un avis. Gagnez XP et réputation.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-title">5️⃣ Progression Hero</div>
+      <div class="tl-desc">Accumulez XP, débloquez des badges, montez en niveau. De Rookie à Community Legend.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-title">6️⃣ Donner du TIME</div>
+      <div class="tl-desc">Soutenez le pot solidaire. Chaque don est reconnu et valorisé.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 — Key Metrics -->
+<div class="slide slide-accent" id="slide-7">
+  <div class="halftone"></div>
+  <div class="slide-number">07/10</div>
+
+  <h2>La plateforme <span class="accent-text">en chiffres</span></h2>
+  <div class="divider"></div>
+
+  <div class="impact-row">
+    <div class="impact-item card" style="text-align:center">
+      <div class="stat-number">10</div>
+      <div class="stat-label">Lots livrés</div>
+      <p class="card-desc" style="font-size:0.75rem;margin-top:0.3rem">Du MVP à la gamification</p>
+    </div>
+    <div class="impact-item card" style="text-align:center">
+      <div class="stat-number">17</div>
+      <div class="stat-label">Badges</div>
+      <p class="card-desc" style="font-size:0.75rem;margin-top:0.3rem">Compétences, confiance & engagement</p>
+    </div>
+    <div class="impact-item card" style="text-align:center">
+      <div class="stat-number">5</div>
+      <div class="stat-label">Niveaux Hero</div>
+      <p class="card-desc" style="font-size:0.75rem;margin-top:0.3rem">Rookie → Community Legend</p>
+    </div>
+    <div class="impact-item card" style="text-align:center">
+      <div class="stat-number">6</div>
+      <div class="stat-label">Catégories</div>
+      <p class="card-desc" style="font-size:0.75rem;margin-top:0.3rem">Numérique, brico, cuisine, etc.</p>
+    </div>
+    <div class="impact-item card" style="text-align:center">
+      <div class="stat-number">29</div>
+      <div class="stat-label">Routes</div>
+      <p class="card-desc" style="font-size:0.75rem;margin-top:0.3rem">Pages fonctionnelles</p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:1.5rem">
+    <div class="card card-accent" style="text-align:center;padding:1.5rem">
+      <span style="font-family:'Anton',sans-serif;font-size:1.8rem;color:#00d4aa">Tech Stack</span>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;margin-top:0.75rem">
+        <span class="badge-outline">Next.js 16</span>
+        <span class="badge-outline">TypeScript</span>
+        <span class="badge-outline">Prisma 6</span>
+        <span class="badge-outline">SQLite</span>
+        <span class="badge-outline">Tailwind v4</span>
+        <span class="badge-outline">NextAuth</span>
+      </div>
+    </div>
+    <div class="card card-accent" style="text-align:center;padding:1.5rem">
+      <span style="font-family:'Anton',sans-serif;font-size:1.8rem;color:#00d4aa">Design System</span>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;margin-top:0.75rem">
+        <span class="badge-outline">Dark premium</span>
+        <span class="badge-outline">#00d4aa</span>
+        <span class="badge-outline">Comics moderne</span>
+        <span class="badge-outline">Halftone dots</span>
+        <span class="badge-outline">Burst shapes</span>
+        <span class="badge-outline">Lisible</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 — Architecture -->
+<div class="slide slide-dark" id="slide-8">
+  <div class="halftone"></div>
+  <div class="slide-number">08/10</div>
+
+  <h2>Architecture <span class="accent-text">technique</span></h2>
+  <div class="divider"></div>
+
+  <div class="grid-2" style="margin-top:1rem">
+    <div class="card">
+      <h3>📦 Stack</h3>
+      <div style="margin-top:0.5rem">
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid #181818">
+          <span style="color:#a3a3a3;font-size:0.85rem">Frontend</span>
+          <span style="font-size:0.85rem;font-weight:600">Next.js 16 + Turbopack</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid #181818">
+          <span style="color:#a3a3a3;font-size:0.85rem">Backend</span>
+          <span style="font-size:0.85rem;font-weight:600">API Routes Next.js</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid #181818">
+          <span style="color:#a3a3a3;font-size:0.85rem">Base de données</span>
+          <span style="font-size:0.85rem;font-weight:600">Prisma 6 + SQLite</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid #181818">
+          <span style="color:#a3a3a3;font-size:0.85rem">Auth</span>
+          <span style="font-size:0.85rem;font-weight:600">NextAuth Credentials</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;">
+          <span style="color:#a3a3a3;font-size:0.85rem">Hébergement</span>
+          <span style="font-size:0.85rem;font-weight:600">VPS Hetzner + Caddy</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗️ Architecture déploiement</h3>
+      <div style="margin-top:0.5rem;font-size:0.85rem;line-height:2">
+        <span style="color:#00d4aa">🌐 Navigateur</span><br>
+        <span style="color:#525252">↓ HTTPS (SSL Let's Encrypt)</span><br>
+        <span style="color:#00d4aa">🔄 Caddy (reverse proxy)</span><br>
+        <span style="color:#525252">↓ Port 3096</span><br>
+        <span style="color:#00d4aa">⬢ Node.js (Next.js)</span><br>
+        <span style="color:#525252">↓ Prisma</span><br>
+        <span style="color:#00d4aa">🗄️ SQLite</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-accent" style="margin-top:1.5rem;padding:1.25rem 1.5rem">
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+      <span style="font-weight:700;">URL :</span>
+      <a href="https://timeheroes.fr" style="color:#00d4aa;font-weight:600;text-decoration:none" target="_blank">https://timeheroes.fr</a>
+      <span style="color:#525252">|</span>
+      <span style="color:#a3a3a3;font-size:0.85rem">Comptes test : ronald.test1@timebank.local / Lot2bTest2025!</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 — Roadmap -->
+<div class="slide slide-green" id="slide-9">
+  <div class="halftone"></div>
+  <div class="slide-number">09/10</div>
+
+  <h2>Roadmap & <span class="accent-text">Vision</span></h2>
+  <div class="divider"></div>
+
+  <div class="roadmap-phase">
+    <div class="phase-label">Phase 1 — ✅ POC Livré</div>
+    <div class="phase-items">
+      <span class="phase-item">✅ Lot 1-6 : Auth, services, wallet, marketplace, escrow</span>
+      <span class="phase-item">✅ Lot 7 : Admin/NFC</span>
+      <span class="phase-item">✅ Lot 8 : Preuve de complétion</span>
+      <span class="phase-item">✅ Lot 9 : Notifications</span>
+      <span class="phase-item" style="border-color:#00d4aa;color:#00d4aa">✅ Lot 10 : Gamification Hero</span>
+    </div>
+  </div>
+
+  <div class="roadmap-phase" style="margin-top:1.5rem">
+    <div class="phase-label">Phase 2 — 🎯 Prochaines étapes</div>
+    <div class="phase-items">
+      <span class="phase-item">Badges saisonniers & challenges</span>
+      <span class="phase-item">Carte d'impact partageable</span>
+      <span class="phase-item">Admin badges complet</span>
+      <span class="phase-item">Comptes de démo pitch</span>
+      <span class="phase-item">Tests utilisateurs réels</span>
+    </div>
+  </div>
+
+  <div class="roadmap-phase" style="margin-top:1.5rem">
+    <div class="phase-label">Phase 3 — 🌟 Vision long terme</div>
+    <div class="phase-items">
+      <span class="phase-item" style="border-color:#00d4aa;color:#00d4aa">Records of Achievement</span>
+      <span class="phase-item" style="border-color:#00d4aa;color:#00d4aa">Passeport d'engagement</span>
+      <span class="phase-item" style="border-color:#00d4aa;color:#00d4aa">Portfolio bénévole</span>
+      <span class="phase-item" style="border-color:#00d4aa;color:#00d4aa">CV ESS / Employabilité</span>
+      <span class="phase-item" style="border-color:#00d4aa;color:#00d4aa">Communautés ESS</span>
+      <span class="phase-item" style="border-color:#00d4aa;color:#00d4aa">Modèle blockchain (future génération)</span>
+    </div>
+  </div>
+
+  <div class="quote" style="margin-top:2rem;border-left-color:#00d4aa">
+    "La gamification ne doit pas flatter l'ego — elle doit <strong>reconnaître l'impact réel</strong> et préparer la reconnaissance professionnelle et citoyenne de l'engagement."
+  </div>
+</div>
+
+<!-- SLIDE 10 — Vision & CTA -->
+<div class="slide slide-accent" id="slide-10">
+  <div class="halftone"></div>
+  <div class="slide-number">10/10</div>
+
+  <h2>Et après ? <span class="accent-text">La grande vision</span></h2>
+  <div class="divider"></div>
+
+  <div class="grid-2">
+    <div class="card card-accent" style="text-align:center">
+      <span style="font-family:'Anton',sans-serif;font-size:3rem;color:#00d4aa">📜</span>
+      <h3 style="margin:0.5rem 0">Records of Achievement</h3>
+      <p class="card-desc">
+        Un passeport d'engagement qui capture chaque mission, chaque badge, chaque heure donnée.
+        Utilisable comme portfolio, CV bénévole, attestation d'impact.
+      </p>
+    </div>
+    <div class="card card-accent" style="text-align:center">
+      <span style="font-family:'Anton',sans-serif;font-size:3rem;color:#00d4aa">🏛️</span>
+      <h3 style="margin:0.5rem 0">ESS & Employabilité</h3>
+      <p class="card-desc">
+        Intégration avec les structures ESS, entreprises, collectivités.
+        L'engagement citoyen devient un actif professionnel reconnu.
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:2.5rem">
+    <h3 style="color:#f5f5f5;margin-bottom:0.5rem">TimeHeroes est prêt pour la démonstration</h3>
+    <p style="color:#a3a3a3;font-size:0.9rem;margin-bottom:1.5rem">
+      POC fonctionnel — 10 lots livrés — En ligne sur timeheroes.fr
+    </p>
+    <div class="flex-center">
+      <a href="https://timeheroes.fr" target="_blank" class="cta-btn">🚀 Voir le site</a>
+      <span style="color:#525252;font-size:0.85rem">
+        Ronald Mounien — MBA ESSEC 2026
+      </span>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

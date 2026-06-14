@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Pitch Deck MBA ESSEC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton:wght@400;700&family=Inter:wght@300;400;500;600;700;800&family=Bangers&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --surface3: #1f1f1f;
+    --accent: #00d4aa;
+    --accent-hover: #00b894;
+    --accent-glow: rgba(0,212,170,0.15);
+    --text: #f5f5f5;
+    --text-secondary: #a3a3a3;
+    --text-muted: #6b6b6b;
+    --border: #262626;
+    --border-light: #333;
+    --radius: 16px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 40px rgba(0,0,0,0.6);
+    --slide-w: 1920px;
+    --slide-h: 1080px;
+  }
+  html, body { width: 100%; height: 100%; background: #050505; color: var(--text); font-family: 'Inter', sans-serif; overflow: hidden; }
+  
+  /* Deck container */
+  .deck { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .deck-inner { position: relative; width: var(--slide-w); height: var(--slide-h); transform-origin: center center; }
+  
+  /* Slides */
+  .slide { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease; padding: 80px; overflow: hidden; border-radius: 4px; }
+  .slide.active { opacity: 1; visibility: visible; }
+  
+  /* Slide backgrounds */
+  .slide-bg-dark { background: var(--bg); }
+  .slide-bg-surface { background: var(--surface); }
+  .slide-bg-gradient { background: linear-gradient(135deg, #0a0a0a 0%, #0d1a18 40%, #0a0a0a 100%); }
+  .slide-bg-accent { background: linear-gradient(135deg, #0a0a0a 0%, #0d2d25 100%); }
+  
+  /* Decorative elements */
+  .slide-grid { position: absolute; inset: 0; background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none; z-index: 0; }
+  .slide-orb { position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; opacity: 0.4; }
+  .orb-1 { width: 600px; height: 600px; background: var(--accent-glow); top: -200px; right: -100px; }
+  .orb-2 { width: 400px; height: 400px; background: rgba(0,212,170,0.08); bottom: -100px; left: -100px; }
+  .orb-3 { width: 500px; height: 500px; background: rgba(0,212,170,0.06); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+  
+  /* Content layers */
+  .slide-content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+
+  /* Navigation */
+  .nav { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; align-items: center; gap: 20px; background: rgba(17,17,17,0.85); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 50px; padding: 12px 28px; }
+  .nav-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: all 0.2s; font-size: 18px; }
+  .nav-btn:hover { color: var(--accent); background: var(--surface2); }
+  .nav-dots { display: flex; gap: 8px; }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-light); cursor: pointer; transition: all 0.3s; }
+  .nav-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+  .nav-dot:hover { background: var(--text-muted); }
+  .nav-counter { font-size: 13px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
+  
+  /* Typography */
+  h1 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.05; }
+  h2 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.1; }
+  h3 { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: -0.01em; }
+  .tagline { font-family: 'Inter', sans-serif; }
+  .accent-text { color: var(--accent); }
+  .hero-label { font-family: 'Bangers', sans-serif; color: var(--accent); letter-spacing: 0.05em; font-size: 20px; transform: rotate(-2deg); display: inline-block; }
+  
+  /* Tags */
+  .tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.2); color: var(--accent); padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 500; }
+  .tag-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--surface2); border: 1px solid var(--border); color: var(--text-secondary); padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 500; }
+  
+  /* Cards */
+  .feature-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; transition: all 0.3s; }
+  .feature-card:hover { border-color: rgba(0,212,170,0.3); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+  .feature-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(0,212,170,0.12); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 16px; }
+  
+  .stat-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; text-align: center; }
+  .stat-number { font-family: 'Anton', sans-serif; font-size: 48px; color: var(--accent); line-height: 1; }
+  
+  .journey-step { display: flex; gap: 20px; align-items: flex-start; }
+  .journey-num { width: 48px; height: 48px; min-width: 48px; border-radius: 50%; background: rgba(0,212,170,0.15); border: 1px solid rgba(0,212,170,0.3); display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 20px; color: var(--accent); }
+  .journey-line { width: 1px; flex: 1; min-height: 24px; background: linear-gradient(to bottom, var(--accent), transparent); margin-left: 24px; }
+  
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; }
+  .grid-6 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  
+  /* Roadmap */
+  .roadmap-phase { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; position: relative; overflow: hidden; }
+  .roadmap-phase::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+  .roadmap-done::before { background: var(--accent); }
+  .roadmap-next::before { background: #f0a500; }
+  .roadmap-vision::before { background: #7c5cfc; }
+  .phase-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .phase-done .phase-label { color: var(--accent); }
+  .phase-next .phase-label { color: #f0a500; }
+  .phase-vision .phase-label { color: #7c5cfc; }
+  
+  /* Code/stack */
+  .stack-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .stack-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+  .stack-item:hover { border-color: rgba(0,212,170,0.3); color: var(--text); }
+  
+  /* Screenshot placeholders */
+  .screenshot-mock { background: var(--surface3); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; position: relative; }
+  .screenshot-mock .mock-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center; }
+  .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .mock-dot.red { background: #ff5f57; } .mock-dot.yellow { background: #febc2e; } .mock-dot.green { background: #28c840; }
+  .screenshot-mock .mock-title { font-size: 12px; color: var(--text-muted); margin-left: 8px; }
+  .screenshot-mock .mock-body { padding: 20px; }
+  
+  /* Animations */
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.active .anim-1 { animation: fadeInUp 0.6s ease forwards; }
+  .slide.active .anim-2 { animation: fadeInUp 0.6s ease 0.1s forwards; opacity: 0; }
+  .slide.active .anim-3 { animation: fadeInUp 0.6s ease 0.2s forwards; opacity: 0; }
+  .slide.active .anim-4 { animation: fadeInUp 0.6s ease 0.3s forwards; opacity: 0; }
+  .slide.active .anim-5 { animation: fadeInUp 0.6s ease 0.4s forwards; opacity: 0; }
+  .slide.active .anim-6 { animation: fadeInUp 0.6s ease 0.5s forwards; opacity: 0; }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .slide.active * { animation: none !important; opacity: 1 !important; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+
+  /* Print */
+  @media print {
+    .nav { display: none !important; }
+    .slide { position: relative !important; opacity: 1 !important; visibility: visible !important; page-break-after: always; height: 1080px; }
+    .deck-inner { transform: none !important; width: 100%; height: auto; }
+    .deck { position: relative !important; overflow: visible !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+  <div class="deck-inner" id="deckInner">
+
+    <!-- ═══════════════ SLIDE 1 — TITLE ═══════════════ -->
+    <div class="slide slide-bg-gradient active" data-slide="0">
+      <div class="slide-grid"></div>
+      <div class="slide-orb orb-1"></div>
+      <div class="slide-orb orb-2"></div>
+      <div class="slide-content" style="justify-content:center; align-items:center; text-align:center;">
+        <div class="anim-1" style="margin-bottom:20px;">
+          <span class="hero-label" style="font-size:24px;">⚡ STRATEGIC PROJECT</span>
+        </div>
+        <h1 class="anim-2" style="font-size:120px; letter-spacing:4px;">
+          TIME<span class="accent-text">HEROES</span>
+        </h1>
+        <p class="anim-3" style="font-size:26px; color:var(--text-secondary); margin-top:20px; max-width:800px; line-height:1.5; font-weight:300;">
+          Une banque du temps moderne pour<br>
+          <span style="color:var(--text); font-weight:500;">les héros du quotidien</span>
+        </p>
+        <div class="anim-4" style="margin-top:50px; display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+          <span class="tag">🎯 POC fonctionnel</span>
+          <span class="tag">🏗️ 12 lots livrés</span>
+          <span class="tag">🚀 timeheroes.fr</span>
+        </div>
+        <div class="anim-5" style="margin-top:80px; font-size:16px; color:var(--text-muted);">
+          Ronald Mounien — MBA ESSEC Executive 2026
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 2 — PROBLEM ═══════════════ -->
+    <div class="slide slide-bg-dark" data-slide="1">
+      <div class="slide-grid"></div>
+      <div class="slide-orb orb-1" style="width:300px; height:300px; right:0; top:0; opacity:0.25;"></div>
+      <div class="slide-content">
+        <div class="anim-1" style="margin-bottom:12px;"><span class="tag">Pourquoi ce projet ?</span></div>
+        <h2 class="anim-2" style="font-size:72px; max-width:900px; margin-bottom:50px;">
+          Le temps, dernière<br>
+          <span class="accent-text">ressource vraiment égale</span>
+        </h2>
+        <div class="grid-3 anim-3" style="flex:1;">
+          <div class="feature-card" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="font-size:36px; line-height:1;">🤝</div>
+            <h3 style="font-size:20px;">Lien social en déclin</h3>
+            <p style="color:var(--text-secondary); font-size:15px; line-height:1.6;">Nos quartiers se fragmentent. 1 Français sur 3 ne connaît pas ses voisins. Les plateformes marchandes ne font que consommer ce lien.</p>
+          </div>
+          <div class="feature-card" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="font-size:36px; line-height:1;">💸</div>
+            <h3 style="font-size:20px;">Barrière économique</h3>
+            <p style="color:var(--text-secondary); font-size:15px; line-height:1.6;">Aide informatique, soutien scolaire, bricolage — ces services existent mais sont inaccessibles à ceux qui n'ont pas les moyens de payer.</p>
+          </div>
+          <div class="feature-card" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="font-size:36px; line-height:1;">📉</div>
+            <h3 style="font-size:20px;">Engagement non valorisé</h3>
+            <p style="color:var(--text-secondary); font-size:15px; line-height:1.6;">Des millions d'heures de bénévolat ne laissent aucune trace. Pas de reconnaissance, pas de CV, pas de valorisation professionnelle.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 3 — SOLUTION ═══════════════ -->
+    <div class="slide slide-bg-accent" data-slide="2">
+      <div class="slide-grid"></div>
+      <div class="slide-orb" style="width:500px;height:500px;background:rgba(0,212,170,0.06);top:10%;right:-100px;"></div>
+      <div class="slide-content">
+        <div class="anim-1" style="margin-bottom:12px;"><span class="tag" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.15);">La solution</span></div>
+        <h2 class="anim-2" style="font-size:72px; max-width:950px; margin-bottom:20px;">
+          Une banque du temps<br>
+          <span class="accent-text">1 heure = 1 TIME</span>
+        </h2>
+        <p class="anim-3" style="font-size:18px; color:var(--text-secondary); max-width:750px; line-height:1.7; margin-bottom:50px;">
+          TimeHeroes est une plateforme où chaque compétence devient une monnaie d'échange. 
+          <strong style="color:var(--text);">Pas d'argent.</strong> Du temps contre du temps. 
+          Avec des mécanismes modernes pour sécuriser, valoriser et gamifier l'entraide.
+        </p>
+        <div class="grid-3 anim-4" style="flex:1;">
+          <div class="feature-card" style="text-align:center; padding:36px 28px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <div style="font-size:42px;">🔒</div>
+            <h3 style="font-size:20px;">Escrow TIME</h3>
+            <p style="color:var(--text-secondary); font-size:14px; line-height:1.6;">Les TIME sont bloqués pendant la mission. Libérés <strong style="color:var(--text);">uniquement</strong> après validation des deux parties.</p>
+          </div>
+          <div class="feature-card" style="text-align:center; padding:36px 28px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <div style="font-size:42px;">✅</div>
+            <h3 style="font-size:20px;">QR Code & NFC</h3>
+            <p style="color:var(--text-secondary); font-size:14px; line-height:1.6;">Validation de complétion par QR code scanné ou tag NFC. <strong style="color:var(--text);;">Zéro friction</strong> entre héros.</p>
+          </div>
+          <div class="feature-card" style="text-align:center; padding:36px 28px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <div style="font-size:42px;">🏆</div>
+            <h3 style="font-size:20px;">Gamification Hero</h3>
+            <p style="color:var(--text-secondary); font-size:14px; line-height:1.6;">XP, badges, niveaux, quêtes et récompenses. <strong style="color:var(--text);;">Chaque heure d'entraide compte</strong> dans ta progression.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 4 — KEY FEATURES ═══════════════ -->
+    <div class="slide slide-bg-surface" data-slide="3">
+      <div class="slide-grid"></div>
+      <div class="slide-content">
+        <div class="anim-1" style="margin-bottom:12px;"><span class="tag">Fonctionnalités</span></div>
+        <h2 class="anim-2" style="font-size:56px; margin-bottom:36px;">
+          Tout ce qu'un héros<br>
+          <span class="accent-text">mérite d'avoir</span>
+        </h2>
+        <div class="grid-3 anim-3" style="gap:16px; flex:1;">
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">🏪</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">Marketplace</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">Recherche, filtres par catégories, distance et localisation. Des missions près de chez toi.</p>
+          </div>
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">💰</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">Wallet & TIME</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">Portefeuille TIME avec historique, transferts, et mint initial. 100% traçable.</p>
+          </div>
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">📅</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">Booking & Escrow</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">Réservation, blocage en escrow, annulation, complétion. Toute la vie de la mission.</p>
+          </div>
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">⭐</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">Réputation</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">Système de notes et avis post-mission. La confiance se construit sur des preuves.</p>
+          </div>
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">🆘</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">Urgent Help</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">Mode demande urgente. Quand chaque minute compte, la communauté répond.</p>
+          </div>
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">📍</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">Local Heroes</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">Géolocalisation déclarative. Trouve les héros dans ton quartier, ta ville, ta région.</p>
+          </div>
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">📱</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">QR / NFC</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">Validation physique de complétion. Technologie NFC embarquée pour la preuve réelle.</p>
+          </div>
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">🎮</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">Gamification</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">XP, badges, niveaux, quêtes quotidiennes, rewards. L'entraide devient une aventure.</p>
+          </div>
+          <div class="feature-card" style="padding:24px;">
+            <div class="feature-icon">🎯</div>
+            <h3 style="font-size:17px; margin-bottom:6px;">Pot Commun</h3>
+            <p style="color:var(--text-secondary); font-size:13px; line-height:1.5;">Financement solidaire des missions. Chacun peut contribuer au bien commun.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 5 — GAMIFICATION ═══════════════ -->
+    <div class="slide slide-bg-dark" data-slide="4">
+      <div class="slide-grid"></div>
+      <div class="slide-orb" style="width:450px;height:450px;background:rgba(0,212,170,0.07);top:20%;right:-80px;"></div>
+      <div class="slide-content">
+        <div class="anim-1" style="margin-bottom:12px;"><span class="tag">⭐ Différentiateur clé</span></div>
+        <h2 class="anim-2" style="font-size:64px; max-width:850px; margin-bottom:40px;">
+          Gamification Hero :<br>
+          <span class="accent-text">ton entraide devient ton XP</span>
+        </h2>
+        <div class="grid-3 anim-3" style="flex:1;">
+          <div class="stat-card" style="text-align:left;">
+            <div style="font-size:32px; margin-bottom:8px;">⭐</div>
+            <div class="stat-number" style="font-size:36px; margin-bottom:4px;">5 Niveaux</div>
+            <p style="color:var(--text-secondary); font-size:14px;">Débutant → Héros Légendaire. Chaque niveau débloque de nouveaux privilèges.</p>
+          </div>
+          <div class="stat-card" style="text-align:left;">
+            <div style="font-size:32px; margin-bottom:8px;">🎖️</div>
+            <div class="stat-number" style="font-size:36px; margin-bottom:4px;">Badges</div>
+            <p style="color:var(--text-secondary); font-size:14px;">Badges thématiques récompensant les actions spéciales et l'engagement durable.</p>
+          </div>
+          <div class="stat-card" style="text-align:left;">
+            <div style="font-size:32px; margin-bottom:8px;">📋</div>
+            <div class="stat-number" style="font-size:36px; margin-bottom:4px;">Quêtes</div>
+            <p style="color:var(--text-secondary); font-size:14px;">Défis quotidiens et missions spéciales pour maintenir l'engagement et la découverte.</p>
+          </div>
+        </div>
+        <div class="anim-4" style="margin-top:24px; padding:20px 28px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius);">
+          <p style="color:var(--text-secondary); font-size:15px; line-height:1.6;">
+            <strong style="color:var(--accent;">≠ Différence fondamentale :</strong> La plupart des time banks s'arrêtent au matching. TimeHeroes transforme chaque échange en <strong style="color:var(--text);">expérience engageante</strong> — comme un RPG social où plus tu aides, plus tu montes en grade. Et ça devient un <strong style="color:var(--text);">CV de l'engagement.</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 6 — USER JOURNEY ═══════════════ -->
+    <div class="slide slide-bg-surface" data-slide="5">
+      <div class="slide-grid"></div>
+      <div class="slide-content">
+        <div class="anim-1" style="margin-bottom:12px;"><span class="tag">Parcours utilisateur</span></div>
+        <h2 class="anim-2" style="font-size:56px; margin-bottom:40px;">
+          Du besoin → au héros<br>
+          <span class="accent-text">en 5 minutes</span>
+        </h2>
+        <div class="grid-2 anim-3" style="flex:1; gap:20px;">
+          <div style="display:flex; flex-direction:column; gap:0;">
+            <div class="journey-step">
+              <div class="journey-num">1</div>
+              <div>
+                <h3 style="font-size:18px; margin-bottom:4px;">Je crée mon compte Hero</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">Inscription rapide avec email. Ou connexion démo 1-clic pour tester immédiatement.</p>
+              </div>
+            </div>
+            <div class="journey-line"></div>
+            <div class="journey-step">
+              <div class="journey-num">2</div>
+              <div>
+                <h3 style="font-size:18px; margin-bottom:4px;">Je propose ou je cherche</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">Je publie ce que je sais faire, ou je trouve quelqu'un pour m'aider. Filtres par catégorie, localisation, distance.</p>
+              </div>
+            </div>
+            <div class="journey-line"></div>
+            <div class="journey-step">
+              <div class="journey-num">3</div>
+              <div>
+                <h3 style="font-size:18px; margin-bottom:4px;">Je réserve en quelques clics</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">Les TIME sont bloqués en escrow. Le héros est prévenu. La mission est officielle.</p>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0;">
+            <div class="journey-step">
+              <div class="journey-num">4</div>
+              <div>
+                <h3 style="font-size:18px; margin-bottom:4px;">La mission se réalise</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">Cours de guitare, aide déménagement, soutien scolaire… le temps s'échange.</p>
+              </div>
+            </div>
+            <div class="journey-line"></div>
+            <div class="journey-step">
+              <div class="journey-num">5</div>
+              <div>
+                <h3 style="font-size:18px; margin-bottom:4px;">Je valide par QR/NFC</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">Un scan. Un tag. Les TIME sont libérés. Les deux parties notent l'expérience.</p>
+              </div>
+            </div>
+            <div class="journey-line"></div>
+            <div class="journey-step">
+              <div class="journey-num">6</div>
+              <div>
+                <h3 style="font-size:18px; margin-bottom:4px;">Je gagne XP + badges 🏆</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">Ma réputation grandit. Mon niveau augmente. Mon CV d'engagement s'enrichit.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 7 — METRICS ═══════════════ -->
+    <div class="slide slide-bg-dark" data-slide="6">
+      <div class="slide-grid"></div>
+      <div class="slide-orb orb-1" style="width:350px;height:350px;top:auto;bottom:0;left:auto;right:0;"></div>
+      <div class="slide-content">
+        <div class="anim-1" style="margin-bottom:12px;"><span class="tag">Chiffres & Réalisation</span></div>
+        <h2 class="anim-2" style="font-size:56px; margin-bottom:36px;">
+          Du concept à la réalité<br>
+          <span class="accent-text">en 2 mois</span>
+        </h2>
+        <div class="grid-4 anim-3" style="margin-bottom:32px;">
+          <div class="stat-card">
+            <div class="stat-number">12</div>
+            <p style="color:var(--text-secondary); font-size:13px; margin-top:6px;">Lots fonctionnels livrés</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="font-size:40px;">22+</div>
+            <p style="color:var(--text-secondary); font-size:13px; margin-top:6px;">Routes / pages</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="font-size:40px;">10</div>
+            <p style="color:var(--text-secondary); font-size:13px; margin-top:6px;">Catégories de services</p>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">5</div>
+            <p style="color:var(--text-secondary); font-size:13px; margin-top:6px;">Niveaux Hero</p>
+          </div>
+        </div>
+        <div class="grid-3 anim-4" style="gap:16px;">
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 20px;">
+            <p style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Lots livrés</p>
+            <p style="font-size:14px; color:var(--text-secondary); line-height:1.6;">
+              Auth & Wallet · Marketplace · Booking & Escrow · Rating & Reputation · Local Heroes · Urgent Help · NFC Proof · Gamification · Demo Seed · Landing Page
+            </p>
+          </div>
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 20px;">
+            <p style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Screens principales</p>
+            <p style="font-size:14px; color:var(--text-secondary); line-height:1.6;">
+              Dashboard · Marketplace · Detail Mission · Booking · Wallet · Rewards · Profile · Urgent · Admin
+            </p>
+          </div>
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 20px;">
+            <p style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Stack</p>
+            <p style="font-size:14px; color:var(--text-secondary); line-height:1.6;">
+              Next.js 16 · TypeScript · Prisma 6 · SQLite · Tailwind v4 · NextAuth · Zod
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 8 — ARCHITECTURE ═══════════════ -->
+    <div class="slide slide-bg-surface" data-slide="7">
+      <div class="slide-grid"></div>
+      <div class="slide-content">
+        <div class="anim-1" style="margin-bottom:12px;"><span class="tag">Architecture & Déploiement</span></div>
+        <h2 class="anim-2" style="font-size:56px; margin-bottom:30px;">
+          Production <span class="accent-text">ready</span><br>
+          <span style="font-size:22px; color:var(--text-secondary); font-family:'Inter'; font-weight:400; text-transform:none; letter-spacing:0;">Une stack moderne, un déploiement VPS réel</span>
+        </h2>
+        <div class="grid-2 anim-3" style="flex:1; gap:30px;">
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:24px;">
+              <h3 style="font-size:16px; margin-bottom:14px; color:var(--accent);">Stack technique</h3>
+              <div class="stack-grid">
+                <span class="stack-item">Next.js 16</span>
+                <span class="stack-item">TypeScript</span>
+                <span class="stack-item">Prisma 6</span>
+                <span class="stack-item">SQLite</span>
+                <span class="stack-item">Tailwind v4</span>
+                <span class="stack-item">NextAuth</span>
+                <span class="stack-item">Zod</span>
+                <span class="stack-item">Lucide Icons</span>
+                <span class="stack-item">bcryptjs</span>
+              </div>
+            </div>
+            <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:24px;">
+              <h3 style="font-size:16px; margin-bottom:14px; color:var(--accent);">Déploiement</h3>
+              <div style="background:var(--surface3); border-radius:var(--radius-sm); padding:14px 18px; font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--text-secondary); line-height:1.8;">
+                Client → HTTPS timeheroes.fr<br>
+                &nbsp;&nbsp;→ Caddy (SSL) → localhost:3096<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;→ Next.js (programmatic server)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ Prisma → SQLite
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:16px; justify-content:center;">
+            <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:28px;">
+              <h3 style="font-size:20px; margin-bottom:10px;">🌐 timeheroes.fr</h3>
+              <p style="color:var(--text-secondary); font-size:14px; margin-bottom:20px;">Hébergé sur VPS Hetzner (Allemagne) · Domaine OVH · SSL Let's Encrypt</p>
+              <div style="background:rgba(0,212,170,0.08); border:1px solid rgba(0,212,170,0.2); border-radius:var(--radius-sm); padding:16px 20px;">
+                <p style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">⚠️ Testez la démo</p>
+                <p style="font-size:15px; color:var(--text); margin-bottom:4px;"><strong>Email :</strong> demo@timeheroes.fr</p>
+                <p style="font-size:15px; color:var(--text);"><strong>Mot de passe :</strong> TimeHeroes2026!</p>
+                <p style="font-size:13px; color:var(--text-secondary); margin-top:8px;">Ou utilisez le bouton ⚡ Connexion démo 1-clic sur la page de login</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 9 — ROADMAP ═══════════════ -->
+    <div class="slide slide-bg-dark" data-slide="8">
+      <div class="slide-grid"></div>
+      <div class="slide-orb" style="width:400px;height:400px;background:rgba(0,212,170,0.05);top:40%;right:-120px;"></div>
+      <div class="slide-content">
+        <div class="anim-1" style="margin-bottom:12px;"><span class="tag">Feuille de route</span></div>
+        <h2 class="anim-2" style="font-size:56px; margin-bottom:40px;">
+          La suite de l'aventure<br>
+          <span class="accent-text">TimeHeroes</span>
+        </h2>
+        <div class="grid-3 anim-3" style="flex:1; gap:20px;">
+          <div class="roadmap-phase roadmap-done" style="display:flex; flex-direction:column; gap:10px;">
+            <div class="phase-label">✅ Fait — POC (Juin 2026)</div>
+            <h3 style="font-size:18px;">Base fonctionnelle</h3>
+            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:6px;">
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:var(--accent);">→</span> Auth, Wallet, Marketplace</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:var(--accent);">→</span> Booking & Escrow</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:var(--accent);">→</span> QR/NFC, Gamification</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:var(--accent);">→</span> Urgent Help, Local Heroes</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:var(--accent);">→</span> Landing page, seed data</li>
+            </ul>
+          </div>
+          <div class="roadmap-phase roadmap-next" style="display:flex; flex-direction:column; gap:10px;">
+            <div class="phase-label">🎯 En cours — MVP</div>
+            <h3 style="font-size:18px;">Passage à l'échelle</h3>
+            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:6px;">
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#f0a500;">→</span> Dashboard admin analytics</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#f0a500;">→</span> Notifications temps réel</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#f0a500;">→</span> Messagerie intégrée</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#f0a500;">→</span> Onboarding enrichi</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#f0a500;">→</span> PostgreSQL scale</li>
+            </ul>
+          </div>
+          <div class="roadmap-phase roadmap-vision" style="display:flex; flex-direction:column; gap:10px;">
+            <div class="phase-label">🌟 Vision — Long terme</div>
+            <h3 style="font-size:18px;">Impact & écosystème</h3>
+            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:6px;">
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#7c5cfc;">→</span> Records of Achievement</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#7c5cfc;">→</span> Portfolio bénévole / CV</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#7c5cfc;">→</span> Réseau coopératives ESS</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#7c5cfc;">→</span> Application mobile</li>
+              <li style="display:flex; gap:8px; color:var(--text-secondary); font-size:14px;"><span style="color:#7c5cfc;">→</span> API publique</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SLIDE 10 — VISION & CTA ═══════════════ -->
+    <div class="slide slide-bg-gradient" data-slide="9">
+      <div class="slide-grid"></div>
+      <div class="slide-orb" style="width:600px;height:600px;background:rgba(0,212,170,0.08);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+      <div class="slide-content" style="justify-content:center; align-items:center; text-align:center;">
+        <div class="anim-1" style="margin-bottom:16px;">
+          <span class="hero-label" style="font-size:22px;">🌍 L'AVENIR DE L'ENTRAIDE</span>
+        </div>
+        <h2 class="anim-2" style="font-size:72px; max-width:1000px; letter-spacing:2px;">
+          L'engagement citoyen devient<br>
+          <span class="accent-text">un actif professionnel</span>
+        </h2>
+        <p class="anim-3" style="font-size:22px; color:var(--text-secondary); max-width:800px; margin-top:24px; line-height:1.6; font-weight:300;">
+          TimeHeroes, c'est plus qu'une app. C'est un <strong style="color:var(--text);">nouveau standard</strong> pour<br>
+          reconnaître, valoriser et monétiser l'engagement de chacun.<br>
+          <span style="color:var(--text-muted);">Le temps est la seule vraie richesse. Échangeons-la.</span>
+        </p>
+        <div class="anim-4" style="margin-top:50px; display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+          <a href="https://timeheroes.fr" target="_blank" style="display:inline-flex; align-items:center; gap:10px; background:var(--accent); color:#0a0a0a; padding:16px 40px; border-radius:50px; font-size:18px; font-weight:600; text-decoration:none; transition:all 0.2s;">
+            🚀 timeheroes.fr
+          </a>
+          <div style="display:inline-flex; align-items:center; gap:10px; background:var(--surface2); border:1px solid var(--border); color:var(--text-secondary); padding:16px 32px; border-radius:50px; font-size:15px;">
+            📧 demo@timeheroes.fr / TimeHeroes2026!
+          </div>
+        </div>
+        <div class="anim-5" style="margin-top:60px; font-size:14px; color:var(--text-muted); max-width:600px; line-height:1.7;">
+          <em>"Le temps est la seule monnaie qui ne s'emprunte pas, ne s'imprime pas, ne se crée pas. Choisis bien comment tu dépenses le tien."</em>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav" id="nav">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous">◀</button>
+  <div class="nav-dots" id="navDots"></div>
+  <span class="nav-counter" id="slideCounter">01 / 10</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next">▶</button>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  
+  // Build dots
+  const dotsContainer = document.getElementById('navDots');
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.dataset.index = i;
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  }
+  
+  function updateScale() {
+    const el = document.getElementById('deckInner');
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const sw = 1920;
+    const sh = 1080;
+    const scale = Math.min(w / sw, h / sh);
+    el.style.transform = `scale(${scale})`;
+  }
+  
+  function goTo(idx) {
+    if (idx < 0) idx = 0;
+    if (idx >= total) idx = total - 1;
+    current = idx;
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    document.getElementById('slideCounter').textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    try { localStorage.setItem('timeheroes-slide', idx); } catch(e) {}
+  }
+  
+  document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+  
+  // Touch swipe
+  let touchStartX = 0, touchStartY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+  
+  // Restore last slide
+  try {
+    const saved = parseInt(localStorage.getItem('timeheroes-slide'));
+    if (!isNaN(saved) && saved >= 0 && saved < total) goTo(saved);
+  } catch(e) {}
+  
+  window.addEventListener('resize', updateScale);
+  updateScale();
+  
+  // Scale on load
+  setTimeout(updateScale, 100);
+})();
+</script>
+</body>
+</html>

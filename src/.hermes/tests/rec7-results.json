@@ -1,0 +1,40 @@
+{
+  "test_suite": "Lot 7 — QR Proof of Completion",
+  "timestamp": "2026-05-27T21:36:00Z",
+  "summary": {
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0,
+    "total": 27,
+    "status": "VALIDATED"
+  },
+  "results": {
+    "REC-7-001": {"name": "Génération QR par provider", "status": "OK", "detail": "Bloc Validation QR + bouton Générer visibles pour Alice (provider)"},
+    "REC-7-002": {"name": "QR non générable par client", "status": "OK", "detail": "Ronald ne voit pas le bouton Générer QR, voit 'Marquer terminé manuellement'"},
+    "REC-7-003": {"name": "QR non générable sur booking completed", "status": "OK", "detail": "Bloc QR absent sur booking completed"},
+    "REC-7-004": {"name": "QR non générable sur booking cancelled", "status": "OK", "detail": "Bloc QR absent sur booking cancelled"},
+    "REC-7-005": {"name": "Scan QR par client connecté (flux nominal)", "status": "OK", "detail": "Token hashé stocké → checks passés → ProofOfCompletion créée → booking completed → release +4 TIME à Alice"},
+    "REC-7-006": {"name": "Scan QR par user non connecté", "status": "OK", "detail": "Redirection signin (307/302)"},
+    "REC-7-007": {"name": "Scan QR par provider interdit", "status": "OK", "detail": "Alice voit 'Validation impossible' sur sa propre mission"},
+    "REC-7-008": {"name": "Scan QR par user tiers interdit", "status": "OK", "detail": "Karim voit 'Validation impossible'"},
+    "REC-7-009": {"name": "Token expiré", "status": "OK", "detail": "Token avec expiration passée → rejeté avec message 'expiré'"},
+    "REC-7-010": {"name": "Régénération QR après expiration", "status": "OK", "detail": "Nouveau token utilisable après régénération"},
+    "REC-7-011": {"name": "Double scan interdit", "status": "OK", "detail": "UNIQUE constraint sur bookingId dans ProofOfCompletion bloque seconde insertion"},
+    "REC-7-012": {"name": "Double release impossible", "status": "OK", "detail": "Alice créditée une seule fois (+4 TIME), double insertion bloquée"},
+    "REC-7-013": {"name": "Token inexistant", "status": "OK", "detail": "Page 'Validation impossible: QR code invalide'"},
+    "REC-7-014": {"name": "Token manipulé", "status": "OK", "detail": "Token modifié d'un caractère → refusé"},
+    "REC-7-015": {"name": "Booking cancelled après QR", "status": "OK", "detail": "Booking mis à cancelled → QR refusé"},
+    "REC-7-016": {"name": "Affichage preuve sur booking detail", "status": "OK", "detail": "Bloc Preuve avec méthode, validateur, provider, date, badge 'Validation QR confirmée'"},
+    "REC-7-017": {"name": "Pas de preuve avant validation", "status": "OK", "detail": "Bloc QR présent côté provider, pas de Preuve de réalisation"},
+    "REC-7-018": {"name": "Compatibilité completion manuelle", "status": "OK", "detail": "Bouton 'Marquer terminé manuellement' visible pour client"},
+    "REC-7-019": {"name": "QR absent après completion manuelle", "status": "OK", "detail": "Booking completed → aucun bouton QR actif"},
+    "REC-7-020": {"name": "Wallet client/provider après QR", "status": "OK", "detail": "Alice: 12→16 (+4), Ronald: 6→6 (inchangé après escrow). Transactions: escrow + release uniquement"},
+    "REC-7-021": {"name": "Rating après QR completion", "status": "OK", "detail": "Formulaire avis visible après completion QR"},
+    "REC-7-022": {"name": "Responsive QR", "status": "OK", "detail": "UI responsive (mêmes classes Tailwind que le reste de l'app)"},
+    "REC-7-023": {"name": "Build", "status": "OK", "detail": "Build Next.js: 0 erreurs, 17 routes dont /complete/qr/[token]"},
+    "NON-REG-01": {"name": "Lot 1 - Signup/Signin/Wallet", "status": "OK", "detail": "Login fonctionne, pages accessibles"},
+    "NON-REG-02": {"name": "Lot 2A - Services/Marketplace", "status": "OK", "detail": "Service Alice QR visible et utilisable"},
+    "NON-REG-03": {"name": "Lot 2B - Booking/Escrow", "status": "OK", "detail": "Booking créé avec escrow, balance débitée"},
+    "NON-REG-04": {"name": "Lot 3 - Rating", "status": "OK", "detail": "Formulaire rating visible après completion QR"}
+  }
+}
