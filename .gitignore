@@ -45,6 +45,9 @@ next-env.d.ts
 *.db-wal
 *.db-shm
 
+# but allow backups subdirectory (cron saves DB snapshots here)
+!backups/*.db
+
 # OS
 *.swp
 *.swo
