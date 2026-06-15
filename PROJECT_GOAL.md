@@ -91,6 +91,14 @@ Client → HTTPS → timeheroes.fr (Caddy) → localhost:3096 (Node.js/Next.js)
 | 10 | Gamification Hero (XP, badges, niveaux, quêtes, rewards) | `725da3e` |
 | 11 | Demo seed data + connexion démo 1-clic | `8958cef` |
 | 12 | Landing Page & Storytelling (cette page README) | `740c93d` |
+| 13 | Calendrier & disponibilités | |
+| 15 | Dashboard mobile responsive + widgets | |
+| 16 | Parcours guidé onboarding + UI polish | |
+| 17 | Community Pot / Pot commun TIME | |
+| 17 bis | Rôle Facilitateur / Gardien des TIME | `efffe44` |
+| 18 | Missions solidaires + workflow | `f2c9a82` |
+| 19 | Missions collectives / Co-production | `feat: lot 19 collective missions` |
+| **20** | **Facilitator Dashboard v2 / Intelligence réseau** | **`lot-20-facilitator-network`** |
 
 ---
 
