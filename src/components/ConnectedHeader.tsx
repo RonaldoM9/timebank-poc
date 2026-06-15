@@ -17,6 +17,8 @@ import {
   X,
   ChevronDown,
   ShieldCheck,
+  Users,
+  Activity,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -26,6 +28,7 @@ function buildNav(isFacilitator: boolean): NavItem[] {
   const base: NavItem[] = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/services", label: "Missions", icon: Search },
+    { href: "/collective-missions", label: "Collectives", icon: Users },
     { href: "/bookings", label: "Bookings", icon: Calendar },
     { href: "/agenda", label: "Agenda", icon: CalendarCheck },
     { href: "/wallet", label: "Wallet", icon: Wallet },
@@ -34,7 +37,10 @@ function buildNav(isFacilitator: boolean): NavItem[] {
     { href: "/profile", label: "Profil", icon: User },
   ];
   if (isFacilitator) {
-    base.splice(1, 0, { href: "/facilitator/community-pot", label: "Facilitateur", icon: ShieldCheck });
+    base.splice(1, 0,
+      { href: "/facilitator/community-pot", label: "Pot commun", icon: ShieldCheck },
+      { href: "/facilitator/network", label: "Intelligence réseau", icon: Activity },
+    );
   }
   return base;
 }

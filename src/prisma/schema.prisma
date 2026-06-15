@@ -48,6 +48,11 @@ model User {
   communityPotDonations CommunityPotTransaction[]
   communityPotRequests   CommunityPotRequest[]
   communityPotDecisions  CommunityPotRequest[] @relation("DecidedBy")
+
+  collectiveMissions         CollectiveMission[]          @relation("CollectiveMissionOrganizer")
+  collectiveMissionParticipants CollectiveMissionParticipant[]
+
+  facilitatorNotes FacilitatorNote[]
 }
 
 model HeroPassport {
@@ -264,6 +269,141 @@ model CommunityPotRequest {
 }
 
 // ─── End Lot 17 bis ───────────────────────────────────────────────────────
+
+// ─── Lot 20 — Facilitator Dashboard v2 / Intelligence réseau ─────────────────
+
+model FacilitatorNetworkAlert {
+  id                  String   @id @default(cuid())
+
+  type                String
+  severity            String
+  status              String   @default("OPEN")
+
+  title               String
+  description         String?
+  recommendedAction   String?
+
+  entityType          String?
+  entityId            String?
+
+  assignedToId        String?
+  resolvedById        String?
+  resolvedAt          DateTime?
+  resolutionNote      String?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([type])
+  @@index([severity])
+  @@index([status])
+  @@index([entityType, entityId])
+  @@map("FacilitatorNetworkAlert")
+}
+
+model FacilitatorNote {
+  id          String   @id @default(cuid())
+
+  authorId    String
+  entityType  String
+  entityId    String
+
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User     @relation(fields: [authorId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([authorId])
+  @@map("FacilitatorNote")
+}
+
+// ─── End Lot 20 ───────────────────────────────────────────────────────────
+
+// ─── Lot 19 — Missions collectives / Co-production ─────────────────────────
+
+model CollectiveMission {
+  id              String   @id @default(cuid())
+
+  title           String
+  description     String
+  type            String   // ONE_TO_MANY | MANY_TO_ONE | MANY_TO_MANY | ORG_TO_MANY
+  category        String?
+  status          String   @default("OPEN") // OPEN | FULL | IN_PROGRESS | ATTENDANCE_PENDING | COMPLETED | CANCELLED
+
+  organizerId     String
+  facilitatorId   String?
+
+  city            String?
+  department      String?
+  region          String?
+  locationLabel   String?
+  online          Boolean  @default(false)
+
+  startsAt        DateTime?
+  endsAt          DateTime?
+  durationHours   Int      // en heures entières
+
+  minParticipants Int      @default(1)
+  maxParticipants Int
+
+  fundingSource   String   @default("NONE") // NONE | COMMUNITY_POT
+  communityPotAmount Int   @default(0)
+
+  isSolidarity      Boolean @default(false)
+  solidarityCategory String?
+  solidarityReason  String?
+
+  completedAt     DateTime?
+  cancelledAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  organizer       User              @relation("CollectiveMissionOrganizer", fields: [organizerId], references: [id])
+  participants    CollectiveMissionParticipant[]
+
+  @@index([status])
+  @@index([type])
+  @@index([city])
+  @@index([department])
+  @@index([region])
+  @@index([startsAt])
+  @@map("CollectiveMission")
+}
+
+model CollectiveMissionParticipant {
+  id              String   @id @default(cuid())
+
+  missionId       String
+  userId          String
+
+  role            String   @default("CONTRIBUTOR") // ORGANIZER | CONTRIBUTOR | BENEFICIARY | FACILITATOR | OBSERVER
+  status          String   @default("JOINED") // JOINED | WAITLISTED | CHECKED_IN | VALIDATED | NO_SHOW | CANCELLED
+
+  joinedAt        DateTime @default(now())
+  validatedAt     DateTime?
+  validatedById   String?
+
+  hoursValidated  Int?     // minutes réelles validées
+  timeReward      Int?     // TIME effectivement reçus
+  transactionId   String?
+
+  note            String?
+
+  mission         CollectiveMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  user            User              @relation(fields: [userId], references: [id])
+
+  @@unique([missionId, userId])
+  @@index([missionId])
+  @@index([userId])
+  @@index([status])
+  @@index([role])
+  @@map("CollectiveMissionParticipant")
+}
+
+// ─── End Lot 19 ───────────────────────────────────────────────────────────
 
 // ─── Lot 13 — Availability & Calendar ────────────────────────────────────────
 

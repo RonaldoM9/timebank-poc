@@ -20,6 +20,12 @@ export interface ImpactStats {
   completedQuests: number;
   escrowedTime: number;
   transferCount: number;
+
+  // Lot 19 — Missions collectives
+  collectiveMissionsCompleted: number;
+  collectiveParticipantsValidated: number;
+  collectiveTimeDistributed: number;
+  collectiveHours: number;
 }
 
 export async function getImpactStats(): Promise<ImpactStats> {
@@ -39,6 +45,10 @@ export async function getImpactStats(): Promise<ImpactStats> {
     completedQuests,
     escrowedData,
     heroCount,
+    collectiveMissionsCompleted,
+    collectiveParticipantsValidated,
+    collectiveTimeDistributed,
+    collectiveHours,
   ] = await Promise.all([
     // F15.1 — TIME échangé : somme des release + escrow_release (deux systèmes de transactions coexistants dans la seed)
     prisma.transaction.aggregate({
@@ -113,6 +123,20 @@ export async function getImpactStats(): Promise<ImpactStats> {
 
     // F15.3 — Heroes actifs (users avec au moins un booking ou une transaction)
     countActiveHeroes(),
+
+    // Lot 19 — Missions collectives
+    prisma.collectiveMission.count({
+      where: { status: "COMPLETED" },
+    }),
+    prisma.collectiveMissionParticipant.count({
+      where: { status: "VALIDATED" },
+    }),
+    prisma.collectiveMissionParticipant.aggregate({
+      _sum: { timeReward: true },
+    }),
+    prisma.collectiveMissionParticipant.aggregate({
+      _sum: { hoursValidated: true },
+    }),
   ]);
 
   // Rating average
@@ -127,6 +151,10 @@ export async function getImpactStats(): Promise<ImpactStats> {
 
   // XP générée
   const totalXpGenerated = xpData._sum.points ?? 0;
+
+  // Lot 19 — Missions collectives
+  const collectiveTimeDistributedVal = collectiveTimeDistributed._sum.timeReward ?? 0;
+  const collectiveHoursVal = collectiveHours._sum.hoursValidated ?? 0;
 
   return {
     // P0
@@ -148,6 +176,12 @@ export async function getImpactStats(): Promise<ImpactStats> {
     completedQuests,
     escrowedTime: escrowedData,
     transferCount,
+
+    // Lot 19 — Missions collectives
+    collectiveMissionsCompleted,
+    collectiveParticipantsValidated,
+    collectiveTimeDistributed: collectiveTimeDistributedVal,
+    collectiveHours: collectiveHoursVal,
   };
 }
 

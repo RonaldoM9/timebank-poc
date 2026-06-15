@@ -13,10 +13,10 @@ const CATEGORIES = [
 
 const SOLIDARITY_CATEGORIES = [
   { value: "SOCIAL_LINK", label: "Temps de lien" },
-  { value: "DIGITAL_HELP", label: "Aide numérique" },
-  { value: "LOCAL_SUPPORT", label: "Accompagnement local" },
+  { value: "DIGITAL_HELP", label: "Dépannage Numérique" },
+  { value: "LOCAL_SUPPORT", label: "Entraide de Quartier" },
   { value: "CAREGIVER_SUPPORT", label: "Aidants" },
-  { value: "SENIOR_SUPPORT", label: "Seniors" },
+  { value: "SENIOR_SUPPORT", label: "Visite aux Seniors" },
   { value: "TRANSMISSION", label: "Transmission" },
   { value: "NEWCOMER_HELP", label: "Nouveaux arrivants" },
   { value: "SAFE_HOME", label: "Maison sûre" },

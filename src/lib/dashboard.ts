@@ -6,6 +6,8 @@ export type DashboardStats = {
   requestedBookingsCount: number;
   unreadMessagesCount: number;
   todoActionsCount: number;
+  collectiveMissionsOpen: number;
+  collectiveMissionsParticipation: number;
 };
 
 const ACTIVE_STATUSES = ["pending", "accepted", "in_progress"];
@@ -13,7 +15,7 @@ const ACTIVE_STATUSES = ["pending", "accepted", "in_progress"];
 export async function getDashboardStats(
   userId: string
 ): Promise<DashboardStats> {
-  const [user, receivedBookingsCount, requestedBookingsCount, unreadMessagesCount] =
+  const [user, receivedBookingsCount, requestedBookingsCount, unreadMessagesCount, collectiveMissionsOpen, collectiveMissionsParticipation] =
     await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
@@ -46,6 +48,17 @@ export async function getDashboardStats(
           },
         },
       }),
+      // Missions collectives ouvertes
+      prisma.collectiveMission.count({
+        where: { status: "OPEN" },
+      }),
+      // Participations de l'utilisateur aux missions collectives
+      prisma.collectiveMissionParticipant.count({
+        where: {
+          userId: userId,
+          status: { not: "CANCELLED" },
+        },
+      }),
     ]);
 
   // Actions à faire = pending provider bookings + unread messages + completed bookings (customer) sans rating
@@ -73,5 +86,7 @@ export async function getDashboardStats(
     requestedBookingsCount,
     unreadMessagesCount,
     todoActionsCount,
+    collectiveMissionsOpen,
+    collectiveMissionsParticipation,
   };
 }

@@ -59,10 +59,10 @@ export default function SolidarityBadge({
  */
 export const SOLIDARITY_CATEGORY_LABELS: Record<string, string> = {
   SOCIAL_LINK: "Temps de lien",
-  DIGITAL_HELP: "Aide numérique",
-  LOCAL_SUPPORT: "Accompagnement local",
+  DIGITAL_HELP: "Dépannage Numérique",
+  LOCAL_SUPPORT: "Entraide de Quartier",
   CAREGIVER_SUPPORT: "Aidants",
-  SENIOR_SUPPORT: "Seniors",
+  SENIOR_SUPPORT: "Visite aux Seniors",
   TRANSMISSION: "Transmission",
   NEWCOMER_HELP: "Nouveaux arrivants",
   SAFE_HOME: "Maison sûre",

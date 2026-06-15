@@ -213,17 +213,31 @@ export default function ServicesClient({ initialServices }: { initialServices: S
             </div>
           )}
 
-          {/* Solidarity filter */}
-          <div className="flex items-center gap-2">
-            <HeartHandshake className="w-4 h-4 text-tb-text-muted" />
-            <select
-              value={solidarityFilter}
-              onChange={(e) => setSolidarityFilter(e.target.value)}
-              className="bg-tb-surface border border-tb-border rounded-xl px-3.5 py-2 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors text-xs appearance-none cursor-pointer"
+          {/* Solidarity filter - toggle buttons */}
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <button
+              onClick={() => setSolidarityFilter("all")}
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all border ${
+                solidarityFilter === "all"
+                  ? "bg-tb-accent text-white border-tb-accent shadow-sm"
+                  : "bg-tb-surface text-tb-text-secondary border-tb-border hover:border-tb-accent/50"
+              }`}
             >
-              <option value="all">Toutes les missions</option>
-              <option value="solidarity">Missions solidaires</option>
-            </select>
+              <Sparkles className="w-3.5 h-3.5" />
+              Toutes les missions
+            </button>
+
+            <button
+              onClick={() => setSolidarityFilter("solidarity")}
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all border ${
+                solidarityFilter === "solidarity"
+                  ? "bg-pink-500 text-white border-pink-500 shadow-sm"
+                  : "bg-tb-surface text-tb-text-secondary border-tb-border hover:border-pink-500/50"
+              }`}
+            >
+              <HeartHandshake className="w-3.5 h-3.5" />
+              Missions solidaires
+            </button>
           </div>
         </div>
 

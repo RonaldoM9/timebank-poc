@@ -101,6 +101,29 @@ export default function DashboardClient({
         {/* ─── Activity widgets (DashboardStats) ─── */}
         <DashboardStats stats={dashboardStats} />
 
+        {/* ─── Missions collectives ─── */}
+        <Link
+          href="/collective-missions"
+          className="block bg-tb-surface border border-tb-border rounded-2xl p-4 hover:border-tb-accent/30 transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                <HeartHandshake className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div>
+                <span className="text-tb-text-secondary text-sm font-medium">Missions collectives</span>
+                <p className="text-xs text-tb-text-muted mt-0.5">
+                  {dashboardStats.collectiveMissionsOpen} ouverte{dashboardStats.collectiveMissionsOpen > 1 ? "s" : ""}
+                  {" · "}
+                  {dashboardStats.collectiveMissionsParticipation} participation{dashboardStats.collectiveMissionsParticipation > 1 ? "s" : ""}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs text-tb-accent group-hover:text-tb-accent-hover transition-colors">Voir →</span>
+          </div>
+        </Link>
+
         {/* ─── Grille 2 colonnes pour les cartes secondaires ─── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 

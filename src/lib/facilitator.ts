@@ -6,6 +6,7 @@ export type FacilitatorDashboardData = {
   fundingsThisMonth: number;
   pendingRequests: number;
   fundedMissions: number;
+  openCollectiveMissions: number;
 };
 
 export type RequestWithDetails = {
@@ -55,12 +56,17 @@ export async function getFacilitatorDashboard(): Promise<FacilitatorDashboardDat
     where: { status: "PENDING" },
   });
 
+  const openCollectiveMissions = await prisma.collectiveMission.count({
+    where: { status: "OPEN" },
+  });
+
   return {
     potBalance: pot?.balance ?? 0,
     donationsThisMonth,
     fundingsThisMonth: fundingsAgg._sum.amount ?? 0,
     pendingRequests,
     fundedMissions,
+    openCollectiveMissions,
   };
 }
 

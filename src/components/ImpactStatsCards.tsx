@@ -123,6 +123,34 @@ export const KPI_DEFINITIONS: Record<string, KpiDef> = {
     label: "Transferts",
     explanation: "Nombre total de transferts de TIME.",
   },
+
+  // Lot 19 — Missions collectives
+  collectiveMissionsCompleted: {
+    key: "collectiveMissionsCompleted",
+    icon: CheckCircle,
+    label: "Missions collectives",
+    explanation: "Missions collectives terminées avec succès.",
+  },
+  collectiveParticipantsValidated: {
+    key: "collectiveParticipantsValidated",
+    icon: Users,
+    label: "Participants validés",
+    explanation: "Participants ayant contribué à des missions collectives.",
+  },
+  collectiveTimeDistributed: {
+    key: "collectiveTimeDistributed",
+    icon: Clock,
+    label: "TIME distribués",
+    explanation: "TIME redistribués via les missions collectives.",
+    formatValue: (v) => `${Math.round(v ?? 0)}`,
+  },
+  collectiveHours: {
+    key: "collectiveHours",
+    icon: Clock,
+    label: "Heures collectives",
+    explanation: "Heures validées dans les missions collectives.",
+    formatValue: (v) => `${Math.round(v ?? 0)}`,
+  },
 };
 
 // ─── Empty state message ──────────────────────────────────────────────────

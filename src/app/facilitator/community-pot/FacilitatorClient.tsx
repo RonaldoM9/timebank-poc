@@ -19,6 +19,7 @@ import type { FacilitatorDashboardData, RequestWithDetails } from "@/lib/facilit
 import { approveCommunityPotRequest, rejectCommunityPotRequest } from "./actions";
 import { verifySolidarityMission, rejectSolidarityMission } from "@/app/services/solidarity-actions";
 import SolidarityBadge, { SOLIDARITY_CATEGORY_LABELS } from "@/components/SolidarityBadge";
+import ConnectedHeader from "@/components/ConnectedHeader";
 
 type Props = {
   user: { id: string; name: string; role: string };
@@ -92,6 +93,8 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
   }
 
   return (
+    <>
+    <ConnectedHeader />
     <div className="text-tb-text-primary">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
@@ -107,13 +110,13 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
 
         {/* Alerts */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-900/30 border border-red-800/50 text-red-300 text-sm flex items-center gap-2">
+          <div className="mb-6 p-4 rounded-xl bg-red-700 border border-red-600 text-white text-sm font-medium shadow-lg flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             {error}
           </div>
         )}
         {success && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-900/30 border border-emerald-800/50 text-emerald-300 text-sm">
+          <div className="mb-6 p-4 rounded-xl bg-emerald-700 border border-emerald-600 text-white text-sm font-medium shadow-lg">
             {success}
           </div>
         )}
@@ -165,6 +168,17 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
             </div>
             <p className="text-2xl font-bold">{dashboard.fundedMissions}</p>
           </div>
+          {/* Open collective missions */}
+          <a
+            href="/collective-missions"
+            className="rounded-2xl bg-tb-surface border border-tb-border p-4 hover:bg-tb-surface-hover transition block"
+          >
+            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
+              <Users className="w-4 h-4 text-teal-400" />
+              Collectives
+            </div>
+            <p className="text-2xl font-bold">{dashboard.openCollectiveMissions}</p>
+          </a>
         </div>
 
         {/* B. Pending Requests */}
@@ -391,5 +405,6 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
         </div>
       )}
     </div>
+    </>
   );
 }

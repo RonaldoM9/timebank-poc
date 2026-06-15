@@ -68,7 +68,19 @@ export default async function ImpactPage() {
               ]}
             />
 
-            {/* Section 5 — Récit d'impact */}
+            {/* Section 5 — Missions collectives */}
+            <SectionGrid
+              stats={stats}
+              title="Missions collectives"
+              keys={[
+                "collectiveMissionsCompleted",
+                "collectiveParticipantsValidated",
+                "collectiveTimeDistributed",
+                "collectiveHours",
+              ]}
+            />
+
+            {/* Section 6 — Récit d'impact */}
             <section className="border-t border-tb-border pt-12 mt-16">
               <div className="max-w-3xl mx-auto text-center">
                 <h2 className="text-xl md:text-2xl font-bold text-tb-text-primary mb-4 font-anton tracking-wide">

@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "seed:demo": "tsx prisma/seed-demo.ts",
-    "db:reset-demo": "tsx prisma/seed-demo.ts"
+    "seed:facilitator-test": "tsx prisma/seed-facilitator-test.ts",
+    "db:reset-demo": "tsx prisma/seed-demo.ts",
+    "seed:collective-missions": "tsx prisma/seed-collective-missions.ts",
+    "seed:facilitator-network": "tsx prisma/seed-facilitator-network.ts"
   },
   "dependencies": {
     "@next/font": "^14.2.15",
