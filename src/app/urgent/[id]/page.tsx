@@ -19,12 +19,14 @@ export default async function UrgentDetailPage({
   // Check if current user is requester
   const session = await getServerSession(authOptions);
   let userId: string | null = null;
+  let userRole: string | null = null;
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true },
+      select: { id: true, role: true },
     });
     userId = user?.id ?? null;
+    userRole = user?.role ?? null;
   }
 
   const isRequester = userId === request.requester.id;
@@ -43,6 +45,7 @@ export default async function UrgentDetailPage({
       request={request}
       isRequester={isRequester}
       hasOffered={hasOffered}
+      userRole={userRole}
     />
   );
 }

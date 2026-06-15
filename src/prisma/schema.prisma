@@ -53,6 +53,8 @@ model User {
   collectiveMissionParticipants CollectiveMissionParticipant[]
 
   facilitatorNotes FacilitatorNote[]
+  matchRecommendations MatchRecommendation[]
+  matchFeedbacks MatchFeedback[]
 }
 
 model HeroPassport {
@@ -565,3 +567,65 @@ model MessageReport {
   @@index([reporterId])
   @@index([status])
 }
+
+// ─── Lot 21 — IA Matchmaking assistée ─────────────────────────────────────
+
+model MatchRecommendation {
+  id                    String   @id @default(cuid())
+
+  targetType             String   // URGENT_REQUEST | SOLIDARITY_MISSION | COLLECTIVE_MISSION | BOOKING
+  targetId               String
+
+  candidateId            String
+  facilitatorId          String?
+
+  score                  Float
+  skillScore             Float
+  locationScore          Float
+  availabilityScore      Float
+  trustScore             Float
+  reciprocityScore       Float
+  communityHealthScore   Float
+
+  reasonsJson            String?
+  risksJson              String?
+  scoreBreakdownJson     String?
+
+  status                 String   @default("PENDING_REVIEW")
+  decisionNote           String?
+  decidedById            String?
+  decidedAt              DateTime?
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  candidate              User            @relation(fields: [candidateId], references: [id])
+  feedbacks              MatchFeedback[]
+
+  @@index([targetType, targetId])
+  @@index([candidateId])
+  @@index([status])
+  @@index([score])
+  @@map("MatchRecommendation")
+}
+
+model MatchFeedback {
+  id                   String   @id @default(cuid())
+
+  recommendationId      String
+  facilitatorId         String
+
+  decision              String   // GOOD_MATCH | BAD_MATCH | CONTACTED | NOT_AVAILABLE | WRONG_SKILL | OVERUSED | OTHER
+  comment               String?
+
+  createdAt             DateTime @default(now())
+
+  recommendation        MatchRecommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+  facilitator           User                @relation(fields: [facilitatorId], references: [id])
+
+  @@index([recommendationId])
+  @@index([facilitatorId])
+  @@map("MatchFeedback")
+}
+
+// ─── End Lot 21 ───────────────────────────────────────────────────────────

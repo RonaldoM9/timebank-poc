@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { CollectiveMissionWithParticipants, ParticipantDetail } from "@/lib/collective-missions";
+import type { MatchRecommendation } from "@/lib/matchmaking";
+import { getScoreLabel } from "@/lib/matchmaking";
 import {
   getMissionStatusLabel,
   getMissionStatusColor,
@@ -19,6 +21,12 @@ import {
   completeCollectiveMissionAction,
   cancelCollectiveMissionAction,
 } from "../actions";
+import {
+  generateRecommendationsAction,
+  getRecommendationsAction,
+  approveRecommendationAction,
+  rejectRecommendationAction,
+} from "../../facilitator/matching/actions";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -36,6 +44,9 @@ import {
   XCircle,
   LogOut,
   LogIn,
+  Sparkles,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 
 // ─── Props ─────────────────────────────────────────────────────────────────────
@@ -186,6 +197,97 @@ export default function CollectiveMissionDetailClient({
     );
 
   const isCompleted = mission.status === "COMPLETED";
+
+  // ─── Recommendation state ──────────────────────────────────────────────
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
+  const [generatingRecommendations, setGeneratingRecommendations] = useState(false);
+
+  const canSeeRecommendations =
+    mission.organizerId === viewer.id ||
+    viewer.role === "FACILITATOR" ||
+    viewer.role === "ADMIN";
+
+  // ─── Load existing recommendations on mount ────────────────────────────
+  useEffect(() => {
+    if (!canSeeRecommendations) return;
+    (async () => {
+      setLoadingRecommendations(true);
+      try {
+        const result = await getRecommendationsAction("COLLECTIVE_MISSION", mission.id);
+        if (result.success && result.data) {
+          setRecommendations(result.data);
+        }
+      } catch {
+        // silently ignore — server handles auth
+      } finally {
+        setLoadingRecommendations(false);
+      }
+    })();
+  }, [mission.id, canSeeRecommendations]);
+
+  // ─── Recommendation handlers ───────────────────────────────────────────
+  const handleGenerateRecommendations = async () => {
+    clearFeedback();
+    setGeneratingRecommendations(true);
+    try {
+      const result = await generateRecommendationsAction("COLLECTIVE_MISSION", mission.id);
+      if (result.success) {
+        setSuccessMessage("Recommandations générées avec succès.");
+        const recs = await getRecommendationsAction("COLLECTIVE_MISSION", mission.id);
+        if (recs.success && recs.data) {
+          setRecommendations(recs.data);
+        }
+        startTransition(() => { router.refresh(); });
+      } else {
+        setErrorMessage(result.error ?? "Erreur lors de la génération.");
+      }
+    } catch (e: any) {
+      setErrorMessage(e.message ?? "Une erreur est survenue.");
+    } finally {
+      setGeneratingRecommendations(false);
+    }
+  };
+
+  const handleApproveRecommendation = async (recId: string) => {
+    clearFeedback();
+    setLoadingAction(`approve-${recId}`);
+    try {
+      const result = await approveRecommendationAction(recId);
+      if (result.success) {
+        setSuccessMessage("Recommandation approuvée.");
+        const recs = await getRecommendationsAction("COLLECTIVE_MISSION", mission.id);
+        if (recs.success && recs.data) setRecommendations(recs.data);
+        startTransition(() => { router.refresh(); });
+      } else {
+        setErrorMessage(result.error ?? "Erreur lors de l'approbation.");
+      }
+    } catch (e: any) {
+      setErrorMessage(e.message ?? "Une erreur est survenue.");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleRejectRecommendation = async (recId: string) => {
+    clearFeedback();
+    setLoadingAction(`reject-${recId}`);
+    try {
+      const result = await rejectRecommendationAction(recId);
+      if (result.success) {
+        setSuccessMessage("Recommandation rejetée.");
+        const recs = await getRecommendationsAction("COLLECTIVE_MISSION", mission.id);
+        if (recs.success && recs.data) setRecommendations(recs.data);
+        startTransition(() => { router.refresh(); });
+      } else {
+        setErrorMessage(result.error ?? "Erreur lors du rejet.");
+      }
+    } catch (e: any) {
+      setErrorMessage(e.message ?? "Une erreur est survenue.");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
@@ -680,6 +782,206 @@ export default function CollectiveMissionDetailClient({
                 </tbody>
               </table>
             </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Hero recommendations (organizer / FACILITATOR / ADMIN only) ── */}
+      {canSeeRecommendations && (
+        <div className="rounded-2xl border border-tb-border bg-tb-surface p-6">
+          <h2 className="text-base font-semibold text-tb-text-primary mb-4">
+            Heroes recommandés pour compléter l'escouade
+          </h2>
+
+          {loadingRecommendations ? (
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="w-5 h-5 animate-spin text-tb-text-muted" />
+              <span className="ml-2 text-sm text-tb-text-muted">Chargement...</span>
+            </div>
+          ) : recommendations.length === 0 ? (
+            <div className="text-center py-6">
+              <p className="text-sm text-tb-text-muted mb-4">
+                Aucune recommandation pour le moment. Utilise le matching automatique pour trouver
+                des héros compatibles.
+              </p>
+              <button
+                onClick={handleGenerateRecommendations}
+                disabled={generatingRecommendations}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-tb-accent text-white font-semibold text-sm hover:brightness-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {generatingRecommendations ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Sparkles className="w-4 h-4" />
+                )}
+                Trouver des Heroes
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Header with count + regenerate */}
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm text-tb-text-muted">
+                  {recommendations.length} recommandation{recommendations.length > 1 ? "s" : ""}
+                </p>
+                <button
+                  onClick={handleGenerateRecommendations}
+                  disabled={generatingRecommendations}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tb-accent/10 text-tb-accent text-xs font-medium hover:brightness-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {generatingRecommendations ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3 h-3" />
+                  )}
+                  Regénérer
+                </button>
+              </div>
+
+              {/* Candidate cards */}
+              <div className="space-y-3">
+                {recommendations.map((rec) => {
+                  const reasons =
+                    typeof rec.reasonsJson === "string"
+                      ? JSON.parse(rec.reasonsJson)
+                      : rec.reasonsJson ?? [];
+                  const risks =
+                    typeof rec.risksJson === "string"
+                      ? JSON.parse(rec.risksJson)
+                      : rec.risksJson ?? [];
+
+                  return (
+                    <div
+                      key={rec.id}
+                      className="rounded-xl border border-tb-border bg-tb-surface p-4"
+                    >
+                      {/* Top row: avatar + name + score */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="w-9 h-9 rounded-full bg-tb-accent/10 text-tb-accent text-xs font-semibold flex items-center justify-center shrink-0">
+                            {rec.candidate?.name?.charAt(0).toUpperCase() ?? "?"}
+                          </span>
+                          <div>
+                            <p className="text-sm font-medium text-tb-text-primary">
+                              {rec.candidate?.name ?? "Hero inconnu"}
+                            </p>
+                            <p className="text-xs text-tb-text-muted">
+                              {rec.candidate?.city ?? "Localisation non précisée"}
+                              {rec.candidate?.reputation != null &&
+                                ` · ${rec.candidate.reputation.toFixed(1)}/5`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0 ml-4">
+                          <p className="text-lg font-bold text-tb-accent">{rec.score}%</p>
+                          <p className="text-[10px] text-tb-text-muted uppercase tracking-wide">
+                            {getScoreLabel(rec.score)}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Reasons */}
+                      {reasons.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-[11px] font-medium text-tb-text-muted mb-1">
+                            Pourquoi ce match ?
+                          </p>
+                          <ul className="space-y-0.5">
+                            {reasons.map((r: string, i: number) => (
+                              <li
+                                key={i}
+                                className="text-xs text-emerald-400 flex items-start gap-1.5"
+                              >
+                                <span className="mt-0.5 shrink-0">✓</span>
+                                <span>{r}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Risks */}
+                      {risks.length > 0 && (
+                        <div className="mt-2">
+                          <p className="text-[11px] font-medium text-tb-text-muted mb-1">
+                            Risques
+                          </p>
+                          <ul className="space-y-0.5">
+                            {risks.map((r: string, i: number) => (
+                              <li
+                                key={i}
+                                className="text-xs text-amber-400 flex items-start gap-1.5"
+                              >
+                                <span className="mt-0.5 shrink-0">⚠</span>
+                                <span>{r}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Action buttons for PENDING_REVIEW */}
+                      {rec.status === "PENDING_REVIEW" && (
+                        <div className="mt-3 pt-3 border-t border-tb-border flex items-center gap-2">
+                          <button
+                            onClick={() => handleApproveRecommendation(rec.id)}
+                            disabled={loadingAction === `approve-${rec.id}`}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {loadingAction === `approve-${rec.id}` ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <ThumbsUp className="w-3 h-3" />
+                            )}
+                            Approuver
+                          </button>
+                          <button
+                            onClick={() => handleRejectRecommendation(rec.id)}
+                            disabled={loadingAction === `reject-${rec.id}`}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {loadingAction === `reject-${rec.id}` ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <ThumbsDown className="w-3 h-3" />
+                            )}
+                            Rejeter
+                          </button>
+                          <span className="text-xs text-blue-400 font-medium ml-auto">
+                            En attente
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Status badges for decided recommendations */}
+                      {rec.status === "APPROVED" && (
+                        <div className="mt-3 pt-3 border-t border-tb-border">
+                          <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-medium">
+                            <ThumbsUp className="w-3 h-3" />
+                            Approuvée
+                          </span>
+                        </div>
+                      )}
+                      {rec.status === "REJECTED" && (
+                        <div className="mt-3 pt-3 border-t border-tb-border">
+                          <span className="inline-flex items-center gap-1 text-xs text-red-400 font-medium">
+                            <ThumbsDown className="w-3 h-3" />
+                            Rejetée
+                          </span>
+                        </div>
+                      )}
+                      {rec.status === "CONTACTED" && (
+                        <div className="mt-3 pt-3 border-t border-tb-border">
+                          <span className="inline-flex items-center gap-1 text-xs text-blue-400 font-medium">
+                            Contacté
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       )}

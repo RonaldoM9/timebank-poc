@@ -1,14 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
   ArrowLeft, Zap, MapPin, Calendar, Clock, Users,
   User, Loader2, AlertCircle, CheckCircle, MessageSquare,
+  XCircle, Star,
 } from "lucide-react";
 import { acceptOffer, proposeHelp } from "@/app/urgent/actions";
+import {
+  generateRecommendationsAction,
+  getRecommendationsAction,
+  approveRecommendationAction,
+  rejectRecommendationAction,
+} from "@/app/facilitator/matching/actions";
 import ConnectedHeader from "@/components/ConnectedHeader";
 
 interface UrgentOffer {
@@ -51,10 +58,12 @@ export default function UrgentDetailClient({
   request,
   isRequester,
   hasOffered,
+  userRole,
 }: {
   request: UrgentDetail;
   isRequester: boolean;
   hasOffered: boolean;
+  userRole: string | null;
 }) {
   const router = useRouter();
   const { data: session } = useSession();
@@ -63,6 +72,26 @@ export default function UrgentDetailClient({
   const [accepting, setAccepting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Recommendations state
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [recsLoading, setRecsLoading] = useState(false);
+  const [recsGenerating, setRecsGenerating] = useState(false);
+  const [recsError, setRecsError] = useState<string | null>(null);
+  const [approvingRec, setApprovingRec] = useState<string | null>(null);
+  const [rejectingRec, setRejectingRec] = useState<string | null>(null);
+
+  const isFacilitator =
+    userRole === "FACILITATOR" || userRole === "ADMIN" ||
+    (session?.user as any)?.role === "FACILITATOR" ||
+    (session?.user as any)?.role === "ADMIN";
+
+  // Load existing recommendations on mount for facilitators
+  useEffect(() => {
+    if (isFacilitator) {
+      loadRecommendations();
+    }
+  }, [isFacilitator]);
 
   async function handleProposeHelp() {
     setSubmitting(true);
@@ -89,6 +118,60 @@ export default function UrgentDetailClient({
       setSuccess("Offre acceptée ! Le booking a été créé. Voir dans le tableau de bord.");
       router.refresh();
     }
+  }
+
+  // ─── Recommendations helpers ───────────────────────────────────────────
+
+  async function loadRecommendations() {
+    setRecsLoading(true);
+    setRecsError(null);
+    const result = await getRecommendationsAction("URGENT_REQUEST", request.id);
+    if (!result.success) {
+      setRecsError(result.error);
+      setRecommendations([]);
+    } else {
+      setRecommendations(result.data ?? []);
+    }
+    setRecsLoading(false);
+  }
+
+  async function handleGenerateRecommendations() {
+    setRecsGenerating(true);
+    setRecsError(null);
+    const result = await generateRecommendationsAction("URGENT_REQUEST", request.id);
+    if (!result.success) {
+      setRecsError(result.error);
+    } else {
+      setRecommendations(result.data?.recommendations ?? []);
+      setSuccess("Recommandations générées avec succès !");
+    }
+    setRecsGenerating(false);
+  }
+
+  async function handleApproveRecommendation(recId: string) {
+    setApprovingRec(recId);
+    setRecsError(null);
+    const result = await approveRecommendationAction(recId);
+    if (!result.success) {
+      setRecsError(result.error);
+    } else {
+      await loadRecommendations();
+      setSuccess("Recommandation approuvée !");
+    }
+    setApprovingRec(null);
+  }
+
+  async function handleRejectRecommendation(recId: string) {
+    setRejectingRec(recId);
+    setRecsError(null);
+    const result = await rejectRecommendationAction(recId);
+    if (!result.success) {
+      setRecsError(result.error);
+    } else {
+      await loadRecommendations();
+      setSuccess("Recommandation rejetée.");
+    }
+    setRejectingRec(null);
   }
 
   const isOpen = request.status === "open";
@@ -384,6 +467,217 @@ export default function UrgentDetailClient({
               >
                 Voir le tableau de bord →
               </Link>
+            </div>
+          )}
+
+          {/* ─── Recommandations de Heroes (FACILITATOR / ADMIN only) ─── */}
+          {isFacilitator && (
+            <div className="border-t border-gray-200 pt-6 mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Star className="w-4 h-4 text-[#f59e0b]" />
+                  <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                    Recommandations de Heroes
+                  </h2>
+                </div>
+                <button
+                  onClick={handleGenerateRecommendations}
+                  disabled={recsGenerating}
+                  className="text-xs bg-[#f59e0b] hover:bg-[#d97706] disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl px-3 py-1.5 transition-colors flex items-center gap-1.5"
+                >
+                  {recsGenerating ? (
+                    <><Loader2 className="w-3 h-3 animate-spin" /> Génération…</>
+                  ) : (
+                    <><Zap className="w-3 h-3" /> Générer des recommandations</>
+                  )}
+                </button>
+              </div>
+
+              {recsError && (
+                <div className="bg-red-900/20 border border-red-800 rounded-xl p-3 mb-4">
+                  <p className="text-red-400 text-sm">{recsError}</p>
+                </div>
+              )}
+
+              {!recsLoading && recommendations.length === 0 && !recsError && (
+                <p className="text-gray-400 text-sm text-center py-4">
+                  Aucune recommandation pour le moment. Cliquez sur "Générer des recommandations" pour trouver les meilleurs héros.
+                </p>
+              )}
+
+              {recsLoading && (
+                <div className="flex items-center justify-center py-6">
+                  <Loader2 className="w-5 h-5 animate-spin text-tb-accent" />
+                </div>
+              )}
+
+              {recommendations.length > 0 && (
+                <div className="space-y-3">
+                  {recommendations.map((rec) => {
+                    const reasons = rec.reasonsJson ? JSON.parse(rec.reasonsJson) : [];
+                    const risks = rec.risksJson ? JSON.parse(rec.risksJson) : [];
+                    const statusColors: Record<string, string> = {
+                      PENDING_REVIEW: "text-[#f59e0b]",
+                      APPROVED: "text-tb-accent",
+                      REJECTED: "text-red-400",
+                      CONTACTED: "text-blue-400",
+                      ASSIGNED_MANUALLY: "text-purple-400",
+                      DISMISSED: "text-gray-400",
+                    };
+                    const statusLabels: Record<string, string> = {
+                      PENDING_REVIEW: "En attente",
+                      APPROVED: "Approuvé",
+                      REJECTED: "Rejeté",
+                      CONTACTED: "Contacté",
+                      ASSIGNED_MANUALLY: "Assigné",
+                      DISMISSED: "Ignoré",
+                    };
+                    const isPending = rec.status === "PENDING_REVIEW";
+
+                    return (
+                      <div
+                        key={rec.id}
+                        className={`border rounded-xl p-4 ${
+                          rec.status === "APPROVED"
+                            ? "border-tb-accent bg-tb-accent/5"
+                            : rec.status === "REJECTED"
+                              ? "border-red-800/30 bg-red-900/10 opacity-70"
+                              : "border-gray-200"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-4 mb-2">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <User className="w-4 h-4 text-gray-400" />
+                              <span className="text-gray-900 font-semibold text-sm">
+                                {rec.candidate?.name ?? "Utilisateur inconnu"}
+                              </span>
+                              {rec.candidate?.reputation != null && (
+                                <span className="text-xs text-gray-400">
+                                  ★ {rec.candidate.reputation.toFixed(1)}
+                                </span>
+                              )}
+                              <span className={`text-xs font-bangers tracking-wider ${statusColors[rec.status] ?? "text-gray-400"}`}>
+                                {statusLabels[rec.status] ?? rec.status}
+                              </span>
+                            </div>
+                            {rec.candidate?.city && (
+                              <p className="text-[10px] text-gray-400">{rec.candidate.city}</p>
+                            )}
+                          </div>
+                          <div className="text-right shrink-0">
+                            <div className="text-lg font-bold text-tb-accent">
+                              {Math.round(rec.score)}
+                            </div>
+                            <div className="text-[10px] text-gray-400">/100</div>
+                          </div>
+                        </div>
+
+                        {/* Score breakdown bar */}
+                        <div className="flex gap-1 mb-2">
+                          {[
+                            { label: "Comp.", value: rec.skillScore, color: "bg-blue-500" },
+                            { label: "Loc.", value: rec.locationScore, color: "bg-green-500" },
+                            { label: "Dispo.", value: rec.availabilityScore, color: "bg-yellow-500" },
+                            { label: "Conf.", value: rec.trustScore, color: "bg-purple-500" },
+                            { label: "Récip.", value: rec.reciprocityScore, color: "bg-pink-500" },
+                            { label: "Comm.", value: rec.communityHealthScore, color: "bg-indigo-500" },
+                          ].map((s) => (
+                            <div key={s.label} className="flex-1" title={`${s.label}: ${Math.round(s.value)}`}>
+                              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full ${s.color} rounded-full transition-all`}
+                                  style={{ width: `${Math.min(100, s.value)}%` }}
+                                />
+                              </div>
+                              <p className="text-[9px] text-gray-400 text-center mt-0.5">{s.label}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Reasons */}
+                        {reasons.length > 0 && (
+                          <div className="mb-1.5">
+                            <p className="text-[10px] text-gray-400 mb-0.5">Pourquoi ce match :</p>
+                            <ul className="space-y-0.5">
+                              {reasons.map((r: string, i: number) => (
+                                <li key={i} className="text-xs text-green-600 flex items-start gap-1">
+                                  <span className="mt-0.5">✓</span>
+                                  <span>{r}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Risks */}
+                        {risks.length > 0 && (
+                          <div className="mb-2">
+                            <p className="text-[10px] text-gray-400 mb-0.5">Risques :</p>
+                            <ul className="space-y-0.5">
+                              {risks.map((r: string, i: number) => (
+                                <li key={i} className="text-xs text-amber-600 flex items-start gap-1">
+                                  <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
+                                  <span>{r}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Score breakdown detail */}
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-gray-400 mb-2">
+                          <span>Comp.: {Math.round(rec.skillScore)}</span>
+                          <span>Loc.: {Math.round(rec.locationScore)}</span>
+                          <span>Dispo.: {Math.round(rec.availabilityScore)}</span>
+                          <span>Conf.: {Math.round(rec.trustScore)}</span>
+                          <span>Récip.: {Math.round(rec.reciprocityScore)}</span>
+                          <span>Comm.: {Math.round(rec.communityHealthScore)}</span>
+                        </div>
+
+                        {/* Approve / Reject buttons */}
+                        {isPending && (
+                          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
+                            <button
+                              onClick={() => handleApproveRecommendation(rec.id)}
+                              disabled={approvingRec === rec.id}
+                              className="flex-1 bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl py-1.5 text-xs transition-colors flex items-center justify-center gap-1"
+                            >
+                              {approvingRec === rec.id ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <CheckCircle className="w-3 h-3" />
+                              )}
+                              Approuver
+                            </button>
+                            <button
+                              onClick={() => handleRejectRecommendation(rec.id)}
+                              disabled={rejectingRec === rec.id}
+                              className="flex-1 bg-red-500/10 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed text-red-400 font-semibold rounded-xl py-1.5 text-xs transition-colors flex items-center justify-center gap-1 border border-red-800/30"
+                            >
+                              {rejectingRec === rec.id ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <XCircle className="w-3 h-3" />
+                              )}
+                              Rejeter
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Decision info */}
+                        {!isPending && rec.decisionNote && (
+                          <div className="mt-2 pt-2 border-t border-gray-100">
+                            <p className="text-[10px] text-gray-400 italic">
+                              Note : {rec.decisionNote}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>

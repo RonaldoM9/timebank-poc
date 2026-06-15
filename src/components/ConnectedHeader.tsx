@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Users,
   Activity,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -40,6 +41,7 @@ function buildNav(isFacilitator: boolean): NavItem[] {
     base.splice(1, 0,
       { href: "/facilitator/community-pot", label: "Pot commun", icon: ShieldCheck },
       { href: "/facilitator/network", label: "Intelligence réseau", icon: Activity },
+      { href: "/facilitator/matching", label: "Matchmaking", icon: Sparkles },
     );
   }
   return base;
