@@ -20,14 +20,16 @@ import {
   Users,
   Activity,
   Sparkles,
+  Building2,
 } from "lucide-react";
 import { useState } from "react";
 
 type NavItem = { href: string; label: string; icon: any; role?: string };
 
-function buildNav(isFacilitator: boolean): NavItem[] {
+function buildNav(isFacilitator: boolean, role: string): NavItem[] {
   const base: NavItem[] = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/organizations", label: "Organisations", icon: Building2 },
     { href: "/services", label: "Missions", icon: Search },
     { href: "/collective-missions", label: "Collectives", icon: Users },
     { href: "/bookings", label: "Bookings", icon: Calendar },
@@ -54,7 +56,11 @@ export default function ConnectedHeader() {
 
   const role = (session?.user as any)?.role;
   const isFacilitator = role === "FACILITATOR" || role === "ADMIN";
-  const ALL_NAV = buildNav(isFacilitator);
+  const ALL_NAV = buildNav(isFacilitator, role);
+
+  if (role === "ADMIN") {
+    ALL_NAV.push({ href: "/admin/organizations", label: "Admin org.", icon: ShieldCheck });
+  }
 
   return (
     <header className="border-b border-tb-border bg-tb-bg/80 backdrop-blur-md sticky top-0 z-50">

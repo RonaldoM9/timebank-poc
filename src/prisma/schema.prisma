@@ -55,6 +55,10 @@ model User {
   facilitatorNotes FacilitatorNote[]
   matchRecommendations MatchRecommendation[]
   matchFeedbacks MatchFeedback[]
+
+  // ─── Lot 22 — Organisations ──────────────────────────────────────
+  organizationsCreated     Organization[]         @relation("OrganizationCreator")
+  organizationMemberships  OrganizationMember[]
 }
 
 model HeroPassport {
@@ -92,6 +96,9 @@ model Service {
   solidarityCategory   String?
   solidarityStatus     String  @default("CLASSIC")
   solidarityReason     String?
+
+  // ─── Lot 22 — Organisation rattachée ─────────────────────────────
+  organizationId String?
 }
 
 model Booking {
@@ -366,6 +373,9 @@ model CollectiveMission {
   organizer       User              @relation("CollectiveMissionOrganizer", fields: [organizerId], references: [id])
   participants    CollectiveMissionParticipant[]
 
+  // ─── Lot 22 — Organisation rattachée ─────────────────────────────
+  organizationId String?
+
   @@index([status])
   @@index([type])
   @@index([city])
@@ -628,4 +638,143 @@ model MatchFeedback {
   @@map("MatchFeedback")
 }
 
-// ─── End Lot 21 ───────────────────────────────────────────────────────────
+// ─── Lot 22 — Partner Spaces / Organisations ─────────────────────────────
+
+model Organization {
+  id              String   @id @default(cuid())
+
+  name            String
+  slug            String   @unique
+  type            String
+  status          String   @default("PENDING_REVIEW")
+
+  description     String?
+  shortDescription String?
+
+  logoUrl         String?
+  coverImageUrl   String?
+  websiteUrl      String?
+
+  city            String?
+  department      String?
+  region          String?
+  country         String?  @default("France")
+
+  contactName     String?
+  contactEmail    String?
+  contactPhone    String?
+
+  isVerified      Boolean  @default(false)
+  verifiedAt      DateTime?
+  verifiedById    String?
+
+  createdById     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  createdBy       User              @relation("OrganizationCreator", fields: [createdById], references: [id])
+  members         OrganizationMember[]
+  invitations     OrganizationInvitation[]
+  pot             OrganizationTimePot?
+
+  @@index([slug])
+  @@index([type])
+  @@index([status])
+  @@index([city])
+  @@index([department])
+  @@index([region])
+  @@index([createdById])
+  @@map("Organization")
+}
+
+model OrganizationMember {
+  id              String   @id @default(cuid())
+
+  organizationId  String
+  userId          String
+
+  role            String   @default("MEMBER")
+  status          String   @default("ACTIVE") // ACTIVE | INVITED | REMOVED
+
+  invitedById     String?
+  joinedAt        DateTime @default(now())
+  removedAt       DateTime?
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@index([role])
+  @@index([status])
+  @@map("OrganizationMember")
+}
+
+model OrganizationInvitation {
+  id              String   @id @default(cuid())
+
+  organizationId  String
+  email           String?
+  tokenHash       String   @unique
+  role            String   @default("MEMBER")
+
+  status          String   @default("PENDING") // PENDING | ACCEPTED | EXPIRED | CANCELLED
+
+  invitedById     String
+  acceptedById    String?
+  acceptedAt      DateTime?
+  expiresAt       DateTime
+
+  createdAt       DateTime @default(now())
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@index([status])
+  @@map("OrganizationInvitation")
+}
+
+model OrganizationTimePot {
+  id              String   @id @default(cuid())
+
+  organizationId  String   @unique
+  balance         Int      @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  transactions    OrganizationTimePotTransaction[]
+
+  @@map("OrganizationTimePot")
+}
+
+model OrganizationTimePotTransaction {
+  id              String   @id @default(cuid())
+
+  potId           String
+  organizationId  String
+
+  type            String   // DONATION | FUNDING | ADJUSTMENT | REFUND
+  amount          Int
+  description     String?
+
+  fromUserId      String?
+  toUserId        String?
+
+  createdById     String?
+  createdAt       DateTime @default(now())
+
+  pot             OrganizationTimePot @relation(fields: [potId], references: [id], onDelete: Cascade)
+
+  @@index([potId])
+  @@index([organizationId])
+  @@index([type])
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@map("OrganizationTimePotTransaction")
+}
+
+// ─── End Lot 22 ───────────────────────────────────────────────────────────
