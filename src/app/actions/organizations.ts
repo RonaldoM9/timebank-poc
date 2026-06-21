@@ -8,43 +8,55 @@ import {
   requireOrganizationPermission,
   donateToOrganizationPot,
 } from "@/lib/organizations";
+import {
+  createOrganizationSchema,
+  updateOrganizationSchema,
+  inviteMemberSchema,
+  updateMemberRoleSchema,
+  potDonationSchema,
+  organizationIdSchema,
+  memberIdSchema,
+} from "@/lib/organization-schemas";
+import { ORGANIZATION_ROLES } from "@/lib/organization-labels";
 import { revalidatePath } from "next/cache";
 import crypto from "crypto";
+import { z } from "zod";
+
+// ─── Helper ──────────────────────────────────────────────────────────
 
 function getUserId(session: any): string | null {
   return (session?.user as any)?.id || null;
 }
 
-// ─── Create organization ─────────────────────────────────────────────
+// ─── 1. Create organization ─────────────────────────────────────────
 
 export async function createOrganizationAction(formData: FormData) {
   const session = await getServerSession(authOptions);
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
-  const name = formData.get("name") as string;
-  const type = formData.get("type") as string;
-  const shortDescription = formData.get("shortDescription") as string;
-  const description = formData.get("description") as string;
-  const city = formData.get("city") as string;
-  const department = formData.get("department") as string || null;
-  const region = formData.get("region") as string || null;
-  const websiteUrl = formData.get("websiteUrl") as string || null;
-  const contactName = formData.get("contactName") as string || null;
-  const contactEmail = formData.get("contactEmail") as string || null;
+  // Zod validation
+  const raw = {
+    name: formData.get("name"),
+    type: formData.get("type"),
+    shortDescription: formData.get("shortDescription") || undefined,
+    description: formData.get("description") || undefined,
+    city: formData.get("city"),
+    department: formData.get("department") || undefined,
+    region: formData.get("region") || undefined,
+    websiteUrl: formData.get("websiteUrl") || undefined,
+    contactName: formData.get("contactName") || undefined,
+    contactEmail: formData.get("contactEmail") || undefined,
+  };
 
-  if (!name || name.trim().length < 3) return { error: "Le nom doit faire au moins 3 caractères." };
-  if (!type) return { error: "Le type d'organisation est obligatoire." };
-  if (!city) return { error: "La ville est obligatoire." };
-  if (shortDescription && shortDescription.length > 180)
-    return { error: "La description courte ne doit pas dépasser 180 caractères." };
-  if (description && description.length > 1500)
-    return { error: "La description ne doit pas dépasser 1500 caractères." };
-  if (websiteUrl && !/^https?:\/\/.+/.test(websiteUrl))
-    return { error: "L'URL du site web n'est pas valide." };
-  if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail))
-    return { error: "L'email de contact n'est pas valide." };
+  const parsed = createOrganizationSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
 
+  const { name, type, shortDescription, description, city, department, region, websiteUrl, contactName, contactEmail } = parsed.data;
+
+  // Generate unique slug
   let slug = generateSlug(name);
   let attempt = 0;
   while (await prisma.organization.findUnique({ where: { slug } })) {
@@ -53,41 +65,34 @@ export async function createOrganizationAction(formData: FormData) {
   }
 
   const org = await prisma.$transaction(async (tx) => {
-    const org = await tx.organization.create({
+    return tx.organization.create({
       data: {
-        name: name.trim(),
+        name,
         slug,
         type,
-        shortDescription: shortDescription?.trim() || null,
-        description: description?.trim() || null,
+        shortDescription: shortDescription || null,
+        description: description || null,
         city,
-        department,
-        region,
-        websiteUrl,
-        contactName: contactName?.trim() || null,
-        contactEmail: contactEmail?.trim() || null,
+        department: department || null,
+        region: region || null,
+        websiteUrl: websiteUrl || null,
+        contactName: contactName || null,
+        contactEmail: contactEmail || null,
         createdById: userId,
         status: "PENDING_REVIEW",
         members: {
-          create: {
-            userId,
-            role: "OWNER",
-            status: "ACTIVE",
-          },
+          create: { userId, role: "OWNER", status: "ACTIVE" },
         },
-        pot: {
-          create: { balance: 0 },
-        },
+        pot: { create: { balance: 0 } },
       },
     });
-    return org;
   });
 
   revalidatePath("/organizations");
   return { success: true, slug: org.slug };
 }
 
-// ─── Update organization ─────────────────────────────────────────────
+// ─── 2. Update organization ─────────────────────────────────────────
 
 export async function updateOrganizationAction(
   organizationId: string,
@@ -97,6 +102,11 @@ export async function updateOrganizationAction(
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
+  // Validate org ID
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
+  // Check permission
   const perm = await requireOrganizationPermission(
     userId,
     organizationId,
@@ -104,40 +114,52 @@ export async function updateOrganizationAction(
   );
   if (!perm.allowed) return { error: perm.error };
 
-  const name = formData.get("name") as string;
-  const shortDescription = formData.get("shortDescription") as string;
-  const description = formData.get("description") as string;
-  const websiteUrl = formData.get("websiteUrl") as string || null;
-  const logoUrl = formData.get("logoUrl") as string || null;
-  const contactName = formData.get("contactName") as string || null;
-  const contactEmail = formData.get("contactEmail") as string || null;
+  // Zod validation
+  const raw = {
+    name: formData.get("name") || undefined,
+    shortDescription: formData.get("shortDescription") === "" ? null : formData.get("shortDescription") || undefined,
+    description: formData.get("description") === "" ? null : formData.get("description") || undefined,
+    websiteUrl: formData.get("websiteUrl") === "" ? null : formData.get("websiteUrl") || undefined,
+    logoUrl: formData.get("logoUrl") === "" ? null : formData.get("logoUrl") || undefined,
+    contactName: formData.get("contactName") === "" ? null : formData.get("contactName") || undefined,
+    contactEmail: formData.get("contactEmail") === "" ? null : formData.get("contactEmail") || undefined,
+  };
 
-  const data: any = {};
-  if (name && name.trim().length >= 3) data.name = name.trim();
-  if (shortDescription !== null) data.shortDescription = shortDescription?.trim() || null;
-  if (description !== null) data.description = description?.trim() || null;
-  if (websiteUrl !== null) data.websiteUrl = websiteUrl || null;
-  if (logoUrl !== null) data.logoUrl = logoUrl || null;
-  if (contactName !== null) data.contactName = contactName?.trim() || null;
-  if (contactEmail !== null) data.contactEmail = contactEmail?.trim() || null;
+  const parsed = updateOrganizationSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
 
-  if (Object.keys(data).length === 0) return { error: "Aucune donnée à modifier." };
+  const data = parsed.data;
+
+  // Strip undefined (not sent) but keep null (intentionally cleared)
+  const cleanData: any = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (value !== undefined) cleanData[key] = value;
+  }
+
+  if (Object.keys(cleanData).length === 0) {
+    return { error: "Aucune donnée à modifier." };
+  }
 
   const org = await prisma.organization.update({
     where: { id: organizationId },
-    data,
+    data: cleanData,
   });
 
   revalidatePath(`/organizations/${org.slug}`);
   return { success: true, slug: org.slug };
 }
 
-// ─── Archive organization ────────────────────────────────────────────
+// ─── 3. Archive organization ────────────────────────────────────────
 
 export async function archiveOrganizationAction(organizationId: string) {
   const session = await getServerSession(authOptions);
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
+
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
 
   const perm = await requireOrganizationPermission(
     userId,
@@ -146,7 +168,15 @@ export async function archiveOrganizationAction(organizationId: string) {
   );
   if (!perm.allowed) return { error: perm.error };
 
-  const org = await prisma.organization.update({
+  // Check org is not already archived
+  const org = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: { status: true, slug: true },
+  });
+  if (!org) return { error: "Organisation introuvable." };
+  if (org.status === "ARCHIVED") return { error: "Cette organisation est déjà archivée." };
+
+  await prisma.organization.update({
     where: { id: organizationId },
     data: { status: "ARCHIVED" },
   });
@@ -155,26 +185,32 @@ export async function archiveOrganizationAction(organizationId: string) {
   return { success: true };
 }
 
-// ─── Join organization ───────────────────────────────────────────────
+// ─── 4. Join organization ───────────────────────────────────────────
 
 export async function joinOrganizationAction(organizationId: string) {
   const session = await getServerSession(authOptions);
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
   const org = await prisma.organization.findUnique({
     where: { id: organizationId },
     select: { status: true },
   });
-  if (!org || org.status === "SUSPENDED" || org.status === "ARCHIVED")
-    return { error: "Cette organisation n'est pas accessible." };
+  if (!org) return { error: "Organisation introuvable." };
+  if (org.status === "SUSPENDED") return { error: "Cette organisation est suspendue." };
+  if (org.status === "ARCHIVED") return { error: "Cette organisation est archivée." };
 
   const existing = await prisma.organizationMember.findUnique({
     where: { organizationId_userId: { organizationId, userId } },
   });
+
   if (existing) {
     if (existing.status === "ACTIVE") return { error: "Vous êtes déjà membre." };
     if (existing.status === "REMOVED") return { error: "Vous ne pouvez pas rejoindre cette organisation." };
+    // Reactivate INVITED
     await prisma.organizationMember.update({
       where: { id: existing.id },
       data: { status: "ACTIVE", joinedAt: new Date() },
@@ -191,29 +227,36 @@ export async function joinOrganizationAction(organizationId: string) {
     });
   }
 
-  revalidatePath(`/organizations`);
+  revalidatePath("/organizations");
   return { success: true };
 }
 
-// ─── Leave organization ──────────────────────────────────────────────
+// ─── 5. Leave organization ──────────────────────────────────────────
 
 export async function leaveOrganizationAction(organizationId: string) {
   const session = await getServerSession(authOptions);
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
   const member = await prisma.organizationMember.findUnique({
     where: { organizationId_userId: { organizationId, userId } },
   });
-  if (!member || member.status !== "ACTIVE")
+  if (!member || member.status !== "ACTIVE") {
     return { error: "Vous n'êtes pas membre actif." };
+  }
 
   if (member.role === "OWNER") {
     const ownerCount = await prisma.organizationMember.count({
       where: { organizationId, role: "OWNER", status: "ACTIVE" },
     });
-    if (ownerCount <= 1)
-      return { error: "Vous êtes le seul responsable. Transférez le rôle avant de quitter." };
+    if (ownerCount <= 1) {
+      return {
+        error: "Vous êtes le seul responsable. Transférez le rôle avant de quitter.",
+      };
+    }
   }
 
   await prisma.organizationMember.update({
@@ -225,7 +268,7 @@ export async function leaveOrganizationAction(organizationId: string) {
   return { success: true };
 }
 
-// ─── Invite member ───────────────────────────────────────────────────
+// ─── 6. Invite member ───────────────────────────────────────────────
 
 export async function inviteOrganizationMemberAction(
   organizationId: string,
@@ -235,6 +278,9 @@ export async function inviteOrganizationMemberAction(
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
   const perm = await requireOrganizationPermission(
     userId,
     organizationId,
@@ -242,19 +288,32 @@ export async function inviteOrganizationMemberAction(
   );
   if (!perm.allowed) return { error: perm.error };
 
-  const email = formData.get("email") as string;
-  const role = (formData.get("role") as string) || "MEMBER";
+  // Zod validation
+  const raw = {
+    email: formData.get("email"),
+    role: formData.get("role") || "MEMBER",
+  };
+  const parsed = inviteMemberSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    return { error: "Email invalide." };
+  const { email, role } = parsed.data;
 
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return { error: "Aucun utilisateur trouvé avec cet email." };
+  // Find target user
+  const targetUser = await prisma.user.findUnique({ where: { email } });
+  if (!targetUser) return { error: "Aucun utilisateur trouvé avec cet email." };
 
+  // Cannot invite yourself
+  if (targetUser.id === userId) return { error: "Vous ne pouvez pas vous inviter vous-même." };
+
+  // Check existing membership
   const existing = await prisma.organizationMember.findUnique({
-    where: { organizationId_userId: { organizationId, userId: user.id } },
+    where: { organizationId_userId: { organizationId, userId: targetUser.id } },
   });
-  if (existing?.status === "ACTIVE") return { error: "Cet utilisateur est déjà membre." };
+  if (existing?.status === "ACTIVE") {
+    return { error: "Cet utilisateur est déjà membre." };
+  }
 
   const tokenHash = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -268,7 +327,7 @@ export async function inviteOrganizationMemberAction(
     await prisma.organizationMember.create({
       data: {
         organizationId,
-        userId: user.id,
+        userId: targetUser.id,
         role,
         status: "ACTIVE",
         invitedById: userId,
@@ -285,17 +344,17 @@ export async function inviteOrganizationMemberAction(
       role,
       status: "ACCEPTED",
       invitedById: userId,
-      acceptedById: user.id,
+      acceptedById: targetUser.id,
       acceptedAt: new Date(),
       expiresAt,
     },
   });
 
   revalidatePath(`/organizations/${organizationId}/members`);
-  return { success: true, message: `${user.name} a été ajouté comme ${role}.` };
+  return { success: true, message: `${targetUser.name} a été ajouté comme ${role}.` };
 }
 
-// ─── Update member role ──────────────────────────────────────────────
+// ─── 7. Update member role ──────────────────────────────────────────
 
 export async function updateOrganizationMemberRoleAction(
   organizationId: string,
@@ -306,6 +365,9 @@ export async function updateOrganizationMemberRoleAction(
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
   const perm = await requireOrganizationPermission(
     userId,
     organizationId,
@@ -313,10 +375,21 @@ export async function updateOrganizationMemberRoleAction(
   );
   if (!perm.allowed) return { error: perm.error };
 
-  const member = await prisma.organizationMember.findUnique({ where: { id: memberId } });
-  if (!member || member.organizationId !== organizationId)
+  // Zod validate role
+  const parsed = updateMemberRoleSchema.safeParse({ newRole });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const member = await prisma.organizationMember.findUnique({
+    where: { id: memberId },
+  });
+  if (!member || member.organizationId !== organizationId) {
     return { error: "Membre introuvable." };
-  if (member.role === "OWNER") return { error: "Impossible de modifier le rôle du responsable principal." };
+  }
+  if (member.role === "OWNER") {
+    return { error: "Impossible de modifier le rôle du responsable principal." };
+  }
 
   await prisma.organizationMember.update({
     where: { id: memberId },
@@ -327,7 +400,7 @@ export async function updateOrganizationMemberRoleAction(
   return { success: true };
 }
 
-// ─── Remove member ───────────────────────────────────────────────────
+// ─── 8. Remove member ───────────────────────────────────────────────
 
 export async function removeOrganizationMemberAction(
   organizationId: string,
@@ -337,6 +410,11 @@ export async function removeOrganizationMemberAction(
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+  const midResult = memberIdSchema.safeParse(memberId);
+  if (!midResult.success) return { error: "ID de membre invalide." };
+
   const perm = await requireOrganizationPermission(
     userId,
     organizationId,
@@ -344,10 +422,19 @@ export async function removeOrganizationMemberAction(
   );
   if (!perm.allowed) return { error: perm.error };
 
-  const member = await prisma.organizationMember.findUnique({ where: { id: memberId } });
-  if (!member || member.organizationId !== organizationId)
+  const member = await prisma.organizationMember.findUnique({
+    where: { id: memberId },
+  });
+  if (!member || member.organizationId !== organizationId) {
     return { error: "Membre introuvable." };
-  if (member.role === "OWNER") return { error: "Impossible de retirer le responsable principal." };
+  }
+  if (member.role === "OWNER") {
+    return { error: "Impossible de retirer le responsable principal." };
+  }
+  // Can't remove yourself via this action — use leave instead
+  if (member.userId === userId) {
+    return { error: "Utilisez 'Quitter' pour vous retirer vous-même." };
+  }
 
   await prisma.organizationMember.update({
     where: { id: memberId },
@@ -358,17 +445,32 @@ export async function removeOrganizationMemberAction(
   return { success: true };
 }
 
-// ─── Admin: Verify organization ──────────────────────────────────────
+// ─── 9. Admin: Verify organization ──────────────────────────────────
 
 export async function verifyOrganizationAction(organizationId: string) {
   const session = await getServerSession(authOptions);
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
-  const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
   if (user?.role !== "ADMIN") return { error: "Action réservée aux administrateurs." };
 
-  const org = await prisma.organization.update({
+  const org = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: { status: true, isVerified: true, slug: true },
+  });
+  if (!org) return { error: "Organisation introuvable." };
+  if (org.isVerified) return { error: "Cette organisation est déjà vérifiée." };
+  if (org.status === "ARCHIVED") return { error: "Impossible de vérifier une organisation archivée." };
+  if (org.status === "SUSPENDED") return { error: "Impossible de vérifier une organisation suspendue." };
+
+  await prisma.organization.update({
     where: { id: organizationId },
     data: {
       isVerified: true,
@@ -378,17 +480,33 @@ export async function verifyOrganizationAction(organizationId: string) {
     },
   });
 
-  revalidatePath(`/organizations/${org.slug}`);
+  revalidatePath(`/organizations`);
   return { success: true };
 }
+
+// ─── 10. Admin: Suspend organization ────────────────────────────────
 
 export async function suspendOrganizationAction(organizationId: string) {
   const session = await getServerSession(authOptions);
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
-  const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
   if (user?.role !== "ADMIN") return { error: "Action réservée aux administrateurs." };
+
+  const org = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: { status: true, slug: true },
+  });
+  if (!org) return { error: "Organisation introuvable." };
+  if (org.status === "SUSPENDED") return { error: "Cette organisation est déjà suspendue." };
+  if (org.status === "ARCHIVED") return { error: "Impossible de suspendre une organisation archivée." };
 
   await prisma.organization.update({
     where: { id: organizationId },
@@ -399,15 +517,31 @@ export async function suspendOrganizationAction(organizationId: string) {
   return { success: true };
 }
 
+// ─── 11. Admin: Activate organization ───────────────────────────────
+
 export async function activateOrganizationAction(organizationId: string) {
   const session = await getServerSession(authOptions);
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
-  const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
   if (user?.role !== "ADMIN") return { error: "Action réservée aux administrateurs." };
 
-  const org = await prisma.organization.update({
+  const org = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: { status: true, slug: true },
+  });
+  if (!org) return { error: "Organisation introuvable." };
+  if (org.status === "ACTIVE") return { error: "Cette organisation est déjà active." };
+  if (org.status === "ARCHIVED") return { error: "Impossible d'activer une organisation archivée." };
+
+  await prisma.organization.update({
     where: { id: organizationId },
     data: { status: "ACTIVE" },
   });
@@ -416,7 +550,7 @@ export async function activateOrganizationAction(organizationId: string) {
   return { success: true };
 }
 
-// ─── Pot donation ────────────────────────────────────────────────────
+// ─── 12. Pot donation ───────────────────────────────────────────────
 
 export async function donateToOrganizationPotAction(
   organizationId: string,
@@ -426,11 +560,15 @@ export async function donateToOrganizationPotAction(
   const userId = getUserId(session);
   if (!userId) return { error: "Non connecté." };
 
-  const result = await donateToOrganizationPot(
-    organizationId,
-    userId,
-    amount
-  );
+  const idResult = organizationIdSchema.safeParse(organizationId);
+  if (!idResult.success) return { error: "ID d'organisation invalide." };
+
+  const parsed = potDonationSchema.safeParse({ amount });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const result = await donateToOrganizationPot(organizationId, userId, amount);
 
   if (result.success) {
     revalidatePath(`/organizations/${organizationId}/pot`);
