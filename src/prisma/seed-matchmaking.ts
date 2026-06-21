@@ -261,7 +261,22 @@ async function main() {
   });
   console.log(`✅ Cas 3 — 4 recommandations créées`);
 
-  console.log(`\n🎉 Seed matchmaking terminé !`);
+  // Remplir scoreBreakdownJson à partir des colonnes individuelles
+  await prisma.$executeRawUnsafe(`
+    UPDATE MatchRecommendation 
+    SET scoreBreakdownJson = json_object(
+      'skillScore', skillScore,
+      'locationScore', locationScore,
+      'availabilityScore', availabilityScore,
+      'trustScore', trustScore,
+      'reciprocityScore', reciprocityScore,
+      'communityHealthScore', communityHealthScore,
+      'totalScore', score
+    )
+    WHERE scoreBreakdownJson IS NULL
+  `);
+
+  console.log(`🎉 Seed matchmaking terminé !`);
   console.log(`   Cas 1 : UrgentRequest — aide smartphone senior (5 recs)`);
   console.log(`   Cas 2 : CollectiveMission — rangement jardin (5 recs)`);
   console.log(`   Cas 3 : Service solidaire — aide administrative (4 recs)`);

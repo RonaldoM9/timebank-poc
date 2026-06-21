@@ -63,11 +63,11 @@ function getScoreLabel(score: number): string {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 90) return "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
-  if (score >= 75) return "text-green-400 border-green-500/30 bg-green-500/10";
-  if (score >= 60) return "text-yellow-400 border-yellow-500/30 bg-yellow-500/10";
-  if (score >= 40) return "text-orange-400 border-orange-500/30 bg-orange-500/10";
-  return "text-red-400 border-red-500/30 bg-red-500/10";
+  if (score >= 90) return "text-emerald-600 border-emerald-500/30 bg-emerald-50";
+  if (score >= 75) return "text-green-600 border-green-500/30 bg-green-50";
+  if (score >= 60) return "text-yellow-600 border-yellow-500/30 bg-yellow-50";
+  if (score >= 40) return "text-orange-600 border-orange-500/30 bg-orange-50";
+  return "text-red-600 border-red-500/30 bg-red-50";
 }
 
 // ─── Recomendation Card ─────────────────────────────────────────────────────
@@ -95,11 +95,11 @@ function RecommendationCard({
   const label = getScoreLabel(rec.score);
   const scoreColor = getScoreColor(rec.score);
   const statusColor: Record<string, string> = {
-    PENDING_REVIEW: "text-yellow-400 border-yellow-500/20 bg-yellow-500/10",
-    APPROVED: "text-emerald-400 border-emerald-500/20 bg-emerald-500/10",
-    REJECTED: "text-red-400 border-red-500/20 bg-red-500/10",
-    CONTACTED: "text-blue-400 border-blue-500/20 bg-blue-500/10",
-    DISMISSED: "text-gray-400 border-gray-500/20 bg-gray-500/10",
+    PENDING_REVIEW: "text-yellow-700 border-yellow-500/20 bg-yellow-50",
+    APPROVED: "text-emerald-700 border-emerald-500/20 bg-emerald-50",
+    REJECTED: "text-red-700 border-red-500/20 bg-red-50",
+    CONTACTED: "text-blue-700 border-blue-500/20 bg-blue-50",
+    DISMISSED: "text-gray-500 border-gray-500/20 bg-gray-50",
   };
 
   const statusLabel: Record<string, string> = {
@@ -144,23 +144,23 @@ function RecommendationCard({
   const canDecide = rec.status === "PENDING_REVIEW";
 
   return (
-    <div className="bg-[#111111] border border-[#262626] rounded-2xl p-5 space-y-4">
+    <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 space-y-4">
       {/* Rang + Hero + Score */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00d4aa]/20 to-[#00d4aa]/5 border border-[#00d4aa]/20 flex items-center justify-center text-lg font-bold text-[#00d4aa]">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-tb-accent/20 to-tb-accent/5 border border-tb-accent/20 flex items-center justify-center text-lg font-bold text-tb-accent">
             {rec.candidate?.name?.charAt(0) || "?"}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[#f5f5f5] font-semibold">{rec.candidate?.name}</span>
+              <span className="text-tb-text-primary font-semibold">{rec.candidate?.name}</span>
               {rec.status !== "PENDING_REVIEW" && (
                 <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColor[rec.status] || ""}`}>
                   {statusLabel[rec.status] || rec.status}
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-3 text-xs text-[#a3a3a3] mt-0.5">
+            <div className="flex items-center gap-3 text-xs text-tb-text-secondary mt-0.5">
               {rec.candidate?.city && (
                 <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{rec.candidate.city}</span>
               )}
@@ -171,7 +171,7 @@ function RecommendationCard({
           </div>
         </div>
         <div className="text-right">
-          <div className={`text-2xl font-bold ${scoreColor.includes("emerald") ? "text-emerald-400" : scoreColor.includes("green") ? "text-green-400" : scoreColor.includes("yellow") ? "text-yellow-400" : scoreColor.includes("orange") ? "text-orange-400" : "text-red-400"}`}>
+          <div className="text-2xl font-bold text-tb-accent">
             {rec.score}/100
           </div>
           <div className={`text-xs px-2 py-0.5 rounded-full border inline-block mt-1 ${scoreColor}`}>
@@ -190,9 +190,9 @@ function RecommendationCard({
           { key: "reciprocityScore", label: "Réciprocité" },
           { key: "communityHealthScore", label: "Réseau" },
         ].map(({ key, label }) => (
-          <div key={key} className="bg-[#181818] rounded-xl p-2">
-            <div className="text-white font-bold text-sm">{(breakdown as any)[key] ?? 0}</div>
-            <div className="text-[#a3a3a3] text-xs truncate">{label}</div>
+          <div key={key} className="bg-tb-surface-elevated rounded-xl p-2">
+            <div className="text-tb-text-primary font-bold text-sm">{(breakdown as any)[key] ?? 0}</div>
+            <div className="text-tb-text-muted text-xs truncate">{label}</div>
           </div>
         ))}
       </div>
@@ -200,11 +200,11 @@ function RecommendationCard({
       {/* Explication */}
       {reasons.length > 0 && (
         <div>
-          <h4 className="text-sm font-semibold text-[#00d4aa] mb-2">Pourquoi ce match ?</h4>
+          <h4 className="text-sm font-semibold text-tb-accent mb-2">Pourquoi ce match ?</h4>
           <ul className="space-y-1">
             {reasons.map((r, i) => (
-              <li key={i} className="text-sm text-[#d4d4d4] flex items-start gap-2">
-                <span className="text-[#00d4aa] mt-0.5">✓</span>
+              <li key={i} className="text-sm text-tb-text-primary flex items-start gap-2">
+                <span className="text-tb-accent mt-0.5">✓</span>
                 {r}
               </li>
             ))}
@@ -215,11 +215,11 @@ function RecommendationCard({
       {/* Risques */}
       {risks.length > 0 && (
         <div>
-          <h4 className="text-sm font-semibold text-orange-400 mb-2">Points de vigilance</h4>
+          <h4 className="text-sm font-semibold text-orange-600 mb-2">Points de vigilance</h4>
           <ul className="space-y-1">
             {risks.map((r, i) => (
-              <li key={i} className="text-sm text-[#d4d4d4] flex items-start gap-2">
-                <span className="text-orange-400 mt-0.5">•</span>
+              <li key={i} className="text-sm text-tb-text-primary flex items-start gap-2">
+                <span className="text-orange-600 mt-0.5">•</span>
                 {r}
               </li>
             ))}
@@ -229,17 +229,17 @@ function RecommendationCard({
 
       {/* Feedback banner */}
       {feedbackResult && (
-        <div className="bg-[#00d4aa]/10 border border-[#00d4aa]/30 rounded-xl p-3 text-sm text-[#00d4aa]">
+        <div className="bg-tb-accent/5 border border-tb-accent/20 rounded-xl p-3 text-sm text-tb-accent">
           {feedbackResult}
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#262626]">
+      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-tb-border">
         <a
           href={`/profile/${rec.candidateId}`}
           target="_blank"
-          className="flex items-center gap-1 text-xs text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors px-3 py-1.5 rounded-lg bg-[#181818] hover:bg-[#222]"
+          className="flex items-center gap-1 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors px-3 py-1.5 rounded-lg bg-tb-surface-elevated hover:bg-tb-border"
         >
           <ExternalLink className="w-3 h-3" />
           Voir profil
@@ -250,7 +250,7 @@ function RecommendationCard({
             <button
               disabled={isPending}
               onClick={handleApprove}
-              className="flex items-center gap-1 text-xs text-emerald-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20"
+              className="flex items-center gap-1 text-xs text-emerald-600 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 border border-emerald-500/30"
             >
               {isPending && pending === "approve" ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
               Valider
@@ -258,14 +258,14 @@ function RecommendationCard({
             <button
               disabled={isPending}
               onClick={handleReject}
-              className="flex items-center gap-1 text-xs text-red-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20"
+              className="flex items-center gap-1 text-xs text-red-600 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-600 border border-red-500/30"
             >
               {isPending && pending === "reject" ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
               Rejeter
             </button>
             <button
               onClick={() => setShowNoteInput(!showNoteInput)}
-              className="flex items-center gap-1 text-xs text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors px-3 py-1.5 rounded-lg bg-[#181818] hover:bg-[#222]"
+              className="flex items-center gap-1 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors px-3 py-1.5 rounded-lg bg-tb-surface-elevated hover:bg-tb-border"
             >
               <MessageSquare className="w-3 h-3" />
               Note
@@ -281,7 +281,7 @@ function RecommendationCard({
                 key={d}
                 disabled={isPending}
                 onClick={() => handleFeedback(d)}
-                className="text-xs px-2 py-1 rounded-lg bg-[#181818] hover:bg-[#222] text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors"
+                className="text-xs px-2 py-1 rounded-lg bg-tb-surface-elevated hover:bg-tb-border text-tb-text-secondary hover:text-tb-text-primary transition-colors"
               >
                 {d === "GOOD_MATCH" ? "✓ Bon" : d === "BAD_MATCH" ? "✗ Mauvais" : "📞 Contacté"}
               </button>
@@ -298,7 +298,7 @@ function RecommendationCard({
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Note de décision..."
-            className="flex-1 bg-[#181818] border border-[#262626] rounded-xl px-3 py-2 text-sm text-[#f5f5f5] placeholder:text-[#5a5a5a] focus:outline-none focus:border-[#00d4aa]/50"
+            className="flex-1 bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-2 text-sm text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent/50"
           />
         </div>
       )}
@@ -312,8 +312,6 @@ function TargetItem({
   target,
   targetType,
   facilitator,
-  onTargetSelect,
-  isSelected,
 }: {
   target: any;
   targetType: string;
@@ -326,8 +324,6 @@ function TargetItem({
   const [generating, setGenerating] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [localNote, setLocalNote] = useState("");
-  const [showFeedbackBtns, setShowFeedbackBtns] = useState(false);
 
   const loadRecommendations = useCallback(async () => {
     setLoading(true);
@@ -369,27 +365,27 @@ function TargetItem({
   }[targetType] || targetType;
 
   return (
-    <div className={`bg-[#111111] border ${isSelected ? "border-[#00d4aa]/40" : "border-[#262626]"} rounded-2xl overflow-hidden transition-colors`}>
+    <div className="bg-tb-surface border border-tb-border rounded-2xl overflow-hidden transition-colors">
       {/* Header */}
       <div
-        className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#181818] transition-colors"
+        className="p-4 flex items-center justify-between cursor-pointer hover:bg-tb-surface-elevated transition-colors"
         onClick={toggleExpand}
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-              targetType === "URGENT_REQUEST" ? "text-red-400 bg-red-500/10 border border-red-500/20" :
-              targetType === "SOLIDARITY_MISSION" ? "text-purple-400 bg-purple-500/10 border border-purple-500/20" :
-              "text-blue-400 bg-blue-500/10 border border-blue-500/20"
+              targetType === "URGENT_REQUEST" ? "text-red-700 bg-red-50 border border-red-200" :
+              targetType === "SOLIDARITY_MISSION" ? "text-purple-700 bg-purple-50 border border-purple-200" :
+              "text-blue-700 bg-blue-50 border border-blue-200"
             }`}>
               {typeLabel}
             </span>
-            <h3 className="text-[#f5f5f5] font-semibold truncate">{target.title}</h3>
+            <h3 className="text-tb-text-primary font-semibold truncate">{target.title}</h3>
           </div>
-          <div className="flex items-center gap-3 text-xs text-[#a3a3a3] mt-1">
+          <div className="flex items-center gap-3 text-xs text-tb-text-secondary mt-1">
             {target.city && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{target.city}</span>}
             {target.requester?.name && <span>par {target.requester.name}</span>}
-            {target.category && <span className="text-[#00d4aa]/70">{target.category}</span>}
+            {target.category && <span className="text-tb-accent/70">{target.category}</span>}
             {target.hours && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{target.hours}h</span>}
             {target._count?.participants != null && (
               <span className="flex items-center gap-1"><Users className="w-3 h-3" />{target._count.participants}/{target.maxParticipants || "?"}</span>
@@ -400,12 +396,12 @@ function TargetItem({
           <button
             onClick={(e) => { e.stopPropagation(); handleGenerate(); }}
             disabled={generating}
-            className="flex items-center gap-1 text-xs text-[#00d4aa] hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-[#00d4aa]/10 hover:bg-[#00d4aa]/20 border border-[#00d4aa]/20 disabled:opacity-50"
+            className="flex items-center gap-1 text-xs text-tb-accent hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-tb-accent/10 hover:bg-tb-accent border border-tb-accent/30 disabled:opacity-50"
           >
             {generating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
             {generating ? "Analyse..." : "Trouver des Heroes"}
           </button>
-          {expanded ? <ChevronUp className="w-4 h-4 text-[#a3a3a3]" /> : <ChevronDown className="w-4 h-4 text-[#a3a3a3]" />}
+          {expanded ? <ChevronUp className="w-4 h-4 text-tb-text-muted" /> : <ChevronDown className="w-4 h-4 text-tb-text-muted" />}
         </div>
       </div>
 
@@ -413,20 +409,20 @@ function TargetItem({
       {expanded && (
         <div className="px-4 pb-4 space-y-3">
           {loading && (
-            <div className="flex items-center gap-2 text-sm text-[#a3a3a3] p-3">
+            <div className="flex items-center gap-2 text-sm text-tb-text-secondary p-3">
               <Loader2 className="w-4 h-4 animate-spin" />
               Chargement des recommandations...
             </div>
           )}
 
           {error && (
-            <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">
               {error}
             </div>
           )}
 
           {!loading && recommendations.length === 0 && (
-            <div className="text-sm text-[#a3a3a3] p-3 text-center border border-dashed border-[#262626] rounded-xl">
+            <div className="text-sm text-tb-text-muted p-3 text-center border border-dashed border-tb-border rounded-xl">
               {generating ? "Analyse en cours..." : "Aucune recommandation pour cette cible. Cliquez sur « Trouver des Heroes » pour en générer."}
             </div>
           )}
@@ -486,25 +482,25 @@ export default function MatchingClient({ user }: Props) {
   }, [fetchTargets]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-tb-bg">
       <ConnectedHeader />
 
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[#f5f5f5] flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-[#00d4aa]" />
+            <h1 className="text-2xl font-bold text-tb-text-primary flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-tb-accent" />
               Matchmaking assisté
             </h1>
-            <p className="text-[#a3a3a3] text-sm mt-1">
+            <p className="text-tb-text-secondary text-sm mt-1">
               L&apos;IA recommande, le facilitateur décide. Aucune assignation automatique.
             </p>
           </div>
           <button
             onClick={fetchTargets}
             disabled={loading}
-            className="flex items-center gap-1 text-xs text-[#a3a3a3] hover:text-[#f5f5f5] transition-colors px-3 py-1.5 rounded-lg bg-[#181818] hover:bg-[#222]"
+            className="flex items-center gap-1 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors px-3 py-1.5 rounded-lg bg-tb-surface-elevated hover:bg-tb-border"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
             Actualiser
@@ -512,15 +508,15 @@ export default function MatchingClient({ user }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-[#111111] rounded-2xl p-1 border border-[#262626]">
+        <div className="flex gap-1 bg-tb-surface rounded-2xl p-1 border border-tb-border">
           {TABS.filter(t => t.id !== "history").map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all flex-1 justify-center ${
                 activeTab === tab.id
-                  ? "bg-[#00d4aa]/10 text-[#00d4aa] border border-[#00d4aa]/20"
-                  : "text-[#a3a3a3] hover:text-[#f5f5f5] hover:bg-[#181818]"
+                  ? "bg-tb-accent/10 text-tb-accent border border-tb-accent/20"
+                  : "text-tb-text-secondary hover:text-tb-text-primary hover:bg-tb-surface-elevated"
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -531,7 +527,7 @@ export default function MatchingClient({ user }: Props) {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-sm text-red-400">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-600">
             {error}
           </div>
         )}
@@ -539,15 +535,15 @@ export default function MatchingClient({ user }: Props) {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center p-12">
-            <Loader2 className="w-6 h-6 animate-spin text-[#00d4aa]" />
+            <Loader2 className="w-6 h-6 animate-spin text-tb-accent" />
           </div>
         )}
 
         {/* Target list */}
         {!loading && targets.length === 0 && activeTab !== "history" && (
-          <div className="text-center p-12 border border-dashed border-[#262626] rounded-2xl">
-            <Sparkles className="w-12 h-12 text-[#262626] mx-auto mb-3" />
-            <p className="text-[#a3a3a3]">Aucune {activeTab === "urgent" ? "demande urgente" : activeTab === "solidarity" ? "mission solidaire" : "mission collective"} ouverte pour le moment.</p>
+          <div className="text-center p-12 border border-dashed border-tb-border rounded-2xl">
+            <Sparkles className="w-12 h-12 text-tb-border mx-auto mb-3" />
+            <p className="text-tb-text-muted">Aucune {activeTab === "urgent" ? "demande urgente" : activeTab === "solidarity" ? "mission solidaire" : "mission collective"} ouverte pour le moment.</p>
           </div>
         )}
 
@@ -572,19 +568,19 @@ export default function MatchingClient({ user }: Props) {
 
         {/* History tab */}
         {activeTab === "history" && (
-          <div className="text-center p-12 border border-dashed border-[#262626] rounded-2xl">
-            <History className="w-12 h-12 text-[#262626] mx-auto mb-3" />
-            <p className="text-[#a3a3a3]">L&apos;historique des recommandations sera affiché ici — toutes cibles confondues.</p>
+          <div className="text-center p-12 border border-dashed border-tb-border rounded-2xl">
+            <History className="w-12 h-12 text-tb-border mx-auto mb-3" />
+            <p className="text-tb-text-muted">L&apos;historique des recommandations sera affiché ici — toutes cibles confondues.</p>
           </div>
         )}
 
         {/* Safety reminder */}
-        <div className="bg-[#00d4aa]/5 border border-[#00d4aa]/10 rounded-2xl p-4">
+        <div className="bg-tb-accent/5 border border-tb-accent/10 rounded-2xl p-4">
           <div className="flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 text-[#00d4aa] mt-0.5 shrink-0" />
+            <ShieldCheck className="w-5 h-5 text-tb-accent mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm text-[#d4d4d4] font-medium">Aucune décision automatique</p>
-              <p className="text-xs text-[#a3a3a3] mt-1">
+              <p className="text-sm text-tb-text-primary font-medium">Aucune décision automatique</p>
+              <p className="text-xs text-tb-text-muted mt-1">
                 TimeHeroes recommande des candidats, le facilitateur valide. Aucun booking, aucun mouvement TIME, aucune assignation n&apos;est créé automatiquement. Toutes les recommandations sont explicables.
               </p>
             </div>
