@@ -25,28 +25,51 @@ import {
 import { useState } from "react";
 
 type NavItem = { href: string; label: string; icon: any; role?: string };
+type NavSection = {
+  title: string;
+  icon: any;
+  items: NavItem[];
+};
 
-function buildNav(isFacilitator: boolean, role: string): NavItem[] {
-  const base: NavItem[] = [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/organizations", label: "Organisations", icon: Building2 },
-    { href: "/services", label: "Missions", icon: Search },
-    { href: "/collective-missions", label: "Collectives", icon: Users },
-    { href: "/bookings", label: "Bookings", icon: Calendar },
-    { href: "/agenda", label: "Agenda", icon: CalendarCheck },
-    { href: "/wallet", label: "Wallet", icon: Wallet },
-    { href: "/rewards", label: "Rewards", icon: Award },
-    { href: "/impact", label: "Impact", icon: BarChart3 },
-    { href: "/profile", label: "Profil", icon: User },
+function buildNavSections(isFacilitator: boolean, role: string): NavSection[] {
+  const sections: NavSection[] = [
+    {
+      title: "Pair à pair",
+      icon: Users,
+      items: [
+        { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { href: "/services", label: "Missions", icon: Search },
+        { href: "/collective-missions", label: "Collectives", icon: Users },
+        { href: "/bookings", label: "Bookings", icon: Calendar },
+        { href: "/agenda", label: "Agenda", icon: CalendarCheck },
+        { href: "/wallet", label: "Wallet", icon: Wallet },
+        { href: "/rewards", label: "Rewards", icon: Award },
+        { href: "/impact", label: "Impact", icon: BarChart3 },
+        { href: "/profile", label: "Profil", icon: User },
+      ],
+    },
+    {
+      title: "Organisation",
+      icon: Building2,
+      items: [
+        { href: "/organizations", label: "Mes organisations", icon: Building2 },
+      ],
+    },
   ];
+
   if (isFacilitator) {
-    base.splice(1, 0,
+    sections[1].items.push(
       { href: "/facilitator/community-pot", label: "Pot commun", icon: ShieldCheck },
-      { href: "/facilitator/network", label: "Intelligence réseau", icon: Activity },
+      { href: "/facilitator/network", label: "Réseau", icon: Activity },
       { href: "/facilitator/matching", label: "Matchmaking", icon: Sparkles },
     );
   }
-  return base;
+
+  if (role === "ADMIN") {
+    sections[1].items.push({ href: "/admin/organizations", label: "Admin org.", icon: ShieldCheck });
+  }
+
+  return sections;
 }
 
 export default function ConnectedHeader() {
@@ -56,11 +79,7 @@ export default function ConnectedHeader() {
 
   const role = (session?.user as any)?.role;
   const isFacilitator = role === "FACILITATOR" || role === "ADMIN";
-  const ALL_NAV = buildNav(isFacilitator, role);
-
-  if (role === "ADMIN") {
-    ALL_NAV.push({ href: "/admin/organizations", label: "Admin org.", icon: ShieldCheck });
-  }
+  const SECTIONS = buildNavSections(isFacilitator, role);
 
   return (
     <header className="border-b border-tb-border bg-tb-bg/80 backdrop-blur-md sticky top-0 z-50">
@@ -100,25 +119,34 @@ export default function ConnectedHeader() {
                   className="fixed inset-0 z-10"
                   onClick={() => setDesktopMoreOpen(false)}
                 />
-                <div className="absolute top-full right-0 mt-1 w-56 bg-tb-surface border border-tb-border rounded-xl shadow-xl z-20 py-2">
-                  {ALL_NAV.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setDesktopMoreOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm text-tb-text-secondary hover:text-tb-text-primary hover:bg-tb-surface-elevated transition-colors"
-                    >
-                      <link.icon className="w-4 h-4" />
-                      <span>{link.label}</span>
-                    </Link>
+                <div className="absolute top-full right-0 mt-1 w-64 bg-tb-surface border border-tb-border rounded-xl shadow-xl z-20 py-2 max-h-[70vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-tb-border/60 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent scrollbar-thin scrollbar-color-tb-border/60-transparent" style={{scrollbarWidth:'thin',scrollbarColor:'#E8E1D8 transparent'}}>
+                  {SECTIONS.map((section, si) => (
+                    <div key={section.title}>
+                      {si > 0 && <hr className="border-tb-border my-1 mx-2" />}
+                      <div className="px-4 py-1.5 text-[10px] uppercase tracking-widest text-tb-text-muted font-semibold flex items-center gap-1.5">
+                        <section.icon className="w-3 h-3" />
+                        <span>{section.title}</span>
+                      </div>
+                      {section.items.map((link) => (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={() => setDesktopMoreOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-tb-text-secondary hover:text-tb-text-primary hover:bg-tb-surface-elevated transition-colors"
+                        >
+                          <link.icon className="w-4 h-4" />
+                          <span>{link.label}</span>
+                        </Link>
+                      ))}
+                    </div>
                   ))}
-                  <hr className="border-tb-border my-2" />
+                  <hr className="border-tb-border my-1 mx-2" />
                   <button
                     onClick={() => {
                       setDesktopMoreOpen(false);
                       signOut({ callbackUrl: "/auth/signin" });
                     }}
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:text-red-300 transition-colors w-full text-left"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 transition-colors w-full text-left"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Déconnexion</span>
@@ -140,20 +168,29 @@ export default function ConnectedHeader() {
         </button>
       </div>
 
-      {/* Mobile menu — tous les liens */}
+      {/* Mobile menu — sections séparées */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-tb-border bg-tb-surface max-h-[80vh] overflow-y-auto">
+        <div className="md:hidden border-t border-tb-border bg-tb-surface max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-tb-border/60 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent scrollbar-thin scrollbar-color-tb-border/60-transparent" style={{scrollbarWidth:'thin',scrollbarColor:'#E8E1D8 transparent'}}>
           <nav className="flex flex-col px-4 py-3 gap-1">
-            {ALL_NAV.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-tb-text-secondary hover:text-tb-text-primary hover:bg-tb-surface-elevated transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <link.icon className="w-5 h-5" />
-                <span>{link.label}</span>
-              </Link>
+            {SECTIONS.map((section, si) => (
+              <div key={section.title}>
+                {si > 0 && <hr className="border-tb-border my-2 mx-2" />}
+                <div className="px-3 py-1.5 text-[10px] uppercase tracking-widest text-tb-text-muted font-semibold flex items-center gap-1.5">
+                  <section.icon className="w-3 h-3" />
+                  <span>{section.title}</span>
+                </div>
+                {section.items.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-tb-text-secondary hover:text-tb-text-primary hover:bg-tb-surface-elevated transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <link.icon className="w-5 h-5" />
+                    <span>{link.label}</span>
+                  </Link>
+                ))}
+              </div>
             ))}
             <hr className="border-tb-border my-2" />
             <div className="px-3 py-2">

@@ -14,6 +14,8 @@ import {
   UserPlus,
   TrendingUp,
   AlertTriangle,
+  FileText,
+  BarChart3,
 } from "lucide-react";
 import {
   getOrganizationTypeLabel,
@@ -88,6 +90,20 @@ export default function OrganizationDashboardClient({ dashboard: d }: Props) {
               Membres
             </Link>
             <Link
+              href={`/organizations/${d.slug}/impact`}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-tb-text-secondary hover:text-tb-text-primary bg-tb-surface-elevated hover:bg-tb-border transition-colors"
+            >
+              <TrendingUp className="w-4 h-4" />
+              Impact
+            </Link>
+            <Link
+              href={`/organizations/${d.slug}/reports`}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-tb-text-secondary hover:text-tb-text-primary bg-tb-surface-elevated hover:bg-tb-border transition-colors"
+            >
+              <FileText className="w-4 h-4" />
+              Rapports
+            </Link>
+            <Link
               href={`/organizations/${d.slug}/settings`}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-tb-text-secondary hover:text-tb-text-primary bg-tb-surface-elevated hover:bg-tb-border transition-colors"
             >
@@ -158,13 +174,50 @@ export default function OrganizationDashboardClient({ dashboard: d }: Props) {
               </div>
             </Link>
             <Link
-              href="/impact"
+              href={`/organizations/${d.slug}/impact`}
               className="flex items-center gap-3 p-3 rounded-xl bg-tb-surface-elevated hover:bg-tb-border transition-colors"
             >
               <TrendingUp className="w-5 h-5 text-tb-accent" />
               <div>
-                <p className="text-sm font-medium text-tb-text-primary">Impact</p>
-                <p className="text-xs text-tb-text-muted">Statistiques</p>
+                <p className="text-sm font-medium text-tb-text-primary">Impact & rapports</p>
+                <p className="text-xs text-tb-text-muted">Voir l'impact · Générer un rapport</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+
+        {/* Impact & Reports section */}
+        <div className="bg-white border border-tb-border rounded-2xl p-6">
+          <h2 className="text-lg font-semibold text-tb-text-primary mb-4">Impact & rapports</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Link
+              href={`/organizations/${d.slug}/impact`}
+              className="flex items-center gap-3 p-3 rounded-xl bg-tb-surface-elevated hover:bg-tb-border transition-colors"
+            >
+              <BarChart3 className="w-5 h-5 text-tb-accent" />
+              <div>
+                <p className="text-sm font-medium text-tb-text-primary">Voir l'impact</p>
+                <p className="text-xs text-tb-text-muted">Indicateurs en temps réel</p>
+              </div>
+            </Link>
+            <Link
+              href={`/organizations/${d.slug}/reports/new`}
+              className="flex items-center gap-3 p-3 rounded-xl bg-tb-surface-elevated hover:bg-tb-border transition-colors"
+            >
+              <FileText className="w-5 h-5 text-tb-accent" />
+              <div>
+                <p className="text-sm font-medium text-tb-text-primary">Générer un rapport</p>
+                <p className="text-xs text-tb-text-muted">Rapport d'impact complet</p>
+              </div>
+            </Link>
+            <Link
+              href={`/organizations/${d.slug}/reports`}
+              className="flex items-center gap-3 p-3 rounded-xl bg-tb-surface-elevated hover:bg-tb-border transition-colors"
+            >
+              <FileText className="w-5 h-5 text-tb-accent" />
+              <div>
+                <p className="text-sm font-medium text-tb-text-primary">Historique</p>
+                <p className="text-xs text-tb-text-muted">Rapports générés</p>
               </div>
             </Link>
           </div>

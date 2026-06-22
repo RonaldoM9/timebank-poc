@@ -676,6 +676,7 @@ model Organization {
   members         OrganizationMember[]
   invitations     OrganizationInvitation[]
   pot             OrganizationTimePot?
+  impactReports   ImpactReport[]
 
   @@index([slug])
   @@index([type])
@@ -777,4 +778,46 @@ model OrganizationTimePotTransaction {
   @@map("OrganizationTimePotTransaction")
 }
 
-// ─── End Lot 22 ───────────────────────────────────────────────────────────
+// ─── Lot 23 — Impact Reports ──────────────────────────────────────────────
+
+model ImpactReport {
+  id                    String   @id @default(cuid())
+
+  organizationId        String
+  title                 String
+  type                  String   @default("ORGANIZATION_SUMMARY")
+  status                String   @default("DRAFT")
+
+  periodStart           DateTime
+  periodEnd             DateTime
+
+  summary               String?
+  metricsJson           String?
+  highlightsJson        String?
+  risksJson             String?
+  recommendationsJson   String?
+
+  socialValueHourlyRate Int      @default(15)
+  socialValueEstimated  Int      @default(0)
+
+  visibility            String   @default("PRIVATE") // PRIVATE | ORGANIZATION | SHARE_LINK | PUBLIC
+  publicTokenHash       String?
+  publicEnabledAt       DateTime?
+
+  generatedById         String?
+  generatedAt           DateTime?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([type])
+  @@index([periodStart])
+  @@index([periodEnd])
+  @@map("ImpactReport")
+}
+
+// ─── End Lot 23 ───────────────────────────────────────────────────────────

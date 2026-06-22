@@ -13,7 +13,8 @@
     "seed:collective-missions": "tsx prisma/seed-collective-missions.ts",
     "seed:facilitator-network": "tsx prisma/seed-facilitator-network.ts",
     "seed:matchmaking": "tsx prisma/seed-matchmaking.ts",
-    "seed:organizations": "tsx prisma/seed-organizations.ts"
+    "seed:organizations": "tsx prisma/seed-organizations.ts",
+    "seed:impact-reports": "tsx prisma/seed-impact-reports.ts"
   },
   "dependencies": {
     "@next/font": "^14.2.15",
