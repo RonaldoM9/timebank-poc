@@ -75,8 +75,22 @@ export default function NewMissionClient() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    const rawStartsAt = formData.get("startsAt") as string;
-    const rawEndsAt = formData.get("endsAt") as string;
+    const rawStartsAtDate = formData.get("startsAtDate") as string;
+    const rawStartsAtTime = formData.get("startsAtTime") as string;
+    const rawEndsAtDate = formData.get("endsAtDate") as string;
+    const rawEndsAtTime = formData.get("endsAtTime") as string;
+
+    const startsAt = rawStartsAtDate && rawStartsAtTime
+      ? `${rawStartsAtDate}T${rawStartsAtTime}`
+      : rawStartsAtDate
+      ? `${rawStartsAtDate}T00:00`
+      : undefined;
+
+    const endsAt = rawEndsAtDate && rawEndsAtTime
+      ? `${rawEndsAtDate}T${rawEndsAtTime}`
+      : rawEndsAtDate
+      ? `${rawEndsAtDate}T00:00`
+      : undefined;
 
     const data = {
       title: (formData.get("title") as string).trim(),
@@ -88,8 +102,8 @@ export default function NewMissionClient() {
       region: (formData.get("region") as string).trim() || undefined,
       locationLabel: (formData.get("locationLabel") as string).trim() || undefined,
       online: online,
-      startsAt: rawStartsAt || undefined,
-      endsAt: rawEndsAt || undefined,
+      startsAt,
+      endsAt,
       durationHours: parseInt(formData.get("durationHours") as string, 10),
       maxParticipants: parseInt(formData.get("maxParticipants") as string, 10),
       fundingSource: (formData.get("fundingSource") as string) || undefined,
@@ -330,26 +344,44 @@ export default function NewMissionClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="startsAt" className="block text-sm font-medium text-tb-text-secondary mb-1.5">
+                  <label className="block text-sm font-medium text-tb-text-secondary mb-1.5">
                     Début
                   </label>
-                  <input
-                    id="startsAt"
-                    name="startsAt"
-                    type="datetime-local"
-                    className="w-full bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      id="startsAtDate"
+                      name="startsAtDate"
+                      type="date"
+                      className="flex-1 min-w-0 bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors"
+                    />
+                    <input
+                      id="startsAtTime"
+                      name="startsAtTime"
+                      type="time"
+                      defaultValue="09:00"
+                      className="w-[130px] shrink-0 bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors"
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label htmlFor="endsAt" className="block text-sm font-medium text-tb-text-secondary mb-1.5">
+                  <label className="block text-sm font-medium text-tb-text-secondary mb-1.5">
                     Fin
                   </label>
-                  <input
-                    id="endsAt"
-                    name="endsAt"
-                    type="datetime-local"
-                    className="w-full bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      id="endsAtDate"
+                      name="endsAtDate"
+                      type="date"
+                      className="flex-1 min-w-0 bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors"
+                    />
+                    <input
+                      id="endsAtTime"
+                      name="endsAtTime"
+                      type="time"
+                      defaultValue="17:00"
+                      className="w-[130px] shrink-0 bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
