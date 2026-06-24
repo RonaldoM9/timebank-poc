@@ -10,10 +10,10 @@ import {
 // ─── Types de mission collective ─────────────────────────────────────────────
 
 export const COLLECTIVE_MISSION_TYPES: Record<string, { label: string; icon: any; description: string }> = {
-  ONE_TO_MANY:    { label: "Mission Mentor",    icon: UserPlus,      description: "Un Hero transmet son savoir ou son talent à plusieurs participants : atelier, cours, initiation, transmission." },
-  MANY_TO_ONE:    { label: "Escouade Renfort",  icon: Users,         description: "Plusieurs Heroes se rassemblent pour aider une personne face à un besoin concret." },
-  MANY_TO_MANY:   { label: "Alliance Heroes",   icon: Handshake,     description: "Des Heroes unissent leurs forces pour réussir une mission commune dans le quartier." },
-  ORG_TO_MANY:    { label: "Mission Publique",   icon: Building2,     description: "Une association, école, mairie ou organisation lance une mission officielle pour mobiliser les Heroes." },
+  ONE_TO_MANY:    { label: "Mission Mentor",    icon: UserPlus,      description: "1 → N · Un Hero transmet son savoir ou son talent à plusieurs participants : atelier, cours, initiation, transmission." },
+  MANY_TO_ONE:    { label: "Escouade Renfort",  icon: Users,         description: "N → 1 · Plusieurs Heroes se rassemblent pour aider une personne face à un besoin concret." },
+  MANY_TO_MANY:   { label: "Alliance Heroes",   icon: Handshake,     description: "N → N · Des Heroes unissent leurs forces pour réussir une mission commune dans le quartier." },
+  ORG_TO_MANY:    { label: "Mission Publique",   icon: Building2,     description: "🏛 → N · Une association, école, mairie ou organisation lance une mission officielle pour mobiliser les Heroes." },
 };
 
 export function getCollectiveMissionTypeLabel(type: string): string {

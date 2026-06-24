@@ -22,10 +22,10 @@ import Link from "next/link";
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const MISSION_TYPES: { value: string; label: string; tagline: string; description: string }[] = [
-  { value: "ONE_TO_MANY", label: "Mission Mentor",    tagline: "Transmets ton talent",         description: "Un Hero transmet son savoir ou son talent à plusieurs participants : atelier, cours, initiation, transmission." },
-  { value: "MANY_TO_ONE", label: "Escouade Renfort",  tagline: "Mobilise-toi pour aider",       description: "Plusieurs Heroes se rassemblent pour aider une personne face à un besoin concret." },
-  { value: "MANY_TO_MANY", label: "Alliance Heroes",   tagline: "Unissez vos forces",            description: "Des Heroes unissent leurs forces pour réussir une mission commune dans le quartier." },
-  { value: "ORG_TO_MANY", label: "Mission Publique",   tagline: "Réponds à l'appel citoyen",     description: "Une association, école, mairie ou organisation lance une mission officielle pour mobiliser les Heroes." },
+  { value: "ONE_TO_MANY", label: "Mission Mentor",    tagline: "1 → N · Transmets ton talent",         description: "Un Hero transmet son savoir ou son talent à plusieurs participants : atelier, cours, initiation, transmission." },
+  { value: "MANY_TO_ONE", label: "Escouade Renfort",  tagline: "N → 1 · Mobilise-toi pour aider",       description: "Plusieurs Heroes se rassemblent pour aider une personne face à un besoin concret." },
+  { value: "MANY_TO_MANY", label: "Alliance Heroes",   tagline: "N → N · Unissez vos forces",            description: "Des Heroes unissent leurs forces pour réussir une mission commune dans le quartier." },
+  { value: "ORG_TO_MANY", label: "Mission Publique",   tagline: "🏛 → N · Réponds à l'appel citoyen",     description: "Une association, école, mairie ou organisation lance une mission officielle pour mobiliser les Heroes." },
 ];
 
 const CATEGORIES: { value: string; label: string }[] = [
