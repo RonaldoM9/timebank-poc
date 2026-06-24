@@ -104,10 +104,12 @@ export default function BookingDetailClient({
   booking,
   userId,
   isClient,
+  userRole,
 }: {
   booking: BookingDetailData;
   userId: string;
   isClient: boolean;
+  userRole?: string;
 }) {
   const router = useRouter();
   const status = statusConfig[booking.status] || statusConfig.pending;
@@ -290,7 +292,7 @@ export default function BookingDetailClient({
   const existingRating = booking.rating;
   const showRatingForm = isCompleted && isClient && !existingRating && !ratingSuccess;
   const showRatingDisplay = existingRating || ratingSuccess;
-  const isProvider = !isClient;
+  const isProvider = !isClient && !userRole?.match(/^(FACILITATOR|ADMIN)$/);
 
   const hasProof = booking.proofOfCompletion;
   const hasReleaseTx = booking.transactions.some((tx) => tx.type === "release");

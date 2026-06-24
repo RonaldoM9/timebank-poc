@@ -16,7 +16,7 @@ export default async function BookingDetailPage({
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true },
+    select: { id: true, role: true },
   });
   if (!user) redirect("/auth/signin");
 
@@ -54,10 +54,11 @@ export default async function BookingDetailPage({
 
   if (!booking) notFound();
 
-  // Sécurité : accessible uniquement par le client ou le provider
+  // Sécurité : accessible par le client, le provider, ou le facilitateur/admin
   const isClient = booking.clientId === user.id;
   const isProvider = booking.service.provider.id === user.id;
-  if (!isClient && !isProvider) notFound();
+  const isStaff = user.role === "FACILITATOR" || user.role === "ADMIN";
+  if (!isClient && !isProvider && !isStaff) notFound();
 
   const serialized = {
     id: booking.id,
@@ -124,6 +125,7 @@ export default async function BookingDetailPage({
       booking={serialized}
       userId={user.id}
       isClient={isClient}
+      userRole={user.role}
     />
   );
 }
