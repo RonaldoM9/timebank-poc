@@ -14,20 +14,26 @@ import {
   HeartHandshake,
   FileText,
   Sparkles,
+  Banknote,
+  ArrowUpRight,
+  ArrowDownRight,
 } from "lucide-react";
-import type { FacilitatorDashboardData, RequestWithDetails } from "@/lib/facilitator";
+import type { FacilitatorDashboardData, RequestWithDetails, PotTransactionWithDetails } from "@/lib/facilitator";
 import { approveCommunityPotRequest, rejectCommunityPotRequest } from "./actions";
 import { verifySolidarityMission, rejectSolidarityMission } from "@/app/services/solidarity-actions";
 import SolidarityBadge, { SOLIDARITY_CATEGORY_LABELS } from "@/components/SolidarityBadge";
 import ConnectedHeader from "@/components/ConnectedHeader";
 
+type KpiFilter = "balance" | "donations" | "fundings" | "requests" | "missions" | null;
+
 type Props = {
   user: { id: string; name: string; role: string };
   dashboard: FacilitatorDashboardData;
   requests: RequestWithDetails[];
+  transactions: PotTransactionWithDetails[];
 };
 
-export default function FacilitatorClient({ user, dashboard, requests }: Props) {
+export default function FacilitatorClient({ user, dashboard, requests, transactions }: Props) {
   const [pendingRequests, setPendingRequests] = useState(
     requests.filter((r) => r.status === "PENDING")
   );
@@ -42,6 +48,7 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
     requestId: string;
   } | null>(null);
   const [decisionNote, setDecisionNote] = useState("");
+  const [activeKpi, setActiveKpi] = useState<KpiFilter>(null);
 
   async function handleAction(requestId: string, action: "approve" | "reject", note?: string) {
     setActionLoading(requestId);
@@ -54,7 +61,6 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
     if (!result.success) {
       setError(result.error);
     } else {
-      // Move from pending to history
       const done = pendingRequests.find((r) => r.id === requestId);
       if (done) {
         const updated = {
@@ -92,6 +98,71 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
     setDecisionModal(null);
   }
 
+  function scrollTo(id: string) {
+    setActiveKpi(null);
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  }
+
+  const kpiCards = [
+    {
+      key: "balance" as KpiFilter,
+      label: "Solde du pot",
+      value: `${dashboard.potBalance} TIME`,
+      icon: <HeartHandshake className="w-4 h-4 text-tb-accent" />,
+      color: "text-tb-accent",
+      onClick: () => setActiveKpi(activeKpi === "balance" ? null : "balance"),
+      desc: "Voir les transactions du pot",
+    },
+    {
+      key: "donations" as KpiFilter,
+      label: "Dons (mois)",
+      value: String(dashboard.donationsThisMonth),
+      icon: <TrendingUp className="w-4 h-4 text-emerald-400" />,
+      color: "text-emerald-400",
+      onClick: () => setActiveKpi(activeKpi === "donations" ? null : "donations"),
+      desc: "Voir les dons reçus",
+    },
+    {
+      key: "fundings" as KpiFilter,
+      label: "TIME utilisés",
+      value: `${dashboard.fundingsThisMonth} TIME`,
+      icon: <TrendingDown className="w-4 h-4 text-amber-400" />,
+      color: "text-amber-400",
+      onClick: () => setActiveKpi(activeKpi === "fundings" ? null : "fundings"),
+      desc: "Voir les financements accordés",
+    },
+    {
+      key: "requests" as KpiFilter,
+      label: "Demandes",
+      value: `${dashboard.pendingRequests} en attente`,
+      icon: <Clock className="w-4 h-4 text-blue-400" />,
+      color: "text-blue-400",
+      onClick: () => scrollTo("demandes-en-attente"),
+      desc: "Voir les demandes en attente",
+    },
+    {
+      key: "missions" as KpiFilter,
+      label: "Missions financées",
+      value: String(dashboard.fundedMissions),
+      icon: <Users className="w-4 h-4 text-purple-400" />,
+      color: "text-purple-400",
+      onClick: () => window.location.href = "/bookings",
+      desc: "Voir les réservations",
+    },
+  ];
+
+  const filteredTransactions = activeKpi === "balance"
+    ? transactions
+    : activeKpi === "donations"
+    ? transactions.filter((t) => t.type === "DONATION")
+    : activeKpi === "fundings"
+    ? transactions.filter((t) => t.type === "FUNDING")
+    : [];
+
+  const showTransactions = activeKpi === "balance" || activeKpi === "donations" || activeKpi === "fundings";
+
   return (
     <>
     <ConnectedHeader />
@@ -121,53 +192,26 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
           </div>
         )}
 
-        {/* A. Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
-          {/* Pot Balance */}
-          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
-            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
-              <HeartHandshake className="w-4 h-4 text-tb-accent" />
-              Solde du pot
-            </div>
-            <p className="text-2xl font-bold">{dashboard.potBalance} TIME</p>
-          </div>
-          {/* Donations this month */}
-          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
-            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
-              Dons (mois)
-            </div>
-            <p className="text-2xl font-bold">{dashboard.donationsThisMonth}</p>
-          </div>
-          {/* Fundings this month */}
-          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
-            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
-              <TrendingDown className="w-4 h-4 text-amber-400" />
-              TIME utilisés
-            </div>
-            <p className="text-2xl font-bold">{dashboard.fundingsThisMonth} TIME</p>
-          </div>
-          {/* Pending requests */}
-          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
-            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
-              <Clock className="w-4 h-4 text-blue-400" />
-              Demandes
-            </div>
-            <p className="text-2xl font-bold">
-              {dashboard.pendingRequests}
-              {dashboard.pendingRequests > 0 && (
-                <span className="text-xs ml-1 text-blue-400">en attente</span>
-              )}
-            </p>
-          </div>
-          {/* Funded missions */}
-          <div className="rounded-2xl bg-tb-surface border border-tb-border p-4">
-            <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
-              <Users className="w-4 h-4 text-purple-400" />
-              Missions
-            </div>
-            <p className="text-2xl font-bold">{dashboard.fundedMissions}</p>
-          </div>
+        {/* A. Summary Cards - all clickable */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+          {kpiCards.map((kpi) => (
+            <button
+              key={kpi.key}
+              onClick={kpi.onClick}
+              className={`rounded-2xl bg-tb-surface border p-4 text-left transition-all ${
+                activeKpi === kpi.key
+                  ? "border-tb-accent ring-1 ring-tb-accent/40"
+                  : "border-tb-border hover:bg-tb-surface-hover hover:border-tb-text-muted"
+              }`}
+            >
+              <div className="flex items-center gap-2 text-tb-text-secondary text-xs mb-2">
+                {kpi.icon}
+                {kpi.label}
+              </div>
+              <p className={`text-2xl font-bold ${kpi.color}`}>{kpi.value}</p>
+              <p className="text-[10px] text-tb-text-muted mt-1">{kpi.desc}</p>
+            </button>
+          ))}
           {/* Open collective missions */}
           <a
             href="/collective-missions"
@@ -177,12 +221,105 @@ export default function FacilitatorClient({ user, dashboard, requests }: Props) 
               <Users className="w-4 h-4 text-teal-400" />
               Collectives
             </div>
-            <p className="text-2xl font-bold">{dashboard.openCollectiveMissions}</p>
+            <p className="text-2xl font-bold text-teal-400">{dashboard.openCollectiveMissions}</p>
+            <p className="text-[10px] text-tb-text-muted mt-1">Voir les missions collectives</p>
           </a>
         </div>
 
+        {/* Transactions detail panel */}
+        {showTransactions && (
+          <section id="pot-transactions" className="mb-8">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Banknote className="w-5 h-5 text-tb-accent" />
+              Transactions du pot
+              {activeKpi === "donations" && (
+                <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full">
+                  Dons uniquement
+                </span>
+              )}
+              {activeKpi === "fundings" && (
+                <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">
+                  Financements uniquement
+                </span>
+              )}
+              <button
+                onClick={() => setActiveKpi(null)}
+                className="ml-auto text-xs text-tb-text-muted hover:text-tb-text-secondary transition"
+              >
+                ✕ Fermer
+              </button>
+            </h2>
+
+            {filteredTransactions.length === 0 ? (
+              <div className="rounded-2xl bg-tb-surface border border-tb-border p-8 text-center text-tb-text-secondary">
+                <Banknote className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                <p>Aucune transaction trouvée.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredTransactions.map((tx) => (
+                  <div
+                    key={tx.id}
+                    className="rounded-2xl bg-tb-surface border border-tb-border p-4 flex items-start justify-between gap-4"
+                  >
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className={`mt-0.5 ${
+                        tx.type === "DONATION" ? "text-emerald-400" : "text-amber-400"
+                      }`}>
+                        {tx.type === "DONATION" ? (
+                          <ArrowUpRight className="w-5 h-5" />
+                        ) : (
+                          <ArrowDownRight className="w-5 h-5" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                            tx.type === "DONATION"
+                              ? "bg-emerald-500/20 text-emerald-400"
+                              : "bg-amber-500/20 text-amber-400"
+                          }`}>
+                            {tx.type === "DONATION" ? "Don" : "Financement"}
+                          </span>
+                          <span className="font-medium">{tx.userName || "Système"}</span>
+                          {tx.bookingId && (
+                            <a
+                              href={`/bookings/${tx.bookingId}`}
+                              className="text-xs text-blue-400 hover:underline flex items-center gap-1"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              Voir la mission
+                            </a>
+                          )}
+                        </div>
+                        {tx.reason && (
+                          <p className="text-sm text-tb-text-secondary mt-0.5">{tx.reason}</p>
+                        )}
+                        <p className="text-xs text-tb-text-muted mt-0.5">
+                          {new Date(tx.createdAt).toLocaleDateString("fr-FR", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <span className={`font-bold text-lg shrink-0 ${
+                      tx.type === "DONATION" ? "text-emerald-400" : "text-amber-400"
+                    }`}>
+                      {tx.type === "DONATION" ? "+" : "-"}{tx.amount} TIME
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
         {/* B. Pending Requests */}
-        <section className="mb-8">
+        <section id="demandes-en-attente" className="mb-8">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-blue-400" />
             Demandes en attente

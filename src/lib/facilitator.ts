@@ -9,6 +9,16 @@ export type FacilitatorDashboardData = {
   openCollectiveMissions: number;
 };
 
+export type PotTransactionWithDetails = {
+  id: string;
+  type: string;
+  amount: number;
+  reason: string | null;
+  userName: string | null;
+  bookingId: string | null;
+  createdAt: Date;
+};
+
 export type RequestWithDetails = {
   id: string;
   userId: string;
@@ -129,4 +139,44 @@ export async function getFacilitatorRequests(): Promise<RequestWithDetails[]> {
     solidarityCategory: service?.solidarityCategory ?? null,
     solidarityReason: service?.solidarityReason ?? null,
   }});
+}
+
+/**
+ * Get recent pot transactions with user details.
+ */
+export async function getPotTransactions(): Promise<PotTransactionWithDetails[]> {
+  const transactions = await prisma.communityPotTransaction.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 50,
+    include: {
+      user: { select: { name: true } },
+    },
+  });
+
+  // Fetch booking titles for transactions linked to bookings
+  const bookingIds = transactions
+    .filter((t) => t.bookingId)
+    .map((t) => t.bookingId!);
+
+  const bookings = bookingIds.length > 0
+    ? await prisma.booking.findMany({
+        where: { id: { in: bookingIds } },
+        select: {
+          id: true,
+          service: { select: { title: true } },
+        },
+      })
+    : [];
+
+  const bookingTitles = new Map(bookings.map((b) => [b.id, b.service.title]));
+
+  return transactions.map((t) => ({
+    id: t.id,
+    type: t.type,
+    amount: t.amount,
+    reason: t.reason,
+    userName: t.user?.name ?? null,
+    bookingId: t.bookingId,
+    createdAt: t.createdAt,
+  }));
 }
