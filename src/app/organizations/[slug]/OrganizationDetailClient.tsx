@@ -209,7 +209,7 @@ export default function OrganizationDetailClient({ organization: org, user }: Pr
 
         {/* Quick links for members */}
         {user && (
-          <div className="mt-6">
+          <div className="mt-6 flex flex-col gap-3">
             <Link
               href={`/organizations/${org.slug}/dashboard`}
               className="flex items-center justify-between bg-tb-accent/5 border border-tb-accent/20 rounded-2xl p-4 hover:bg-tb-accent/10 transition-colors"
@@ -219,6 +219,19 @@ export default function OrganizationDetailClient({ organization: org, user }: Pr
                 <div>
                   <p className="text-sm font-medium text-tb-text-primary">Accéder au tableau de bord</p>
                   <p className="text-xs text-tb-text-muted">Gérer les membres, missions, pot et impact</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-tb-accent" />
+            </Link>
+            <Link
+              href={`/organizations/${org.slug}/programs`}
+              className="flex items-center justify-between bg-tb-surface-elevated border border-tb-border rounded-2xl p-4 hover:bg-tb-border transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <Sparkles className="w-5 h-5 text-tb-accent" />
+                <div>
+                  <p className="text-sm font-medium text-tb-text-primary">Programmes</p>
+                  <p className="text-xs text-tb-text-muted">Lancer et suivre des programmes d'action locaux</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-tb-accent" />

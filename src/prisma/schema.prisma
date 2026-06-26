@@ -59,6 +59,12 @@ model User {
   // ─── Lot 22 — Organisations ──────────────────────────────────────
   organizationsCreated     Organization[]         @relation("OrganizationCreator")
   organizationMemberships  OrganizationMember[]
+
+  // ─── Lot 24 — Programmes ─────────────────────────────────────────
+  programParticipations ProgramParticipant[]
+  createdPrograms       OrganizationProgram[] @relation("ProgramCreator")
+
+  // ─── End User ────────────────────────────────────────────────────
 }
 
 model HeroPassport {
@@ -677,6 +683,7 @@ model Organization {
   invitations     OrganizationInvitation[]
   pot             OrganizationTimePot?
   impactReports   ImpactReport[]
+  programs        OrganizationProgram[]
 
   @@index([slug])
   @@index([type])
@@ -812,6 +819,10 @@ model ImpactReport {
 
   organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
+  // ─── Lot 24 — Programme ──────────────────────────────────────────
+  programId String?
+  program   OrganizationProgram? @relation("ProgramImpactReports", fields: [programId], references: [id])
+
   @@index([organizationId])
   @@index([status])
   @@index([type])
@@ -862,3 +873,63 @@ model WellbeingSurvey {
 // ─── End Lot 23 bis ──────────────────────────────────────────────────────
 
 // ─── Lot 24 — Programmes Organisation ────────────────────────────────────
+
+model OrganizationProgram {
+  id                String   @id @default(cuid())
+  organizationId    String
+
+  name              String
+  slug              String
+  type              String   // SENIOR_SOCIAL_LINK | DIGITAL_INCLUSION | YOUTH | CAREGIVER_SUPPORT | NEIGHBORHOOD_SOLIDARITY | OTHER
+  status            String   @default("DRAFT") // DRAFT | ACTIVE | COMPLETED | ARCHIVED
+
+  description       String?
+  shortDescription  String?
+
+  startDate         DateTime?
+  endDate           DateTime?
+
+  targetAudience    String?
+  goalsJson         String?
+  settingsJson      String?
+
+  createdById       String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdBy         User         @relation("ProgramCreator", fields: [createdById], references: [id])
+
+  participants      ProgramParticipant[]
+  impactReports     ImpactReport[] @relation("ProgramImpactReports")
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@index([type])
+  @@index([status])
+  @@map("OrganizationProgram")
+}
+
+model ProgramParticipant {
+  id          String   @id @default(cuid())
+  programId   String
+  userId      String
+
+  role        String   // SENIOR | HERO | CAREGIVER | FACILITATOR | OBSERVER
+  status      String   @default("ACTIVE") // ACTIVE | PAUSED | REMOVED
+
+  joinedAt    DateTime @default(now())
+  removedAt   DateTime?
+
+  program     OrganizationProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([programId, userId])
+  @@index([programId])
+  @@index([userId])
+  @@index([role])
+  @@index([status])
+  @@map("ProgramParticipant")
+}
+
+// ─── End Lot 24 ──────────────────────────────────────────────────────────

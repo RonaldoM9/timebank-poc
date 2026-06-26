@@ -15,7 +15,8 @@
     "seed:matchmaking": "tsx prisma/seed-matchmaking.ts",
     "seed:organizations": "tsx prisma/seed-organizations.ts",
     "seed:impact-reports": "tsx prisma/seed-impact-reports.ts",
-    "seed:wellbeing": "tsx prisma/seed-wellbeing.ts"
+    "seed:wellbeing": "tsx prisma/seed-wellbeing.ts",
+    "seed:senior-program": "tsx prisma/seed-senior-program.ts"
   },
   "dependencies": {
     "@next/font": "^14.2.15",
