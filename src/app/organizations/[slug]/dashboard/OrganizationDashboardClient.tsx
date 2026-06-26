@@ -97,6 +97,13 @@ export default function OrganizationDashboardClient({ dashboard: d }: Props) {
               Impact
             </Link>
             <Link
+              href={`/organizations/${d.slug}/wellbeing`}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-tb-text-secondary hover:text-tb-text-primary bg-tb-surface-elevated hover:bg-tb-border transition-colors"
+            >
+              <Heart className="w-4 h-4" />
+              Impact humain
+            </Link>
+            <Link
               href={`/organizations/${d.slug}/reports`}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-tb-text-secondary hover:text-tb-text-primary bg-tb-surface-elevated hover:bg-tb-border transition-colors"
             >
@@ -164,7 +171,7 @@ export default function OrganizationDashboardClient({ dashboard: d }: Props) {
               </div>
             </Link>
             <Link
-              href={`/organizations/${d.slug}/pot`}
+              href="/wallet"
               className="flex items-center gap-3 p-3 rounded-xl bg-tb-surface-elevated hover:bg-tb-border transition-colors"
             >
               <Heart className="w-5 h-5 text-tb-accent" />
