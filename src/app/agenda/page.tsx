@@ -4,29 +4,18 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import AgendaClient from "./AgendaClient";
 
-export type AgendaBooking = {
+// ─── Unified event type for the calendar ───────────────────────────────
+
+export type AgendaEvent = {
   id: string;
-  serviceId: string;
-  clientId: string;
-  hours: number;
-  totalTime: number;
+  title: string;
+  date: string | null; // ISO string
+  type: "booking" | "collective" | "urgent";
   status: string;
-  createdAt: string;
-  startAt: string | null;
-  endAt: string | null;
-  completedAt: string | null;
-  cancelledAt: string | null;
-  cancellationReason: string | null;
-  service: {
-    id: string;
-    title: string;
-    ratePerHour: number;
-    providerId: string;
-    provider: { id: string; name: string };
-  };
-  client: { id: string; name: string };
-  provider: { id: string; name: string };
-  transactions: { id: string; type: string; amount: number; status: string; createdAt: string }[];
+  totalTime?: number;
+  href: string;
+  roleIcon: string;
+  roleLabel: string;
 };
 
 export default async function AgendaPage() {
@@ -39,6 +28,10 @@ export default async function AgendaPage() {
   });
 
   if (!user) redirect("/auth/signin");
+
+  const events: AgendaEvent[] = [];
+
+  // ─── 1. Bookings (missions réservées) ─────────────────────────────────
 
   const bookings = await prisma.booking.findMany({
     where: {
@@ -59,62 +52,131 @@ export default async function AgendaPage() {
         },
       },
       client: { select: { id: true, name: true } },
-      transactions: {
-        orderBy: { createdAt: "desc" },
-        select: { id: true, type: true, amount: true, status: true, createdAt: true },
+    },
+  });
+
+  for (const b of bookings) {
+    const isClient = b.clientId === user.id;
+    events.push({
+      id: `booking-${b.id}`,
+      title: b.service.title,
+      date: b.startAt?.toISOString() ?? null,
+      type: "booking",
+      status: b.status,
+      totalTime: b.totalTime,
+      href: `/bookings/${b.id}`,
+      roleIcon: isClient ? "🙋" : "🦸",
+      roleLabel: isClient ? "En tant que client" : "En tant que Hero",
+    });
+  }
+
+  // ─── 2. Collective missions (missions collectives) ───────────────────
+
+  const collectiveMissions = await prisma.collectiveMission.findMany({
+    where: {
+      OR: [
+        { organizerId: user.id },
+        { participants: { some: { userId: user.id } } },
+      ],
+    },
+    orderBy: { startsAt: { sort: "desc", nulls: "last" } },
+    include: {
+      participants: {
+        where: { userId: user.id },
+        select: { role: true, status: true },
       },
     },
   });
 
-  const now = new Date();
+  for (const m of collectiveMissions) {
+    const myParticipation = m.participants[0];
+    const isOrganizer = m.organizerId === user.id;
+    const roleIcon = isOrganizer ? "👥" : "🤝";
+    const roleLabel = isOrganizer
+      ? "En tant qu'organisateur"
+      : myParticipation?.role === "BENEFICIARY"
+        ? "En tant que bénéficiaire"
+        : "En tant que participant";
 
-  const serialized: AgendaBooking[] = bookings.map((b: any) => ({
-    id: b.id,
-    serviceId: b.serviceId,
-    clientId: b.clientId,
-    hours: b.hours,
-    totalTime: b.totalTime,
-    status: b.status,
-    createdAt: b.createdAt.toISOString(),
-    startAt: b.startAt?.toISOString() ?? null,
-    endAt: b.endAt?.toISOString() ?? null,
-    completedAt: b.completedAt?.toISOString() ?? null,
-    cancelledAt: b.cancelledAt?.toISOString() ?? null,
-    cancellationReason: b.cancellationReason ?? null,
-    service: {
-      id: b.service.id,
-      title: b.service.title,
-      ratePerHour: b.service.ratePerHour,
-      providerId: b.service.providerId,
-      provider: { id: b.service.provider.id, name: b.service.provider.name },
+    events.push({
+      id: `collective-${m.id}`,
+      title: m.title,
+      date: m.startsAt?.toISOString() ?? null,
+      type: "collective",
+      status: m.status,
+      totalTime: m.durationHours,
+      href: `/collective-missions/${m.id}`,
+      roleIcon,
+      roleLabel,
+    });
+  }
+
+  // ─── 3. Urgent requests (demandes urgentes) ──────────────────────────
+
+  const urgentRequests = await prisma.urgentRequest.findMany({
+    where: { requesterId: user.id },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      title: true,
+      totalTime: true,
+      status: true,
+      createdAt: true,
+      expiresAt: true,
     },
-    client: { id: b.client.id, name: b.client.name },
-    provider: { id: b.service.provider.id, name: b.service.provider.name },
-    transactions: b.transactions.map((tx: any) => ({
-      id: tx.id,
-      type: tx.type,
-      amount: tx.amount,
-      status: tx.status,
-      createdAt: tx.createdAt.toISOString(),
-    })),
-  }));
+  });
 
-  const isUpcoming = (b: AgendaBooking) => {
-    if (b.status === "completed" || b.status === "cancelled") return false;
-    if (b.startAt && new Date(b.startAt) < now) return false;
-    if (!b.startAt && b.status === "pending") return true;
-    return true;
-  };
+  for (const r of urgentRequests) {
+    // Use expiresAt as the calendar date if available, otherwise createdAt
+    const date = r.expiresAt?.toISOString() ?? r.createdAt.toISOString();
+    events.push({
+      id: `urgent-${r.id}`,
+      title: r.title,
+      date,
+      type: "urgent",
+      status: r.status,
+      totalTime: r.totalTime,
+      href: `/urgent/${r.id}`,
+      roleIcon: "🆘",
+      roleLabel: "Demande urgente",
+    });
+  }
 
-  const upcoming = serialized.filter(isUpcoming);
-  const past = serialized.filter((b) => !isUpcoming(b));
+  // ─── 4. Urgent offers (offres sur demandes urgentes) ─────────────────
+
+  const urgentOffers = await prisma.urgentOffer.findMany({
+    where: { providerId: user.id },
+    orderBy: { createdAt: "desc" },
+    include: {
+      urgentRequest: {
+        select: {
+          id: true,
+          title: true,
+          totalTime: true,
+          createdAt: true,
+          expiresAt: true,
+        },
+      },
+    },
+  });
+
+  for (const o of urgentOffers) {
+    const date =
+      o.urgentRequest.expiresAt?.toISOString() ?? o.createdAt.toISOString();
+    events.push({
+      id: `urgent-offer-${o.id}`,
+      title: o.urgentRequest.title,
+      date,
+      type: "urgent",
+      status: o.status,
+      totalTime: o.urgentRequest.totalTime,
+      href: `/urgent/${o.urgentRequest.id}`,
+      roleIcon: "🦸",
+      roleLabel: "Offre de service",
+    });
+  }
 
   return (
-    <AgendaClient
-      upcoming={upcoming}
-      past={past}
-      userId={user.id}
-      userName={user.name}
-    />
+    <AgendaClient events={events} userId={user.id} userName={user.name} />
   );
 }

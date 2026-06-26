@@ -20,7 +20,7 @@ export default async function ImpactPage() {
       {/* Header minimal */}
       <ConnectedHeader />
 
-      <main className="max-w-6xl mx-auto px-4 py-12">
+      <main className="max-w-6xl mx-auto px-4 py-12 animate-fade-in-up">
         {emptyMessage && (
           <EmptyState icon={<BarChart3 />} title="Pas encore de données d'impact" description="Les chiffres d'impact apparaîtront dès les premières missions réalisées." actionLabel="Explorer les missions" actionHref="/services" />
         )}

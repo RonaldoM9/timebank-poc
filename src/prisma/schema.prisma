@@ -821,3 +821,44 @@ model ImpactReport {
 }
 
 // ─── End Lot 23 ───────────────────────────────────────────────────────────
+
+// ─── Lot 23 bis — Wellbeing / Impact humain ─────────────────────────────
+
+model WellbeingSurvey {
+  id              String   @id @default(cuid())
+
+  organizationId  String?
+  programId       String?
+  userId          String
+
+  contextType     String   // ORGANIZATION | PROGRAM | MISSION | SUPPORT_CIRCLE
+  contextId       String?
+
+  phase           String   // BEFORE | AFTER | FOLLOW_UP
+  status          String   @default("COMPLETED")
+
+  isolationScore      Int?
+  supportScore        Int?
+  usefulnessScore     Int?
+  trustScore          Int?
+  contributionScore   Int?
+
+  comment         String?
+
+  scoreTotal      Int?
+  scoreAverage    Int?     // scoreAverage100 — 0-100 scale
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([programId])
+  @@index([userId])
+  @@index([contextType, contextId])
+  @@index([phase])
+  @@map("WellbeingSurvey")
+}
+
+// ─── End Lot 23 bis ──────────────────────────────────────────────────────
+
+// ─── Lot 24 — Programmes Organisation ────────────────────────────────────

@@ -178,8 +178,8 @@ interface StatCardProps {
 
 export function StatCard({ icon: Icon, value, label, suffix, explanation }: StatCardProps) {
   return (
-    <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 hover:border-tb-accent/30 transition-all group">
-      <div className="w-10 h-10 rounded-xl bg-tb-accent/10 border border-tb-accent/20 flex items-center justify-center mb-3 group-hover:bg-tb-accent/20 transition-colors">
+    <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 hover:border-tb-accent/30 transition-all group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-tb-accent/5">
+      <div className="w-10 h-10 rounded-xl bg-tb-accent/10 border border-tb-accent/20 flex items-center justify-center mb-3 group-hover:bg-tb-accent/20 transition-colors group-hover:scale-110 transition-transform duration-300">
         <Icon className="w-5 h-5 text-tb-accent" />
       </div>
       <p className="text-3xl md:text-4xl font-bold text-tb-text-primary mb-1 font-anton tracking-wide">

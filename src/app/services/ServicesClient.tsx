@@ -91,7 +91,7 @@ export default function ServicesClient({ initialServices }: { initialServices: S
     <div className="min-h-screen">
       {session ? <ConnectedHeader /> : <PublicHeader />}
 
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+      <main className="max-w-5xl mx-auto px-4 py-8 space-y-6 animate-fade-in-up">
         {/* Hero */}
         <div className="text-center mb-2">
           <h1 className="text-3xl font-anton tracking-wide text-tb-text-primary mb-1">
@@ -255,13 +255,14 @@ export default function ServicesClient({ initialServices }: { initialServices: S
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {services.map((service) => {
+            {services.map((service, idx) => {
               const zone = getProviderZone(service);
               const radiusKm = service.provider.serviceRadiusKm;
               return (
                 <div
                   key={service.id}
-                  className="bg-tb-surface border border-tb-border rounded-2xl p-5 hover:border-tb-accent/20 transition-all group flex flex-col"
+                  className="bg-tb-surface border border-tb-border rounded-2xl p-5 hover:border-tb-accent/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-tb-accent/5 hover:border-tb-accent/30 group flex flex-col"
+                  style={{ animationDelay: `${idx * 0.06}s` }}
                 >
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">

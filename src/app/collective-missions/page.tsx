@@ -48,7 +48,7 @@ export default async function CollectiveMissionsPage(props: {
     <>
       <ConnectedHeader />
 
-      <main className="max-w-6xl mx-auto px-4 py-12">
+      <main className="max-w-6xl mx-auto px-4 py-12 animate-fade-in-up">
         {/* Page header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
@@ -99,7 +99,7 @@ export default async function CollectiveMissionsPage(props: {
         {/* Mission grid */}
         {!isEmpty && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {missions.map((mission) => {
+            {missions.map((mission, idx) => {
               const statusColorClass = getMissionStatusColor(mission.status);
               const typeLabel = getCollectiveMissionTypeLabel(mission.type);
               const statusLabel = getMissionStatusLabel(mission.status);
@@ -123,7 +123,8 @@ export default async function CollectiveMissionsPage(props: {
                 <Link
                   key={mission.id}
                   href={`/collective-missions/${mission.id}`}
-                  className="group block rounded-2xl border border-tb-border bg-tb-surface hover:border-tb-accent/50 transition-all overflow-hidden"
+                  className="group block rounded-2xl border border-tb-border bg-tb-surface hover:border-tb-accent/50 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-tb-accent/5 hover:border-tb-accent/30 overflow-hidden"
+                  style={{ animationDelay: `${idx * 0.06}s` }}
                 >
                   <div className="p-5 flex flex-col gap-3">
                     {/* Top badges row */}

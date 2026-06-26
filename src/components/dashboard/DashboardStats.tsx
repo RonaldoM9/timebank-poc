@@ -233,7 +233,7 @@ export default function DashboardStats({
 
       {/* ─── DESKTOP: Full 5-widget grid (hidden on <md) ─── */}
       <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {WIDGETS.map((w) => {
+        {WIDGETS.map((w, idx) => {
           const value = stats[w.key];
           const displayValue = w.formatValue
             ? w.formatValue(value)
@@ -243,9 +243,10 @@ export default function DashboardStats({
             <Link
               key={w.key}
               href={w.href}
-              className={`group relative bg-tb-surface border border-tb-border rounded-xl p-4 hover:border-tb-accent/30 transition-all overflow-hidden ${
+              className={`group relative bg-tb-surface border border-tb-border rounded-xl p-4 transition-all duration-300 overflow-hidden animate-fade-in-up ${
                 value === 0 ? "opacity-70" : ""
-              }`}
+              } hover:-translate-y-0.5 hover:shadow-lg hover:shadow-tb-accent/5`}
+              style={{ animationDelay: `${idx * 0.06}s` }}
             >
               {/* Subtle gradient on hover */}
               <div
@@ -255,7 +256,7 @@ export default function DashboardStats({
               <div className="relative z-10 space-y-2">
                 {/* Icon */}
                 <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
                     ICON_BG[w.title]
                   }`}
                 >
@@ -270,6 +271,11 @@ export default function DashboardStats({
                 {/* Label */}
                 <div className="text-xs text-tb-text-secondary font-medium">
                   {w.title}
+                  {w.key === "unreadMessagesCount" && value > 0 && (
+                    <span className="ml-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 text-[10px] font-semibold animate-pulse-accent">
+                      {value} non lu{value > 1 ? "s" : ""}
+                    </span>
+                  )}
                 </div>
 
                 {/* Empty state hint */}
@@ -278,41 +284,12 @@ export default function DashboardStats({
                     {w.emptyMessage}
                   </div>
                 )}
-
-                {/* Badge for unread messages */}
-                {w.key === "unreadMessagesCount" && value > 0 && (
-                  <div className="text-[10px] text-amber-400 font-semibold">
-                    {value} non lu{value > 1 ? "s" : ""}
-                  </div>
-                )}
               </div>
             </Link>
           );
         })}
       </div>
 
-      {/* ─── DESKTOP: Activity summary (hidden on <md) ─── */}
-      <div className="hidden md:block bg-tb-surface border border-tb-border rounded-xl px-4 py-3">
-        {hasActions ? (
-          <p className="text-sm text-tb-text-secondary">
-            Tu as{" "}
-            {[
-              stats.todoActionsCount > 0 &&
-                `${stats.todoActionsCount} action${stats.todoActionsCount > 1 ? "s" : ""} à traiter`,
-              stats.unreadMessagesCount > 0 &&
-                `${stats.unreadMessagesCount} message${stats.unreadMessagesCount > 1 ? "s" : ""} non lu${stats.unreadMessagesCount > 1 ? "s" : ""}`,
-            ]
-              .filter(Boolean)
-              .join(" et ")}
-            .
-          </p>
-        ) : (
-          <p className="text-sm text-tb-text-muted">
-            Tout est à jour. Continue à proposer ton aide ou découvre les
-            missions proches de toi.
-          </p>
-        )}
-      </div>
     </div>
   );
 }

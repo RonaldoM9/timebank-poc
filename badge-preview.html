@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TimeHeroes — Badge Preview</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f5f0;font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}
+h1{font-size:24px;margin-bottom:8px}
+p{color:#666;margin-bottom:32px;font-size:14px}
+.gallery{display:flex;gap:40px;flex-wrap:wrap;margin-bottom:40px}
+.badge-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.06);text-align:center;width:200px}
+.badge-card h3{font-size:14px;margin-top:12px}
+.badge-card .tag{display:inline-block;padding:2px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-top:6px;text-transform:uppercase}
+.badge-card .sub{font-size:11px;color:#999;margin-top:4px}
+.samples{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+.sample-card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 16px rgba(0,0,0,0.06)}
+.sample-card h3{font-size:13px;margin-bottom:12px;color:#555}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.caption{font-size:10px;color:#999;text-align:center;margin-top:4px}
+
+/* ─── Badge component styles ──────────────────────────────────────────── */
+.badge{position:relative;display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;flex-shrink:0}
+.badge-inner{position:absolute;inset:0;border-radius:22%}
+
+/* Outer ring (gradient border) */
+.badge-ring{position:absolute;inset:0;border-radius:22%}
+.badge-ring.commun{background:linear-gradient(135deg,#D1D5DB,#9CA3AF)}
+.badge-ring.rare{background:linear-gradient(135deg,#34D399,#059669)}
+.badge-ring.epic{background:linear-gradient(135deg,#A78BFA,#7C3AED)}
+.badge-ring.legend{background:linear-gradient(135deg,#FBBF24,#D97706)}
+
+.badge-ring.locked{background:linear-gradient(135deg,#E5E7EB,#D1D5DB)}
+
+/* Inner body */
+.badge-body{position:absolute;inset:2.5px;border-radius:22%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.badge-body.commun{background:linear-gradient(180deg,#F9FAFB,#E5E7EB)}
+.badge-body.rare{background:linear-gradient(180deg,#D1FAE5,#A7F3D0)}
+.badge-body.epic{background:linear-gradient(180deg,#EDE9FE,#C4B5FD)}
+.badge-body.legend{background:linear-gradient(180deg,#FEF3C7,#FDE68A)}
+.badge-body.locked{background:linear-gradient(180deg,#F9FAFB,#E5E7EB);opacity:.6}
+
+/* Sheen */
+.badge-sheen{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:22%;background:linear-gradient(180deg,rgba(255,255,255,0.55),transparent 50%)}
+
+/* Icon circle */
+.badge-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.badge-icon.earned{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,0.95),#fff)}
+.badge-icon.locked{background:#F3F4F6}
+
+/* Decorations */
+.deco{position:absolute;border-radius:50%}
+.deco.rare{background:#FCD34D;width:3px;height:3px}
+.deco.epic{background:#C4B5FD;width:2.5px;height:2.5px}
+.deco.legend{background:#FCD34D;width:2px;height:2px}
+
+/* Crown */
+.crown{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #B45309;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.2))}
+.jewel{position:absolute;border-radius:50%;background:rgba(255,255,255,0.7)}
+</style>
+</head>
+<body>
+
+<h1>🎖️ TimeHeroes — Prévisualisation des badges</h1>
+<p>4 raretés × 2 états (débloqué / verrouillé). Les badges utilisent des gradients CSS + icônes Lucide.</p>
+
+<div class="gallery" id="gallery"></div>
+
+<h2 style="font-size:16px;margin-bottom:16px">📦 Variantes par rareté</h2>
+<div class="samples" id="samples"></div>
+
+<script>
+// ─── Badge HTML builder ────────────────────────────────────────────────
+
+const RARITIES = [
+  { key: 'COMMUN',  cls: 'commun',  label: 'COMMUN',  color: '#6B7280', border: '#9CA3AF' },
+  { key: 'RARE',    cls: 'rare',    label: 'RARE',    color: '#047857', border: '#059669' },
+  { key: 'ÉPIQUE',  cls: 'epic',    label: 'ÉPIQUE',  color: '#6D28D9', border: '#7C3AED' },
+  { key: 'LÉGENDAIRE', cls: 'legend', label: 'LÉGENDAIRE', color: '#92400E', border: '#D97706' },
+];
+
+const ICONS = ['star', 'heart', 'shield', 'trophy'];
+const EMOJIS = { star:'⭐', heart:'❤️', shield:'🛡️', trophy:'🏆', people:'👥', target:'🎯', gift:'🎁', award:'🏅' };
+
+function badgeHTML(rarityCls, icon, earned) {
+  const r = RARITIES.find(x => x.cls === rarityCls);
+  const ringCls = earned ? r.cls : 'locked';
+  const bodyCls = earned ? r.cls : 'locked';
+  const iconCls = earned ? 'earned' : 'locked';
+  const emoji = EMOJIS[icon] || '⭐';
+
+  let decos = '';
+  if (earned && r.key === 'RARE') {
+    decos = `
+      <span class="deco rare" style="top:20%;left:20%"></span>
+      <span class="deco rare" style="top:20%;right:20%"></span>
+      <span class="deco rare" style="bottom:16%;left:50%;transform:translateX(-50%)"></span>
+    `;
+  }
+  if (earned && r.key === 'ÉPIQUE') {
+    decos = `
+      <span class="deco epic" style="top:16%;left:16%"></span>
+      <span class="deco epic" style="top:14%;right:18%"></span>
+      <span class="deco epic" style="bottom:18%;right:16%"></span>
+    `;
+  }
+  if (earned && r.key === 'LÉGENDAIRE') {
+    decos = `
+      <div class="crown"></div>
+      <span class="jewel" style="width:3px;height:3px;top:-1px;left:43%"></span>
+      <span class="jewel" style="width:2px;height:2px;top:1px;right:43%"></span>
+      <span class="deco legend" style="top:12%;left:10%"></span>
+      <span class="deco legend" style="bottom:12%;right:10%"></span>
+    `;
+  }
+
+  return `
+    <div class="badge">
+      <div class="badge-ring ${ringCls}"></div>
+      <div class="badge-body ${bodyCls}">
+        <div class="badge-sheen"></div>
+      </div>
+      <div class="badge-icon ${iconCls}">${emoji}</div>
+      ${decos}
+    </div>
+  `;
+}
+
+function badgeCard(rarity, icon) {
+  const r = RARITIES.find(x => x.key === rarity);
+  return `
+    <div class="badge-card">
+      ${badgeHTML(r.cls, icon, true)}
+      <h3>${r.label}</h3>
+      <span class="tag" style="background:${r.color}18;color:${r.color};border:1px solid ${r.color}30">${r.label}</span>
+      <div class="sub">${['Premier Pas','Gardien du Quartier','Pilier du Quartier','Champion de l\'Entraide'][RARITIES.indexOf(r)]}</div>
+    </div>
+  `;
+}
+
+// ─── Build gallery ─────────────────────────────────────────────────────
+const gallery = document.getElementById('gallery');
+RARITIES.forEach((r, i) => {
+  gallery.innerHTML += badgeCard(r.key, ICONS[i]);
+});
+
+// ─── Sample variants ───────────────────────────────────────────────────
+const samples = document.getElementById('samples');
+const variants = [
+  { label: 'COMMUN', items: [
+    { icon: 'star', label: 'Étoile' },
+    { icon: 'heart', label: 'Cœur' },
+    { icon: 'award', label: 'Médaille' },
+  ]},
+  { label: 'RARE', items: [
+    { icon: 'shield', label: 'Bouclier' },
+    { icon: 'people', label: 'Personnes' },
+    { icon: 'target', label: 'Cible' },
+  ]},
+  { label: 'ÉPIQUE', items: [
+    { icon: 'trophy', label: 'Trophée' },
+    { icon: 'gift', label: 'Cadeau' },
+    { icon: 'star', label: 'Étoile' },
+  ]},
+  { label: 'LÉGENDAIRE', items: [
+    { icon: 'trophy', label: 'Trophée' },
+    { icon: 'shield', label: 'Bouclier' },
+    { icon: 'people', label: 'Couronne' },
+  ]},
+];
+
+variants.forEach(v => {
+  const r = RARITIES.find(x => x.key === v.label);
+  const html = `
+    <div class="sample-card">
+      <h3>${v.label}</h3>
+      <div class="row">
+        ${v.items.map(item => `
+          <div style="text-align:center">
+            ${badgeHTML(r.cls, item.icon, true)}
+            <div class="caption">${item.label}</div>
+          </div>
+        `).join('')}
+        <div style="width:1px;height:50px;background:#E5E7EB;margin:0 4px"></div>
+        ${v.items.map(item => `
+          <div style="text-align:center">
+            ${badgeHTML(r.cls, item.icon, false)}
+            <div class="caption">Verrouillé</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  samples.innerHTML += html;
+});
+</script>
+
+</body>
+</html>

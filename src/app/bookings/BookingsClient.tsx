@@ -99,7 +99,7 @@ function BookingCard({
   const isPending = booking.status === "pending";
 
   return (
-    <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 hover:border-tb-accent/20 transition-all group">
+    <div className="bg-tb-surface border border-tb-border rounded-2xl p-5 hover:border-tb-accent/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-tb-accent/5 hover:border-tb-accent/30 group">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
@@ -211,7 +211,7 @@ export default function BookingsClient({
       {/* Header */}
       <ConnectedHeader />
 
-      <main className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <main className="max-w-4xl mx-auto px-4 py-8 space-y-8 animate-fade-in-up">
         {/* Hero */}
         <div>
           <h1 className="text-3xl font-anton tracking-wide text-tb-text-primary mb-1">
@@ -270,7 +270,7 @@ export default function BookingsClient({
           </div>
 
           {providerBookings.length === 0 ? (
-            <div className="text-center py-10 bg-tb-surface border border-tb-border rounded-2xl">
+            <div className="text-center py-10 bg-tb-surface border border-tb-border rounded-2xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-tb-accent/5 hover:border-tb-accent/30">
               <Sparkles className="w-10 h-10 text-tb-text-muted mx-auto mb-3" />
               <p className="text-tb-text-secondary text-sm">
                 Aucune mission reçue pour le moment.

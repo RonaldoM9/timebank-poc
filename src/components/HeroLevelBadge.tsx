@@ -19,6 +19,14 @@ const levelBgColors: Record<number, string> = {
   4: "bg-[#00d4aa]/10",
 };
 
+const shieldColors: Record<number, string> = {
+  0: "text-yellow-400",
+  1: "text-blue-400",
+  2: "text-purple-400",
+  3: "text-orange-400",
+  4: "text-tb-accent",
+};
+
 interface HeroLevelBadgeProps {
   level: HeroLevel;
 }
@@ -26,13 +34,18 @@ interface HeroLevelBadgeProps {
 export default function HeroLevelBadge({ level }: HeroLevelBadgeProps) {
   const borderColor = levelColors[level.level] ?? levelColors[0];
   const bgColor = levelBgColors[level.level] ?? levelBgColors[0];
+  const shieldColor = shieldColors[level.level] ?? shieldColors[0];
 
   return (
     <div
       className={`inline-flex items-center gap-3 rounded-2xl border px-4 py-3 ${borderColor} ${bgColor}`}
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-tb-surface-elevated border border-tb-border">
-        <Shield className="h-5 w-5 text-tb-accent" />
+      <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-tb-surface-elevated border-2 border-tb-border shadow-sm">
+        <Shield className={`h-6 w-6 ${shieldColor}`} />
+        {/* Level number overlay */}
+        <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-tb-accent text-white text-[8px] font-bold flex items-center justify-center shadow-sm">
+          {level.level}
+        </span>
       </div>
       <div>
         <p className="font-bangers text-[10px] tracking-widest text-[#a3a3a3] uppercase">

@@ -51,9 +51,18 @@ type Props = {
     createdAt: string;
   };
   canArchive: boolean;
+  wellbeingStats: {
+    totalResponses: number;
+    beforeAverage: number | null;
+    afterAverage: number | null;
+    evolution: number | null;
+    isolationAvg: number;
+    supportAvg: number;
+    usefulnessAvg: number;
+    trustAvg: number;
+    contributionAvg: number;
+  } | null;
 };
-
-// ─── Styled components constants ────────────────────────────────────
 
 const kpiKeys = [
   "totalMembers",
@@ -70,6 +79,7 @@ export default function OrganizationReportViewClient({
   organization: org,
   report,
   canArchive,
+  wellbeingStats,
 }: Props) {
   const router = useRouter();
   const printRef = useRef<HTMLDivElement>(null);
@@ -340,6 +350,62 @@ export default function OrganizationReportViewClient({
                 </div>
               </div>
             </div>
+
+            {/* Wellbeing / Impact humain */}
+            {wellbeingStats && wellbeingStats.totalResponses > 0 && (
+              <div className="p-8 border-b border-tb-border print:p-6 print:break-inside-avoid">
+                <h2 className="text-lg font-semibold text-tb-text-primary mb-4 flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-tb-accent" />
+                  Impact humain
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <div className="text-xl font-bold text-tb-accent">{wellbeingStats.totalResponses}</div>
+                    <div className="text-xs text-tb-text-muted">Réponses collectées</div>
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold text-tb-text-primary">
+                      {wellbeingStats.beforeAverage !== null ? `${wellbeingStats.beforeAverage}/100` : "—"}
+                    </div>
+                    <div className="text-xs text-tb-text-muted">Score moyen avant</div>
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold text-tb-text-primary">
+                      {wellbeingStats.afterAverage !== null ? `${wellbeingStats.afterAverage}/100` : "—"}
+                    </div>
+                    <div className="text-xs text-tb-text-muted">Score moyen après</div>
+                  </div>
+                  <div>
+                    <div className={`text-xl font-bold ${(wellbeingStats.evolution ?? 0) > 0 ? "text-tb-accent" : "text-tb-text-muted"}`}>
+                      {wellbeingStats.evolution !== null
+                        ? `${wellbeingStats.evolution > 0 ? "+" : ""}${wellbeingStats.evolution}`
+                        : "—"}
+                    </div>
+                    <div className="text-xs text-tb-text-muted">Évolution</div>
+                  </div>
+                </div>
+
+                {/* Detailed dimension scores */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center text-xs">
+                  {[
+                    { label: "Isolement", value: wellbeingStats.isolationAvg },
+                    { label: "Soutien", value: wellbeingStats.supportAvg },
+                    { label: "Utilité", value: wellbeingStats.usefulnessAvg },
+                    { label: "Confiance", value: wellbeingStats.trustAvg },
+                    { label: "Contribution", value: wellbeingStats.contributionAvg },
+                  ].map((d) => (
+                    <div key={d.label} className="bg-tb-accent-soft/30 rounded-xl p-2">
+                      <div className="font-semibold text-tb-text-primary">{d.value}/5</div>
+                      <div className="text-[10px] text-tb-text-muted mt-0.5">{d.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-xs text-tb-text-muted mt-4 italic">
+                  Ces résultats sont déclaratifs et doivent être lus comme des indicateurs d&apos;impact humain, non comme une mesure médicale.
+                </p>
+              </div>
+            )}
 
             {/* Highlights */}
             {highlights.length > 0 && (

@@ -15,4 +15,30 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-anton: var(--font-anton), sans-serif;
   --font-bangers: var(--font-bangers), cursive;
+
+  --animate-fade-in-up: fadeInUp 0.5s ease-out forwards;
+  --animate-fade-in-up-slow: fadeInUp 0.7s ease-out forwards;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-pulse-accent: pulse-accent 2s ease-in-out infinite;
+  --animate-float: float 3s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 168, 137, 0); }
+  50% { box-shadow: 0 0 20px 4px rgba(0, 168, 137, 0.12); }
+}
+
+@keyframes pulse-accent {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }

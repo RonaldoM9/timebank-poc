@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synthèse nef Report — Nouvelles fonctionnalités TimeHeroes</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #121212;
+      --surface2: #1a1a1a;
+      --border: #222;
+      --text: #e0e0e0;
+      --text-dim: #888;
+      --accent: #f59e0b;
+      --accent-dim: #92400e;
+      --green: #22c55e;
+      --green-dim: #166534;
+      --blue: #3b82f6;
+      --blue-dim: #1e3a5f;
+      --purple: #a855f7;
+      --red: #ef4444;
+      --rose: #f43f5e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 0;
+    }
+
+    /* ── HEADER ── */
+    .hero {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a1a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 24px 40px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero .subtitle {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      max-width: 640px;
+      margin: 0 auto 16px;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── SECTIONS ── */
+    section { margin-bottom: 48px; }
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2 .icon { font-size: 1.3rem; }
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-desc {
+      color: var(--text-dim);
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+    }
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* ── BADGES ── */
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .tag-p1 { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
+    .tag-p2 { background: #1a0a00; color: #fdba74; border: 1px solid #7c2d12; }
+    .tag-p3 { background: #0a1a0a; color: #86efac; border: 1px solid #14532d; }
+    .tag-p4 { background: #0a0a1a; color: #93c5fd; border: 1px solid #1e3a5f; }
+    .tag-effort {
+      background: var(--surface2);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+    .tag-inspire {
+      background: #1a0a2a;
+      color: #d8b4fe;
+      border: 1px solid #3b0764;
+    }
+
+    /* ── CHIPS INSPIRATION ── */
+    .inspire-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .inspire-chips .chip {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* ── PRIORITY RIBBON ── */
+    .ribbon {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .ribbon-p1 { background: #450a0a; color: #fca5a5; }
+    .ribbon-p2 { background: #1a0a00; color: #fdba74; }
+    .ribbon-p3 { background: #0a1a0a; color: #86efac; }
+    .ribbon-p4 { background: #0a0a1a; color: #93c5fd; }
+    .ribbon-concept { background: #1a0a2a; color: #d8b4fe; }
+
+    /* ── WORK DONE ── */
+    .work-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .work-item:last-child { border: none; }
+    .work-time {
+      color: var(--text-dim);
+      font-size: 0.78rem;
+      white-space: nowrap;
+      min-width: 48px;
+      padding-top: 1px;
+    }
+    .work-label {
+      font-size: 0.88rem;
+    }
+    .work-label .detail {
+      color: var(--text-dim);
+      font-size: 0.82rem;
+    }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      margin-top: 12px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    tr:last-child td { border: none; }
+
+    /* ── DIVIDER ── */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    /* ── KEY INSIGHTS ── */
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .insight-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .insight-box .num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .insight-box .label {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.5rem; }
+      .card-header { flex-direction: column; }
+      .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════ HEADER ══════════════════════════ -->
+<header class="hero">
+  <h1>⚡ Synthèse <span>nef Report</span></h1>
+  <p class="subtitle">
+    Fonctionnalités TimeHeroes issues du rapport <em>"The New Wealth of Time — How Timebanking Helps People Build Better Public Services"</em> (nef, 2008)
+  </p>
+  <div class="badge">🔖 25 juin 2026 — Ronald Mounien</div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════════════ SECTION 1 — TRAVAIL DU JOUR ═══════════════════════════ -->
+  <section>
+    <h2><span class="icon">📋</span> Travail réalisé aujourd'hui</h2>
+
+    <div class="card">
+      <div style="margin-bottom: 6px; font-size: 0.9rem;">🔍 <strong>Analyse documentaire</strong></div>
+      <div class="work-item">
+        <span class="work-time">1.↓</span>
+        <span class="work-label">
+          Récupération du PDF<br>
+          <span class="detail">Téléchargement et extraction complète du texte du rapport nef (66 pages, 3604 lignes)</span>
+        </span>
+      </div>
+      <div class="work-item">
+        <span class="work-time">2.📖</span>
+        <span class="work-label">
+          Lecture exhaustive du document<br>
+          <span class="detail">11 études de cas, 3 modèles de timebanking (P2P / P2A / A2A), core economy, co-production, recommandations politiques, appendices sur le time audit et la mesure d'impact</span>
+        </span>
+      </div>
+      <div class="work-item">
+        <span class="work-time">3.🗺️</span>
+        <span class="work-label">
+          Cartographie des features TimeHeroes existantes<br>
+          <span class="detail">Analyse de l'arborescence /src/app/ (75+ pages) pour identifier les fonctionnalités déjà en place et les lacunes</span>
+        </span>
+      </div>
+      <div class="work-item">
+        <span class="work-time">4.💡</span>
+        <span class="work-label">
+          Proposition de 10 nouvelles fonctionnalités<br>
+          <span class="detail">Organisées en 4 Lots (A→D), priorisées P1→P4, chacune sourcée sur une étude de cas du rapport</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ SECTION 2 — RAPPORT CLÉ ═══════════════════════════ -->
+  <section>
+    <h2><span class="icon">📄</span> Le rapport en bref</h2>
+
+    <div class="card">
+      <p style="margin-bottom: 12px; font-size: 0.9rem;">
+        <strong>"The New Wealth of Time"</strong> — nef (new economics foundation), novembre 2008. 
+        Écrit par Josh Ryan-Collins, Lucie Stephens & Anna Coote. Prépare par Martin Simon (CEO Timebanking UK) 
+        et David Boyle.
+      </p>
+
+      <div class="insight-grid">
+        <div class="insight-box">
+          <div class="num">600 000</div>
+          <div class="label">heures échangées en UK à l'époque</div>
+        </div>
+        <div class="insight-box">
+          <div class="num">109</div>
+          <div class="label">time banks actives en UK</div>
+        </div>
+        <div class="insight-box">
+          <div class="num">11</div>
+          <div class="label">études de cas (5 domaines)</div>
+        </div>
+        <div class="insight-box">
+          <div class="num">17%</div>
+          <div class="label">récidive Youth Court vs 30% justice classique</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 16px;">3 modèles de timebanking</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Modèle</th>
+            <th>Principe</th>
+            <th>Cas emblématique</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P2P</strong> — Personne→Personne</td>
+            <td style="color: var(--text-dim);">Échanges de voisinage gérés par un time broker</td>
+            <td>Rushey Green GP Time Bank (Case 5)</td>
+          </tr>
+          <tr>
+            <td><strong>P2A</strong> — Personne→Institution</td>
+            <td style="color: var(--text-dim);">Citoyens contribuent aux missions d'une organisation</td>
+            <td>Blaengarw Time Centre (Case 3), Taff Housing (Case 4)</td>
+          </tr>
+          <tr>
+            <td><strong>A2A</strong> — Institution→Institution</td>
+            <td style="color: var(--text-dim);">Organisations partagent ressources et personnel</td>
+            <td>Welsh Assembly Government pilot (p.18)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top: 16px;">4 piliers (core values)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Valeur</th>
+            <th>Traduction TimeHeroes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>①</td><td>Reconnaître les personnes comme des richesses</td><td style="color: var(--text-dim);">Chaque membre a quelque chose à offrir</td></tr>
+          <tr><td>②</td><td>Redéfinir le travail</td><td style="color: var(--text-dim);">1h = 1 TIME, quel que soit le service</td></tr>
+          <tr><td>③</td><td>Réciprocité — donner et recevoir</td><td style="color: var(--text-dim);">Cycle « Karma Boost »</td></tr>
+          <tr><td>④</td><td>Construire des réseaux sociaux</td><td style="color: var(--text-dim);">Communautés locales, cercles de soutien</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ SECTION 3 — PROPOSITIONS LOTS ═══════════════════════════ -->
+  <section>
+    <h2><span class="icon">🚀</span> Lots proposés</h2>
+    <p style="color: var(--text-dim); font-size: 0.88rem; margin-bottom: 20px;">
+      Chaque lot est sourcé sur une ou plusieurs études de cas du rapport nef. 
+      Priorisation : P1 (immédiat) → P4 (vision long terme).
+    </p>
+
+    <!-- ────────────── LOT A ────────────── -->
+    <h3 style="margin-bottom: 12px; color: var(--accent);">
+      <span style="background: var(--accent-dim); padding: 2px 10px; border-radius: 4px; font-size: 0.75rem; color: var(--accent);">LOT A</span>
+      &nbsp;Fondations avancées
+      <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 400;">— impact pitch immédiat</span>
+    </h3>
+
+    <!-- A1 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🔗 A1 — Prescription Sociale</div>
+          <div class="card-desc">
+            Un professionnel (médecin, assistante sociale, éducateur) prescrit l'adhésion à TimeHeroes 
+            comme intervention non-médicamenteuse. Tableau de bord de suivi pour le prescripteur. 
+            Répond à l'enjeu d'isolement social détecté en consultation.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p1">Priorité P1</span>
+            <span class="tag tag-effort">Effort ⚡⚡</span>
+            <span class="tag tag-inspire">Rushey Green GP (CS5) · VNSNY (CS7)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p1">P1</span>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🔄 A2 — Karma Boost (Cycle Donner↔Recevoir)</div>
+          <div class="card-desc">
+            Algorithme qui détecte les déséquilibres : membres avec trop de TIME reçus vs donnés, 
+            ou avec trop de TIME accumulés. Notifications douces pour suggérer des actions. 
+            Maintient la circulation de la monnaie-temps.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p1">Priorité P1</span>
+            <span class="tag tag-effort">Effort ⚡</span>
+            <span class="tag tag-inspire">Principe de réciprocité · Clapham Park (CS1)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p1">P1</span>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🧭 A3 — TimeHeroes Social Club</div>
+          <div class="card-desc">
+            Catalogue d'événements payables en TIME (1h = 1 TIME). Ateliers, sorties culturelles, 
+            soirées à thème. Partenariats avec lieux municipaux, salles de sport, cinémas — 
+            qui acceptent les TIME en période creuse. Donne une utilité concrète aux TIME accumulés.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p1">Priorité P1</span>
+            <span class="tag tag-effort">Effort ⚡⚡⚡</span>
+            <span class="tag tag-inspire">Blaengarw Time Centre (CS3) · Taff Housing (CS4)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p1">P1</span>
+      </div>
+    </div>
+
+    <!-- ────────────── LOT B ────────────── -->
+    <h3 style="margin-bottom: 12px; margin-top: 28px; color: var(--blue);">
+      <span style="background: var(--blue-dim); padding: 2px 10px; border-radius: 4px; font-size: 0.75rem; color: var(--blue);">LOT B</span>
+      &nbsp;Extension communautaire & territoriale
+    </h3>
+
+    <!-- B1 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🏛️ B1 — Organisations émettrices</div>
+          <div class="card-desc">
+            Version enrichie du module organisations : mairies, bailleurs sociaux, écoles 
+            peuvent émettre des missions pour leurs usagers et offrir des récompenses en TIME 
+            (accès piscine, places de spectacle). Dashboard « heures citoyennes générées » 
+            pour les partenaires institutionnels.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p2">Priorité P2</span>
+            <span class="tag tag-effort">Effort ⚡⚡⚡</span>
+            <span class="tag tag-inspire">Taff Housing (CS4) · King's Cross (CS2)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p2">P2</span>
+      </div>
+    </div>
+
+    <!-- B2 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">👶 B2 — Time4Youth (Module Jeunes)</div>
+          <div class="card-desc">
+            Espace dédié 12-18 ans avec interface adaptée. Les jeunes gagnent des TIME en 
+            participant à des projets citoyens, aidant aux devoirs, animant des activités. 
+            Récompenses adaptées (sorties, gaming, places de concert). Liens avec les 
+            établissements scolaires (parcours citoyen).
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p3">Priorité P3</span>
+            <span class="tag tag-effort">Effort ⚡⚡⚡⚡</span>
+            <span class="tag tag-inspire">Glyncoch T4YP (CS8) · Whittington School (CS9)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p3">P3</span>
+      </div>
+    </div>
+
+    <!-- B3 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🤲 B3 — Cercle de Soutien (Intervention Crise)</div>
+          <div class="card-desc">
+            Activation rapide d'un cercle de 3-5 volontaires autour d'un membre vulnérable 
+            (isolement, deuil, maladie). Durée limitée (4 semaines renouvelables). 
+            TIME donnés via le Pot Commun. Coordination par un time broker TimeHeroes.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p3">Priorité P3</span>
+            <span class="tag tag-effort">Effort ⚡⚡</span>
+            <span class="tag tag-inspire">Aran's story · Clapham Park (CS1)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p3">P3</span>
+      </div>
+    </div>
+
+    <!-- ────────────── LOT C ────────────── -->
+    <h3 style="margin-bottom: 12px; margin-top: 28px; color: var(--green);">
+      <span style="background: var(--green-dim); padding: 2px 10px; border-radius: 4px; font-size: 0.75rem; color: var(--green);">LOT C</span>
+      &nbsp;Mesure d'impact & valorisation
+    </h3>
+
+    <!-- C1 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">📊 C1 — Time Audit (Carte des Richesses)</div>
+          <div class="card-desc">
+            Outil de diagnostic communautaire : combien d'heures d'entraide existent déjà 
+            sur un territoire ? Visualisation par type d'activité et groupe démographique. 
+            Estimation de la valeur économique non-marchande (équivalent €). Projection 
+            d'impact potentiel. Outil de plaidoyer pour convaincre les financeurs publics.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p2">Priorité P2</span>
+            <span class="tag tag-effort">Effort ⚡⚡</span>
+            <span class="tag tag-inspire">Appendix 1 · SPICE · Glyncoch (p.57-59)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p2">P2</span>
+      </div>
+    </div>
+
+    <!-- C2 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🎯 C2 — Indice de Co-production & Bien-être</div>
+          <div class="card-desc">
+            Questionnaire périodique : 4 dimensions (contrôle, anxiété, participation, inclusion). 
+            Score de « santé sociale » individuel. Version adaptée de la Recovery Star 
+            (10 domaines : relations, estime de soi, confiance, compétences). 
+            Dashboard agrégé pour partenaires institutionnels.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p2">Priorité P2</span>
+            <span class="tag tag-effort">Effort ⚡⚡⚡</span>
+            <span class="tag tag-inspire">Appendix 2 · MWIA · Recovery Star · Copproduction Audit</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p2">P2</span>
+      </div>
+    </div>
+
+    <!-- C3 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🌊 C3 — Effet Multiplicateur (Fresque des Échanges)</div>
+          <div class="card-desc">
+            Visualisation en graphe des chaînes d'échanges : "Marie a aidé Pierre qui a aidé Sophie…". 
+            Métriques d'effet indirect (second-degree exchanges). Partageable sur les réseaux. 
+            Rend visible la promesse « un acte de gentillesse en entraîne un autre ».
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p3">Priorité P3</span>
+            <span class="tag tag-effort">Effort ⚡⚡</span>
+            <span class="tag tag-inspire">Principe du multiplier effect (p.6, Foreword)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p3">P3</span>
+      </div>
+    </div>
+
+    <!-- ────────────── LOT D ────────────── -->
+    <h3 style="margin-bottom: 12px; margin-top: 28px; color: var(--purple);">
+      <span style="background: #2a0a3a; padding: 2px 10px; border-radius: 4px; font-size: 0.75rem; color: var(--purple);">LOT D</span>
+      &nbsp;Innovations de rupture
+    </h3>
+
+    <!-- D1 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">⚖️ D1 — Peer Justice (Conseil des Sages)</div>
+          <div class="card-desc">
+            Résolution de conflits par un jury de pairs (3 membres expérimentés). 
+            Les jurés gagnent des TIME. Sanctions : remboursement en TIME, mission 
+            de réparation, médiation. Inspiré du Time Dollar Youth Court de Washington 
+            (17% récidive vs 30% justice classique).
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p4">Vision</span>
+            <span class="tag tag-effort">Effort ⚡⚡⚡⚡</span>
+            <span class="tag tag-inspire">Time Dollar Youth Court (CS10) · Washington DC</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p4">P4</span>
+      </div>
+    </div>
+
+    <!-- D2 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🏛️ D2 — A2A (Échange Institutionnel)</div>
+          <div class="card-desc">
+            Les organisations partenaires échangent entre elles : salle de réunion contre 
+            minibus, formation contre IT support. Chaque organisation a un compte TIME 
+            institutionnel. Catalogue des ressources inutilisées. Ouvre le B2B/municipal.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p4">Vision</span>
+            <span class="tag tag-effort">Effort ⚡⚡⚡⚡</span>
+            <span class="tag tag-inspire">Agency-to-agency (Chap.2) · Welsh Assembly pilot</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p4">P4</span>
+      </div>
+    </div>
+
+    <!-- D3 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🖨️ D3 — Vouchers TIME imprimables</div>
+          <div class="card-desc">
+            Billets TIME imprimables (PDF, QR code unique). Support low-tech pour les 
+            personnes âgées ou non-connectées. Scannables via l'app. Utilisation sur les 
+            événements physiques, chez les commerçants partenaires.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p4">Vision</span>
+            <span class="tag tag-effort">Effort ⚡⚡</span>
+            <span class="tag tag-inspire">Blaengarw paper currency (p.28) · Taff Leisure Notes (p.31)</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p4">P4</span>
+      </div>
+    </div>
+
+    <!-- D4 -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🔄 D4 — TIME Réparation (Réinsertion)</div>
+          <div class="card-desc">
+            Partenariat avec structures socio-judiciaires (SPIP, TIG). Personnes sous 
+            main de justice gagnent des TIME en missions citoyennes. TIME reversés 
+            à des associations ou fonds de réparation pour victimes. Certificats 
+            d'heures valorisant le parcours.
+          </div>
+          <div class="card-meta">
+            <span class="tag tag-p4">Vision</span>
+            <span class="tag tag-effort">Effort ⚡⚡⚡⚡</span>
+            <span class="tag tag-inspire">HMP Gloucester Prison (CS11) · Fairshares</span>
+          </div>
+        </div>
+        <span class="ribbon ribbon-p4">P4</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════ SECTION 4 — CARTE DES SOURCES ═══════════════════════════ -->
+  <section>
+    <h2><span class="icon">📚</span> Carte des sources — 11 case studies</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Étude de cas</th>
+          <th>Domaine</th>
+          <th>Fonctionnalités inspirées</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Clapham Park Time Bank (Londres)</td><td style="color: var(--text-dim);">Santé mentale</td><td>A2 · B3 · C2</td></tr>
+        <tr><td>2</td><td>King's Cross / Holy Cross Centre (Londres)</td><td style="color: var(--text-dim);">Santé mentale</td><td>B1</td></tr>
+        <tr><td>3</td><td>Blaengarw Time Centre (Pays de Galles)</td><td style="color: var(--text-dim);">Régénération</td><td>A3 · D3</td></tr>
+        <tr><td>4</td><td>Taff Housing Association (Cardiff)</td><td style="color: var(--text-dim);">Logement social</td><td>B1 · D3</td></tr>
+        <tr><td>5</td><td>Rushey Green GP Time Bank (Londres)</td><td style="color: var(--text-dim);">Personnes âgées</td><td>A1</td></tr>
+        <tr><td>6</td><td>Community Volunteers Time Bank (Bromley)</td><td style="color: var(--text-dim);">Personnes âgées</td><td>Pot Commun (existant) · Don de TIME</td></tr>
+        <tr><td>7</td><td>VNSNY Time Bank (New York)</td><td style="color: var(--text-dim);">Santé à domicile</td><td>A1</td></tr>
+        <tr><td>8</td><td>Glyncoch T4YP (Pays de Galles)</td><td style="color: var(--text-dim);">Jeunes</td><td>B2 · C1</td></tr>
+        <tr><td>9</td><td>Whittington Time Exchange (Londres)</td><td style="color: var(--text-dim);">École</td><td>B2</td></tr>
+        <tr><td>10</td><td>Time Dollar Youth Court (Washington DC)</td><td style="color: var(--text-dim);">Justice</td><td>D1</td></tr>
+        <tr><td>11</td><td>HMP Gloucester Prison</td><td style="color: var(--text-dim);">Prison</td><td>D4</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ═══════════════════════════ SECTION 5 — FEATURES EXISTANTES ═══════════════════════════ -->
+  <section>
+    <h2><span class="icon">✅</span> Fonctionnalités TimeHeroes déjà en place</h2>
+    <p style="color: var(--text-dim); font-size: 0.88rem; margin-bottom: 12px;">
+      Pour mémoire — ces features existent déjà et n'ont pas besoin d'être recréées :
+    </p>
+    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Wallet & TIME Credits</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Pot Commun</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Services (offre/demande)</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Booking & Escrow</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">QR Code / NFC validation</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Système XP / Badges / Niveaux</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Organizations (module)</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Matching facilitateur</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Impact Reports</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Urgent Requests</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Calendrier de disponibilité</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Missions collectives</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Ratings & Avis</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Transfert de TIME</span>
+      <span class="tag" style="background: var(--green-dim); color: var(--green);">Hero Passport</span>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+  <hr>
+  <p style="text-align: center; color: var(--text-dim); font-size: 0.78rem;">
+    Synthèse générée le 25 juin 2026 — basée sur <em>The New Wealth of Time</em> (nef, 2008) 
+    et l'analyse du code source TimeHeroES.
+  </p>
+
+</div>
+</body>
+</html>

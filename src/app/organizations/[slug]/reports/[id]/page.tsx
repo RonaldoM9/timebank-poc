@@ -40,6 +40,28 @@ export default async function OrganizationReportViewPage({
 
   const canArchive = !!(membership && ["OWNER", "ADMIN"].includes(membership.role));
 
+  // Get wellbeing stats for the org
+  let wellbeingStats = null;
+  try {
+    const { getWellbeingResultsForOrganization } = await import("@/lib/wellbeing");
+    const summary = await getWellbeingResultsForOrganization(report.organizationId);
+    if (summary.totalResponses > 0) {
+      wellbeingStats = {
+        totalResponses: summary.totalResponses,
+        beforeAverage: summary.beforeAverage ? Math.round(summary.beforeAverage) : null,
+        afterAverage: summary.afterAverage ? Math.round(summary.afterAverage) : null,
+        evolution: summary.evolution,
+        isolationAvg: Math.round(summary.isolationAvg * 10) / 10,
+        supportAvg: Math.round(summary.supportAvg * 10) / 10,
+        usefulnessAvg: Math.round(summary.usefulnessAvg * 10) / 10,
+        trustAvg: Math.round(summary.trustAvg * 10) / 10,
+        contributionAvg: Math.round(summary.contributionAvg * 10) / 10,
+      };
+    }
+  } catch (e) {
+    // wellbeing module might not exist yet
+  }
+
   return (
     <OrganizationReportViewClient
       organization={{ id: org.id, name: org.name, slug: org.slug }}
@@ -63,6 +85,7 @@ export default async function OrganizationReportViewPage({
         createdAt: report.createdAt.toISOString(),
       }}
       canArchive={canArchive}
+      wellbeingStats={wellbeingStats}
     />
   );
 }
