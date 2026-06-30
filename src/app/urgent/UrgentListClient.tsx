@@ -87,12 +87,25 @@ export default function UrgentListClient({ initialRequests }: { initialRequests:
                 ~ besoin urgent local ~
               </span>
             </div>
-            <h1 className="text-3xl font-anton tracking-wide text-white mb-1">
-              Demandes urgentes
-            </h1>
-            <p className="text-white/70 text-sm">
-              Trouve des héros disponibles près de chez toi pour t&apos;aider rapidement.
-            </p>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-anton tracking-wide text-white mb-1">
+                  Demandes urgentes
+                </h1>
+                <p className="text-white/70 text-sm">
+                  Trouve des héros disponibles près de chez toi pour t&apos;aider rapidement.
+                </p>
+              </div>
+              {session && (
+                <Link
+                  href="/urgent/new"
+                  className="shrink-0 inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold rounded-xl px-5 py-3 transition-all duration-300 text-sm border border-white/20"
+                >
+                  <Plus className="w-4 h-4" />
+                  Publier une demande
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 

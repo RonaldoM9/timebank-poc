@@ -22,6 +22,8 @@ import {
   Check,
   TrendingUp,
   Sparkles,
+  AlertTriangle,
+  Gavel,
 } from "lucide-react";
 import ConnectedHeader from "@/components/ConnectedHeader";
 import EmptyState from "@/components/EmptyState";
@@ -29,6 +31,12 @@ import type { WalletDashboard, WalletTransaction } from "@/lib/wallet-dashboard"
 import { getTransactionLabel, getTransactionStatusLabel, getPotTransactionLabel } from "@/lib/wallet-dashboard";
 import { donateToCommunityPot } from "./community-pot-actions";
 import type { DonateResult } from "./community-pot-actions";
+import {
+  formatTimeAmount,
+  formatDuration,
+  formatTimeWithDuration,
+  getLedgerTransactionLabel,
+} from "@/lib/time-labels";
 
 interface WalletUser {
   id: string;
@@ -38,6 +46,29 @@ interface WalletUser {
   role: string;
   city: string | null;
   department: string | null;
+}
+
+interface SubBalance {
+  key: string;
+  label: string;
+  minutes: number;
+  sublabel: string;
+}
+
+interface NewWallet {
+  id: string;
+  userId: string;
+  availableMinutes: number;
+  pendingMinutes: number;
+  lockedMinutes: number;
+  disputedMinutes: number;
+  earnedMinutes: number;
+  giftedMinutes: number;
+  communityMinutes: number;
+  expiredMinutes: number;
+  totalReceivedMinutes: number;
+  totalSentMinutes: number;
+  totalImpactMinutes: number;
 }
 
 interface PotTx {
@@ -89,7 +120,6 @@ function groupTransactionsByPeriod(txs: WalletTransaction[]): Map<string, Wallet
     groups.get(period)!.push(tx);
   }
 
-  // Sort periods: Aujourd'hui > Hier > Il y a X jours > Mois
   const order = ["Aujourd'hui", "Hier"];
   const sorted = new Map<string, WalletTransaction[]>();
   for (const key of order) {
@@ -102,17 +132,17 @@ function groupTransactionsByPeriod(txs: WalletTransaction[]): Map<string, Wallet
   return sorted;
 }
 
-// ─── KPI Card ─────────────────────────────────────────────────
-function KpiCard({
+// ─── Sub-balance card ────────────────────────────────────────────────────
+function SubBalanceCard({
   icon,
-  value,
   label,
+  minutes,
   sublabel,
   accent,
 }: {
   icon: React.ReactNode;
-  value: string;
   label: string;
+  minutes: number;
   sublabel: string;
   accent: string;
 }) {
@@ -123,9 +153,11 @@ function KpiCard({
           {icon}
         </div>
       </div>
-      <div className="text-2xl font-bold text-tb-text-primary">{value}</div>
-      <div className="text-xs text-tb-text-secondary font-medium mt-0.5">{label}</div>
-      <div className="text-[10px] text-tb-text-muted mt-0.5">{sublabel}</div>
+      <div className="text-lg font-bold text-tb-text-primary">
+        {formatTimeAmount(minutes)}
+      </div>
+      <div className="text-[10px] text-tb-text-secondary font-medium mt-0.5">{label}</div>
+      <div className="text-[9px] text-tb-text-muted mt-0.5 leading-tight">{sublabel}</div>
     </div>
   );
 }
@@ -133,10 +165,14 @@ function KpiCard({
 export default function WalletClient({
   user,
   dashboard,
+  newWallet,
+  breakdown,
   potTransactions,
 }: {
   user: WalletUser;
   dashboard: WalletDashboard;
+  newWallet: NewWallet;
+  breakdown: SubBalance[];
   potTransactions: PotTx[];
 }) {
   const router = useRouter();
@@ -212,6 +248,13 @@ export default function WalletClient({
     100
   );
 
+  const subBalanceSections = breakdown || [
+    { key: "available", label: "Disponible", minutes: newWallet.availableMinutes, sublabel: "Tu peux utiliser ce TIME pour réserver une aide." },
+    { key: "locked", label: "TIME bloqué", minutes: newWallet.lockedMinutes, sublabel: "Ce TIME est réservé pour une mission en cours." },
+    { key: "pending", label: "En attente", minutes: newWallet.pendingMinutes, sublabel: "TIME en attente de validation." },
+    { key: "disputed", label: "TIME en litige", minutes: newWallet.disputedMinutes, sublabel: "Ce TIME est gelé le temps de résoudre un problème." },
+  ];
+
   return (
     <>
       <ConnectedHeader />
@@ -220,10 +263,10 @@ export default function WalletClient({
         {/* ─── Header ─── */}
         <div>
           <h1 className="text-2xl font-anton tracking-wide text-tb-text-primary">
-            Mon Wallet TimeHeroes
+            Ton compte TIME
           </h1>
           <p className="text-sm text-tb-text-secondary mt-1">
-            Gère tes TIME, suis ton impact et contribue à la solidarité locale.
+            Suis ton temps disponible, bloqué ou en attente.
           </p>
         </div>
 
@@ -240,47 +283,12 @@ export default function WalletClient({
                   Tu as donné <strong>{result.amount} TIME</strong> au pot
                   commun. Nouveau solde du pot : <strong>{result.potBalance} TIME</strong>.
                 </p>
-                <p className="text-xs text-tb-text-secondary mt-1">
-                  Merci pour ta générosité. Chaque don aide un membre de la communauté.
-                </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* ─── 4 KPIs ─── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <KpiCard
-            icon={<Wallet className="w-4 h-4 text-tb-accent" />}
-            value={`${dashboard.availableBalance} TIME`}
-            label="Disponible"
-            sublabel="Prêts à être utilisés"
-            accent="bg-tb-accent/10 text-tb-accent"
-          />
-          <KpiCard
-            icon={<Clock className="w-4 h-4 text-amber-400" />}
-            value={`${dashboard.pendingBalance} TIME`}
-            label="En attente"
-            sublabel="Bloqués dans des réservations"
-            accent="bg-amber-500/10 text-amber-400"
-          />
-          <KpiCard
-            icon={<TrendingUp className="w-4 h-4 text-emerald-400" />}
-            value={`${dashboard.earnedTotal} TIME`}
-            label="Gagnés"
-            sublabel="Grâce à tes services"
-            accent="bg-emerald-500/10 text-emerald-400"
-          />
-          <KpiCard
-            icon={<HeartHandshake className="w-4 h-4 text-rose-400" />}
-            value={`${dashboard.donatedTotal} TIME`}
-            label="Donnés"
-            sublabel="Au pot commun"
-            accent="bg-rose-500/10 text-rose-400"
-          />
-        </div>
-
-        {/* ─── Carte principale "Ton énergie disponible" ─── */}
+        {/* ─── Carte principale — Disponible ─── */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-tb-accent via-[#008f78] to-[#006c5b] p-6">
           <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white/5" />
           <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full bg-white/[0.03]" />
@@ -288,7 +296,7 @@ export default function WalletClient({
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs font-bangers tracking-wider text-white/60">
-                ~ énergie disponible ~
+                ~ temps disponible ~
               </span>
               {user.walletAddress && (
                 <button
@@ -307,11 +315,13 @@ export default function WalletClient({
             </div>
 
             <div className="text-5xl font-bold text-white mb-1">
-              {dashboard.availableBalance}{" "}
-              <span className="text-xl text-white/70 font-normal">TIME</span>
+              {formatTimeAmount(newWallet.availableMinutes)}
             </div>
-            <p className="text-sm text-white/60 mb-5">
-              = environ {dashboard.availableBalance} heure{dashboard.availableBalance > 1 ? "s" : ""} d&apos;aide échangeable{dashboard.availableBalance > 1 ? "s" : ""}
+            <p className="text-sm text-white/60 mb-1">
+              {formatDuration(newWallet.availableMinutes)}
+            </p>
+            <p className="text-xs text-white/40 mb-5">
+              Disponible maintenant — tu peux utiliser ce TIME pour réserver une aide.
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -333,7 +343,100 @@ export default function WalletClient({
           </div>
         </div>
 
-        {/* ─── TIME en attente ─── */}
+        {/* ─── Sous-soldes ─── */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {subBalanceSections.map((sb) => {
+            const accentMap: Record<string, string> = {
+              available: "bg-tb-accent/10 text-tb-accent",
+              locked: "bg-amber-500/10 text-amber-400",
+              pending: "bg-blue-500/10 text-blue-400",
+              disputed: "bg-red-500/10 text-red-400",
+            };
+            const iconMap: Record<string, React.ReactNode> = {
+              available: <Wallet className="w-4 h-4" />,
+              locked: <Clock className="w-4 h-4" />,
+              pending: <AlertTriangle className="w-4 h-4" />,
+              disputed: <Gavel className="w-4 h-4" />,
+            };
+            return (
+              <SubBalanceCard
+                key={sb.key}
+                icon={iconMap[sb.key] || <Wallet className="w-4 h-4" />}
+                label={sb.label}
+                minutes={sb.minutes}
+                sublabel={sb.sublabel}
+                accent={accentMap[sb.key] || "bg-tb-accent/10 text-tb-accent"}
+              />
+            );
+          })}
+        </div>
+
+        {/* ─── Stats ─── */}
+        {newWallet.totalReceivedMinutes > 0 || newWallet.totalSentMinutes > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="bg-tb-surface border border-tb-border rounded-xl p-4">
+              <div className="text-xs text-tb-text-secondary mb-1">Reçu (total)</div>
+              <div className="text-lg font-bold text-emerald-400">{formatTimeAmount(newWallet.totalReceivedMinutes)}</div>
+            </div>
+            <div className="bg-tb-surface border border-tb-border rounded-xl p-4">
+              <div className="text-xs text-tb-text-secondary mb-1">Donné (total)</div>
+              <div className="text-lg font-bold text-rose-400">{formatTimeAmount(newWallet.totalSentMinutes)}</div>
+            </div>
+            <div className="bg-tb-surface border border-tb-border rounded-xl p-4">
+              <div className="text-xs text-tb-text-secondary mb-1">Gagné</div>
+              <div className="text-lg font-bold text-tb-accent">{formatTimeAmount(newWallet.earnedMinutes)}</div>
+            </div>
+            <div className="bg-tb-surface border border-tb-border rounded-xl p-4">
+              <div className="text-xs text-tb-text-secondary mb-1">Impact</div>
+              <div className="text-lg font-bold text-purple-400">{formatTimeAmount(newWallet.totalImpactMinutes)}</div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <KpiCard
+              icon={<Wallet className="w-4 h-4 text-tb-accent" />}
+              value={`${dashboard.availableBalance} TIME`}
+              label="Disponible"
+              sublabel="Ancien solde"
+              accent="bg-tb-accent/10 text-tb-accent"
+            />
+            <KpiCard
+              icon={<Clock className="w-4 h-4 text-amber-400" />}
+              value={`${dashboard.pendingBalance} TIME`}
+              label="En attente"
+              sublabel="Bloqués dans des réservations"
+              accent="bg-amber-500/10 text-amber-400"
+            />
+            <KpiCard
+              icon={<TrendingUp className="w-4 h-4 text-emerald-400" />}
+              value={`${dashboard.earnedTotal} TIME`}
+              label="Gagnés"
+              sublabel="Grâce à tes services"
+              accent="bg-emerald-500/10 text-emerald-400"
+            />
+            <KpiCard
+              icon={<HeartHandshake className="w-4 h-4 text-rose-400" />}
+              value={`${dashboard.donatedTotal} TIME`}
+              label="Donnés"
+              sublabel="Au pot commun"
+              accent="bg-rose-500/10 text-rose-400"
+            />
+          </div>
+        )}
+
+        {/* ─── Historique LINK ─── */}
+        <div className="flex items-center justify-end">
+          <Link
+            href="/wallet/history"
+            className="inline-flex items-center gap-1.5 text-xs text-tb-accent hover:text-tb-accent-hover transition-colors font-medium"
+          >
+            <History className="w-3.5 h-3.5" />
+            Voir tout l'historique
+            <span className="text-lg leading-none">→</span>
+          </Link>
+        </div>
+
+        {/* ─── TIME en attente (legacy) ─── */}
         {dashboard.pendingTransactions.length > 0 && (
           <div className="bg-tb-surface border border-tb-border rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-3">
@@ -361,9 +464,6 @@ export default function WalletClient({
                 </div>
               ))}
             </div>
-            <p className="text-[10px] text-tb-text-muted mt-3 leading-relaxed">
-              Les TIME en attente sont temporairement bloqués pendant une réservation. Ils sont transférés quand la mission est validée ou remboursés si elle est annulée.
-            </p>
           </div>
         )}
 
@@ -378,10 +478,8 @@ export default function WalletClient({
 
           <p className="text-xs text-tb-text-secondary mb-3">
             {dashboard.communityPotBalance} TIME disponibles pour financer des missions solidaires.
-            Ce pot aide les membres qui ont besoin d&apos;un coup de main mais n&apos;ont pas assez de TIME.
           </p>
 
-          {/* Progress bar */}
           <div className="mb-4">
             <div className="flex items-center justify-between text-xs mb-1.5">
               <span className="text-tb-text-primary font-medium">{dashboard.communityPotBalance} / {dashboard.communityPotMonthlyGoal} TIME</span>
@@ -395,7 +493,6 @@ export default function WalletClient({
             </div>
           </div>
 
-          {/* User impact */}
           {dashboard.donatedTotal > 0 && (
             <p className="text-xs text-tb-accent font-medium mb-3 flex items-center gap-1">
               <Sparkles className="w-3 h-3" />
@@ -403,7 +500,6 @@ export default function WalletClient({
             </p>
           )}
 
-          {/* Donate buttons */}
           <div>
             <p className="text-xs text-tb-text-secondary mb-2 font-medium">Ajouter au pot</p>
             <div className="flex flex-wrap gap-2 mb-2">
@@ -455,9 +551,6 @@ export default function WalletClient({
                 </div>
               )}
             </div>
-            {user.timeBalance < 1 && (
-              <p className="text-xs text-tb-text-muted italic">Solde insuffisant pour contribuer</p>
-            )}
             {result && !result.success && (
               <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" />
@@ -484,8 +577,8 @@ export default function WalletClient({
                 <Search className="w-5 h-5 text-tb-accent" />
               </div>
               <div>
-                <span className="text-sm font-medium text-tb-text-primary group-hover:text-tb-accent transition-colors">Recevoir de l&apos;aide</span>
-                <p className="text-xs text-tb-text-secondary">Trouve un membre pour t&apos;aider près de chez toi.</p>
+                <span className="text-sm font-medium text-tb-text-primary group-hover:text-tb-accent transition-colors">Recevoir de l'aide</span>
+                <p className="text-xs text-tb-text-secondary">Trouve un membre pour t'aider près de chez toi.</p>
               </div>
             </Link>
             <Link
@@ -501,6 +594,18 @@ export default function WalletClient({
               </div>
             </Link>
             <Link
+              href="/wallet/history"
+              className="flex items-center gap-3 bg-tb-surface-elevated rounded-xl px-4 py-3 hover:bg-tb-accent/5 transition-all duration-300 group"
+            >
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <History className="w-5 h-5 text-blue-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-tb-text-primary group-hover:text-blue-400 transition-colors">Mon historique</span>
+                <p className="text-xs text-tb-text-secondary">Consulte chaque mouvement de ton compte TIME.</p>
+              </div>
+            </Link>
+            <Link
               href="/wallet#community-pot"
               className="flex items-center gap-3 bg-tb-surface-elevated rounded-xl px-4 py-3 hover:bg-rose-500/5 transition-all duration-300 group"
             >
@@ -512,28 +617,22 @@ export default function WalletClient({
                 <p className="text-xs text-tb-text-secondary">Finance une mission solidaire.</p>
               </div>
             </Link>
-            <Link
-              href="/services?solidarity=true"
-              className="flex items-center gap-3 bg-tb-surface-elevated rounded-xl px-4 py-3 hover:bg-tb-accent/5 transition-all duration-300 group"
-            >
-              <div className="w-10 h-10 rounded-lg bg-tb-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <HeartHandshake className="w-5 h-5 text-tb-accent" />
-              </div>
-              <div>
-                <span className="text-sm font-medium text-tb-text-primary group-hover:text-tb-accent transition-colors">Missions solidaires</span>
-                <p className="text-xs text-tb-text-secondary">Découvre les missions financées par le pot commun.</p>
-              </div>
-            </Link>
           </div>
         </div>
 
-        {/* ─── Historique ─── */}
+        {/* ─── Historique inline ─── */}
         <div className="bg-tb-surface border border-tb-border rounded-2xl p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <History className="w-5 h-5 text-tb-text-secondary" />
               <span className="text-sm font-medium text-tb-text-primary">Historique</span>
             </div>
+            <Link
+              href="/wallet/history"
+              className="text-xs text-tb-accent hover:text-tb-accent-hover transition-colors"
+            >
+              Voir tout →
+            </Link>
           </div>
 
           {/* Filters */}
@@ -558,20 +657,10 @@ export default function WalletClient({
             <div className="py-8 text-center">
               <History className="w-10 h-10 text-tb-text-muted mx-auto mb-2" />
               <p className="text-sm text-tb-text-secondary font-medium">
-                {filter === "all"
-                  ? "Aucune transaction pour le moment."
-                  : filter === "received"
-                    ? "Aucun TIME reçu pour le moment."
-                    : filter === "spent"
-                      ? "Aucun TIME dépensé pour le moment."
-                      : filter === "pending"
-                        ? "Aucun TIME en attente."
-                        : "Aucune transaction pot commun."}
+                Aucune transaction pour le moment.
               </p>
               <p className="text-xs text-tb-text-muted mt-1">
-                {filter === "all"
-                  ? "Propose un service ou demande de l'aide pour commencer à utiliser tes TIME."
-                  : ""}
+                Propose un service ou demande de l'aide pour commencer.
               </p>
             </div>
           )}
@@ -593,12 +682,12 @@ export default function WalletClient({
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div
                             className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                              tx.amount > 0
+                              tx.amount > 0 || tx.toId === user.id
                                 ? "bg-tb-accent/10"
                                 : "bg-rose-500/10"
                             }`}
                           >
-                            {tx.amount > 0 ? (
+                            {tx.amount > 0 || tx.toId === user.id ? (
                               <ArrowDownLeft className="w-4 h-4 text-tb-accent" />
                             ) : (
                               <ArrowUpRight className="w-4 h-4 text-rose-400" />
@@ -608,7 +697,6 @@ export default function WalletClient({
                             <p className="text-xs font-medium text-tb-text-primary truncate">
                               {tx.label}
                             </p>
-                            {/* Mission liée */}
                             {tx.missionTitle && (
                               <p className="text-[11px] text-tb-text-secondary truncate mt-0.5 leading-tight">
                                 {tx.missionTitle}
@@ -637,7 +725,7 @@ export default function WalletClient({
                             tx.amount > 0 ? "text-tb-accent" : "text-rose-400"
                           }`}
                         >
-                          {tx.amount > 0 ? "+" : ""}{tx.amount} TIME
+                          {tx.toId === user.id ? "+" : ""}{tx.amount} TIME
                         </span>
                       </div>
                     ))}
@@ -649,5 +737,33 @@ export default function WalletClient({
         </div>
       </main>
     </>
+  );
+}
+
+// ─── KPI Card (legacy fallback) ──────────────────────────────────────────
+function KpiCard({
+  icon,
+  value,
+  label,
+  sublabel,
+  accent,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+  sublabel: string;
+  accent: string;
+}) {
+  return (
+    <div className="bg-tb-surface border border-tb-border rounded-xl p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-tb-accent/5">
+      <div className="flex items-start justify-between mb-2">
+        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent}`}>
+          {icon}
+        </div>
+      </div>
+      <div className="text-2xl font-bold text-tb-text-primary">{value}</div>
+      <div className="text-xs text-tb-text-secondary font-medium mt-0.5">{label}</div>
+      <div className="text-[10px] text-tb-text-muted mt-0.5">{sublabel}</div>
+    </div>
   );
 }

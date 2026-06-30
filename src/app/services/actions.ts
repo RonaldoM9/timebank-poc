@@ -4,6 +4,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getUserBalance, createEscrow, releaseEscrow, refundEscrow } from "@/lib/ledger";
+import {
+  lockTimeForBooking as newLedgerLock,
+  releaseTimeForBooking as newLedgerRelease,
+  refundTimeForBooking as newLedgerRefund,
+  InsufficientTimeBalanceError,
+  IdempotentOperationError,
+  getAvailableMinutes,
+} from "@/lib/time-ledger";
 import { awardXP, evaluateUserRewards } from "@/lib/gamification";
 import { createSystemBookingMessage } from "@/app/bookings/messages/actions";
 import { z } from "zod";
@@ -345,6 +353,23 @@ export async function completeBooking(
     return { error: releaseResult.error };
   }
 
+  // Nouveau ledger — release time
+  try {
+    await newLedgerRelease({
+      requesterId: booking.clientId,
+      helperId: booking.service.providerId,
+      bookingId: booking.id,
+      amountMinutes: booking.totalTime * 60,
+    });
+  } catch (err) {
+    if (err instanceof IdempotentOperationError) {
+      // Déjà libéré — ce n'est pas une erreur bloquante
+      console.warn("Double release détecté (ignoré):", booking.id);
+    } else {
+      console.error("Erreur release ledger:", err);
+    }
+  }
+
   // ─── Message système : mission terminée ─────────────────────────
   await createSystemBookingMessage(booking.id, "Mission terminée.");
 
@@ -417,6 +442,21 @@ export async function cancelBooking(
 
   if ("error" in refundResult) {
     return { error: refundResult.error };
+  }
+
+  // Nouveau ledger — refund time
+  try {
+    await newLedgerRefund({
+      requesterId: booking.clientId,
+      bookingId: booking.id,
+      amountMinutes: booking.totalTime * 60,
+    });
+  } catch (err) {
+    if (err instanceof IdempotentOperationError) {
+      console.warn("Double remboursement détecté (ignoré):", booking.id);
+    } else {
+      console.error("Erreur refund ledger:", err);
+    }
   }
 
   // ─── Message système : mission annulée ──────────────────────────
@@ -555,10 +595,22 @@ export async function createBooking(
   // Recalculer le total côté serveur
   const totalTime = service.ratePerHour * hours;
 
-  // Vérifier le solde
-  const balance = await getUserBalance(user.id);
-  if (balance < totalTime) {
-    return { error: "Solde TIME insuffisant. Vous avez besoin de " + totalTime + " TIME mais vous n'avez que " + balance + " TIME." };
+  // Vérifier le solde avec le nouveau ledger
+  const balanceMinutes = await getAvailableMinutes(user.id);
+  const requiredMinutes = totalTime * 60; // totalTime is in TIME units, convert to minutes
+  if (balanceMinutes < requiredMinutes) {
+    return {
+      error:
+        "Solde TIME insuffisant. Vous avez besoin de " +
+        totalTime +
+        " TIME (" +
+        requiredMinutes +
+        " min) mais vous n'avez que " +
+        (balanceMinutes / 60).toFixed(1) +
+        " TIME (" +
+        balanceMinutes +
+        " min).",
+    };
   }
 
   // Valider le créneau si fourni
@@ -612,7 +664,7 @@ export async function createBooking(
     },
   });
 
-  // Appeler l'escrow
+  // Appeler l'escrow legacy (pour backward compat)
   const escrowResult = await createEscrow({
     clientId: user.id,
     bookingId: booking.id,
@@ -623,6 +675,28 @@ export async function createBooking(
     // Rollback le booking si l'escrow échoue
     await prisma.booking.delete({ where: { id: booking.id } });
     return { error: escrowResult.error };
+  }
+
+  // Nouveau ledger — lock time
+  try {
+    await newLedgerLock({
+      requesterId: user.id,
+      helperId: service.providerId,
+      bookingId: booking.id,
+      amountMinutes: requiredMinutes,
+    });
+  } catch (err) {
+    // Rollback les deux
+    await prisma.booking.delete({ where: { id: booking.id } });
+    // Rollback legacy escrow
+    await refundEscrow({ clientId: user.id, bookingId: booking.id, amount: totalTime }).catch(() => {});
+    if (err instanceof InsufficientTimeBalanceError) {
+      return { error: err.message };
+    }
+    if (err instanceof IdempotentOperationError) {
+      return { error: "Cette réservation est déjà en cours de traitement." };
+    }
+    return { error: "Erreur lors du verrouillage TIME : " + (err as Error).message };
   }
 
   // ─── Message système : réservation créée ────────────────────────
