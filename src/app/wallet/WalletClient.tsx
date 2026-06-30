@@ -24,6 +24,7 @@ import {
   Sparkles,
   AlertTriangle,
   Gavel,
+  ChevronDown,
 } from "lucide-react";
 import ConnectedHeader from "@/components/ConnectedHeader";
 import EmptyState from "@/components/EmptyState";
@@ -182,6 +183,7 @@ export default function WalletClient({
   const [showSuccess, setShowSuccess] = useState(false);
   const [filter, setFilter] = useState<FilterMode>("all");
   const [copied, setCopied] = useState(false);
+  const [showSubBalances, setShowSubBalances] = useState(false);
 
   async function handleDonate(amount: number) {
     setPending(amount);
@@ -314,14 +316,35 @@ export default function WalletClient({
               )}
             </div>
 
-            <div className="text-5xl font-bold text-white mb-1">
-              {formatTimeAmount(newWallet.availableMinutes)}
-            </div>
+            {/* ─── Solde principal — clic pour détail ─── */}
+            <button
+              onClick={() => setShowSubBalances(!showSubBalances)}
+              className="text-left w-full group cursor-pointer"
+            >
+              <div className="flex items-end gap-2">
+                <div className="text-5xl font-bold text-white mb-1">
+                  {formatTimeAmount(newWallet.availableMinutes)}
+                </div>
+                <div className="text-white/60 mb-2 flex items-center gap-1 transition-transform duration-300"
+                  style={{ transform: showSubBalances ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
             <p className="text-sm text-white/60 mb-1">
               {formatDuration(newWallet.availableMinutes)}
             </p>
             <p className="text-xs text-white/40 mb-5">
               Disponible maintenant — tu peux utiliser ce TIME pour réserver une aide.
+              {newWallet.lockedMinutes > 0 || newWallet.disputedMinutes > 0 || newWallet.pendingMinutes > 0 ? (
+                <button
+                  onClick={() => setShowSubBalances(!showSubBalances)}
+                  className="ml-1 underline underline-offset-2 hover:text-white/60 transition-colors"
+                >
+                  Voir le détail →
+                </button>
+              ) : null}
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -343,7 +366,9 @@ export default function WalletClient({
           </div>
         </div>
 
-        {/* ─── Sous-soldes ─── */}
+        {/* ─── Sous-soldes (accordéon) ─── */}
+        {showSubBalances && (
+        <>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {subBalanceSections.map((sb) => {
             const accentMap: Record<string, string> = {
@@ -391,37 +416,8 @@ export default function WalletClient({
               <div className="text-lg font-bold text-purple-400">{formatTimeAmount(newWallet.totalImpactMinutes)}</div>
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <KpiCard
-              icon={<Wallet className="w-4 h-4 text-tb-accent" />}
-              value={`${dashboard.availableBalance} TIME`}
-              label="Disponible"
-              sublabel="Ancien solde"
-              accent="bg-tb-accent/10 text-tb-accent"
-            />
-            <KpiCard
-              icon={<Clock className="w-4 h-4 text-amber-400" />}
-              value={`${dashboard.pendingBalance} TIME`}
-              label="En attente"
-              sublabel="Bloqués dans des réservations"
-              accent="bg-amber-500/10 text-amber-400"
-            />
-            <KpiCard
-              icon={<TrendingUp className="w-4 h-4 text-emerald-400" />}
-              value={`${dashboard.earnedTotal} TIME`}
-              label="Gagnés"
-              sublabel="Grâce à tes services"
-              accent="bg-emerald-500/10 text-emerald-400"
-            />
-            <KpiCard
-              icon={<HeartHandshake className="w-4 h-4 text-rose-400" />}
-              value={`${dashboard.donatedTotal} TIME`}
-              label="Donnés"
-              sublabel="Au pot commun"
-              accent="bg-rose-500/10 text-rose-400"
-            />
-          </div>
+        ) : null}
+        </>
         )}
 
         {/* ─── Historique LINK ─── */}
