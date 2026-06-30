@@ -201,12 +201,18 @@ export async function recalculateWallet(
           locked += tx.amountMinutes;
         } else {
           available -= tx.amountMinutes;
+          locked += tx.amountMinutes; // locked increases on debit from requester
         }
         break;
 
       case "booking_release":
-        // Helper receives it as available
-        if (isCredit) {
+        // For the requester (COMPLETED status): lock is lifted
+        if (isCredit && tx.status === "completed") {
+          // Lock removal — decrease locked
+          locked = Math.max(0, locked - tx.amountMinutes);
+        }
+        // For the helper (RELEASED status): receives TIME as available
+        if (isCredit && tx.status === "released") {
           available += tx.amountMinutes;
           earned += tx.amountMinutes;
           totalImpact += tx.amountMinutes;
@@ -214,15 +220,18 @@ export async function recalculateWallet(
         break;
 
       case "booking_refund":
-        // Goes back to requester available
+        // Goes back to requester available, remove from locked
         if (isCredit) {
           available += tx.amountMinutes;
+          locked = Math.max(0, locked - tx.amountMinutes);
         }
         break;
 
       case "dispute_freeze":
+        // Move from locked to disputed
         if (isCredit) {
           disputed += tx.amountMinutes;
+          locked = Math.max(0, locked - tx.amountMinutes);
         }
         break;
 
@@ -359,27 +368,22 @@ export async function lockTimeForBooking(input: LockTimeInput) {
   }
 
   // Atomic operation: debit requester available, credit requester locked
-  const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-    // Debit from available
-    await createLedgerTransaction({
-      userId: input.requesterId,
-      counterpartyId: input.helperId,
-      bookingId: input.bookingId,
-      amountMinutes: input.amountMinutes,
-      direction: TIME_DIRECTIONS.DEBIT,
-      type: "booking_lock",
-      status: TIME_TRANSACTION_STATUSES.LOCKED,
-      source: "booking",
-      reason: "Réservation confirmée",
-    });
-
-    return { success: true as const };
+  await createLedgerTransaction({
+    userId: input.requesterId,
+    counterpartyId: input.helperId,
+    bookingId: input.bookingId,
+    amountMinutes: input.amountMinutes,
+    direction: TIME_DIRECTIONS.DEBIT,
+    type: "booking_lock",
+    status: TIME_TRANSACTION_STATUSES.LOCKED,
+    source: "booking",
+    reason: "Réservation confirmée",
   });
 
   // Sync wallet cache
   await syncWalletFromLedger(input.requesterId);
 
-  return result;
+  return { success: true as const };
 }
 
 /** Release TIME to the helper when mission is validated */
@@ -398,32 +402,30 @@ export async function releaseTimeForBooking(input: ReleaseTimeInput) {
     );
   }
 
-  await prisma.$transaction(async (_tx: Prisma.TransactionClient) => {
-    // 1. Remove locked from requester
-    await createLedgerTransaction({
-      userId: input.requesterId,
-      counterpartyId: input.helperId,
-      bookingId: input.bookingId,
-      amountMinutes: input.amountMinutes,
-      direction: TIME_DIRECTIONS.CREDIT,
-      type: "booking_release",
-      status: TIME_TRANSACTION_STATUSES.COMPLETED,
-      source: "booking",
-      reason: "Mission validée — sortie du requester",
-    });
+  // 1. Remove locked from requester
+  await createLedgerTransaction({
+    userId: input.requesterId,
+    counterpartyId: input.helperId,
+    bookingId: input.bookingId,
+    amountMinutes: input.amountMinutes,
+    direction: TIME_DIRECTIONS.CREDIT,
+    type: "booking_release",
+    status: TIME_TRANSACTION_STATUSES.COMPLETED,
+    source: "booking",
+    reason: "Mission validée — sortie du requester",
+  });
 
-    // 2. Credit to helper as available
-    await createLedgerTransaction({
-      userId: input.helperId,
-      counterpartyId: input.requesterId,
-      bookingId: input.bookingId,
-      amountMinutes: input.amountMinutes,
-      direction: TIME_DIRECTIONS.CREDIT,
-      type: "booking_release",
-      status: TIME_TRANSACTION_STATUSES.RELEASED,
-      source: "booking",
-      reason: "Mission validée — TIME reçu",
-    });
+  // 2. Credit to helper as available
+  await createLedgerTransaction({
+    userId: input.helperId,
+    counterpartyId: input.requesterId,
+    bookingId: input.bookingId,
+    amountMinutes: input.amountMinutes,
+    direction: TIME_DIRECTIONS.CREDIT,
+    type: "booking_release",
+    status: TIME_TRANSACTION_STATUSES.RELEASED,
+    source: "booking",
+    reason: "Mission validée — TIME reçu",
   });
 
   // Sync both wallets
