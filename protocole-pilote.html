@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Protocole Pilote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --bg:#F8F5F0; --surface:#FFF; --accent:#00A889; --accent-soft:#E6F7F3; --text:#101010; --text-secondary:#5F6368; --text-muted:#9CA3AF; --border:#E8E1D8; --radius:16px; --radius-sm:8px; --shadow:0 2px 12px rgba(0,0,0,0.06); }
+  body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; padding:40px 20px; }
+  .page { max-width:1000px; margin:0 auto; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:48px 56px; box-shadow:var(--shadow); margin-bottom:24px; }
+  .label { font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; }
+  h1 { font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; font-size:38px; margin-bottom:8px; }
+  .accent { color:var(--accent); }
+  h2 { font-family:'Anton',sans-serif; font-size:26px; margin:32px 0 16px; text-transform:uppercase; }
+  h3 { font-size:18px; font-weight:600; margin:16px 0 8px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; margin:12px 0; }
+  th { text-align:left; font-weight:600; padding:10px 14px; border-bottom:2px solid var(--accent); background:var(--accent-soft); font-size:13px; }
+  td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text-secondary); }
+  .phase { background:var(--accent-soft); border-radius:var(--radius-sm); padding:20px 24px; margin:12px 0; border-left:4px solid var(--accent); }
+  .phase .num { font-family:'Anton',sans-serif; font-size:20px; color:var(--accent); }
+  .phase h3 { margin:4px 0; }
+  .phase p { font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  hr { border:none; border-top:1px solid var(--border); margin:32px 0; }
+  .footer { text-align:center; color:var(--text-muted); font-size:13px; padding:16px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+    <div class="label">📋 Programme pilote</div>
+    <h1>Protocole <span class="accent">Pilote</span></h1>
+    <p style="color:var(--text-secondary);margin-bottom:24px;font-size:15px;">Programme d'entraide locale — 6 à 8 semaines</p>
+
+    <h2>S1 — Onboarding</h2>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;"><strong>Objectif :</strong> Tous les participants sont opérationnels sur la plateforme.</p>
+    <table>
+      <tr><th>Action</th><th>Responsable</th><th>Détail</th></tr>
+      <tr><td>Création des comptes</td><td>Facilitateur</td><td>Comptes individuels ou assistés</td></tr>
+      <tr><td>Présentation TIME</td><td>Facilitateur</td><td>Concept 1h=1 TIME, principe de réciprocité</td></tr>
+      <tr><td>Premier service proposé</td><td>Chaque participant</td><td>Au moins 1 service publié par personne</td></tr>
+      <tr><td>Règles de l'entraide</td><td>Facilitateur</td><td>Charte de la communauté</td></tr>
+      <tr><td>Test de réservation</td><td>Tous</td><td>1 réservation test par binôme</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--text-muted);"><strong>Livrable :</strong> Trombinoscope + catalogue des services</p>
+
+    <h2>S2 — Lancement</h2>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;"><strong>Objectif :</strong> Les premiers échanges ont lieu.</p>
+    <table>
+      <tr><th>Action</th><th>Responsable</th><th>Détail</th></tr>
+      <tr><td>Mise en relation</td><td>Facilitateur</td><td>Jumelage des premiers échanges</td></tr>
+      <tr><td>Accompagnement</td><td>Facilitateur</td><td>Assistance aux premiers utilisateurs</td></tr>
+      <tr><td>Résolution blocages</td><td>Facilitateur + TimeHeroes</td><td>Support technique</td></tr>
+      <tr><td>Premier échange</td><td>Participants</td><td>1er transfert TIME effectif</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--text-muted);"><strong>Livrable :</strong> Premier échange TIME enregistré</p>
+
+    <h2>S3 — Croissance</h2>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;"><strong>Objectif :</strong> Montée en régime des échanges.</p>
+    <table>
+      <tr><th>Action</th><th>Responsable</th><th>Détail</th></tr>
+      <tr><td>Relance des inactifs</td><td>Facilitateur</td><td>Identifier ceux qui n'échangent pas</td></tr>
+      <tr><td>Nouveaux services</td><td>Facilitateur</td><td>Stimuler la variété des services</td></tr>
+      <tr><td>Point hebdomadaire</td><td>Facilitateur + TimeHeroes</td><td>Bilan + ajustements</td></tr>
+      <tr><td>Défi de groupe</td><td>Facilitateur</td><td>Challenge collectif (5 échanges/semaine)</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--text-muted);"><strong>Livrable :</strong> Bilan mi-parcours</p>
+
+    <h2>S4-S6 — Consolidation</h2>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;"><strong>Objectif :</strong> Les échanges deviennent naturels et réguliers.</p>
+    <table>
+      <tr><th>Action</th><th>Responsable</th><th>Détail</th></tr>
+      <tr><td>Suivi facilitateur</td><td>Facilitateur</td><td>1 point/semaine avec TimeHeroes</td></tr>
+      <tr><td>Observations terrain</td><td>Facilitateur</td><td>Notes qualitatives, témoignages</td></tr>
+      <tr><td>Questionnaire bien-être</td><td>Participants</td><td>5 dimensions (mi-parcours)</td></tr>
+      <tr><td>Résolution litiges</td><td>Facilitateur</td><td>Application règles escrow</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--text-muted);"><strong>Livrable :</strong> Données d'impact</p>
+
+    <h2>S7-S8 — Bilan</h2>
+    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;"><strong>Objectif :</strong> Produire le rapport d'impact final.</p>
+    <table>
+      <tr><th>Action</th><th>Responsable</th><th>Détail</th></tr>
+      <tr><td>Questionnaire bien-être (fin)</td><td>Participants</td><td>Comparatif avant/après</td></tr>
+      <tr><td>Collecte données</td><td>TimeHeroes</td><td>Extraction 33 métriques</td></tr>
+      <tr><td>Témoignages</td><td>Facilitateur</td><td>3-5 entretiens qualitatifs</td></tr>
+      <tr><td>Rapport d'impact</td><td>TimeHeroes</td><td>Document remis au partenaire</td></tr>
+      <tr><td>Restitution</td><td>TimeHeroes</td><td>Réunion de clôture</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--text-muted);"><strong>Livrable :</strong> Rapport d'impact complet</p>
+
+    <hr>
+
+    <div class="label">👤 Rôle du facilitateur</div>
+    <table>
+      <tr><th>Mission</th><th>Fréquence</th><th>Détail</th></tr>
+      <tr><td>Onboarding</td><td>S1</td><td>Inscrire les participants, expliquer TIME</td></tr>
+      <tr><td>Animation</td><td>S1-S8</td><td>Relancer, proposer des défis</td></tr>
+      <tr><td>Modération</td><td>S1-S8</td><td>Valider services, gérer litiges</td></tr>
+      <tr><td>Suivi</td><td>Hebdo</td><td>Point avec TimeHeroes</td></tr>
+      <tr><td>Bilan</td><td>S8</td><td>Contribuer au rapport d'impact</td></tr>
+    </table>
+    <p style="font-size:13px;color:var(--text-secondary);margin-top:8px;">⏱️ 2-3h/semaine (S3-S6), 5h (S1 et S7-S8)</p>
+
+    <hr>
+
+    <div class="label">📊 Indicateurs d'impact</div>
+    <table>
+      <tr><th>#</th><th>Métrique</th><th>Source</th><th>Période</th></tr>
+      <tr><td>1</td><td>Participants inscrits</td><td>Plateforme</td><td>S1-S8</td></tr>
+      <tr><td>2</td><td>Participants actifs (≥1 échange)</td><td>Plateforme</td><td>S2-S8</td></tr>
+      <tr><td>3</td><td>Taux de rétention</td><td>Plateforme</td><td>S8</td></tr>
+      <tr><td>4</td><td>Services proposés</td><td>Plateforme</td><td>S1-S8</td></tr>
+      <tr><td>5</td><td>Taux de complétion</td><td>Plateforme</td><td>S2-S8</td></tr>
+      <tr><td>6</td><td>Volume TIME échangé</td><td>Plateforme</td><td>S2-S8</td></tr>
+      <tr><td>7</td><td>Score bien-être avant/après</td><td>Questionnaire</td><td>S1 / S7</td></tr>
+      <tr><td>8</td><td>Évolution bien-être</td><td>Calcul</td><td>S8</td></tr>
+      <tr><td>9</td><td>Valeur sociale (heures × 15€)</td><td>Calcul</td><td>S8</td></tr>
+    </table>
+
+    <div class="footer">TimeHeroes — Juillet 2026</div>
+  </div>
+</div>
+</body>
+</html>

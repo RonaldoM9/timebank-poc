@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Liste Prospects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg:#F8F5F0; --surface:#FFF; --accent:#00A889; --accent-hover:#008F78; --accent-soft:#E6F7F3; --text:#101010; --text-secondary:#5F6368; --text-muted:#9CA3AF; --border:#E8E1D8; --radius:16px; --radius-sm:8px; --shadow:0 2px 12px rgba(0,0,0,0.06); }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 40px 20px; }
+  .page { max-width: 1000px; margin: 0 auto; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 48px 56px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .label { font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  h1 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; font-size: 38px; margin-bottom: 8px; }
+  .accent { color: var(--accent); }
+  table { width:100%; border-collapse:collapse; font-size:14px; margin:16px 0; }
+  th { text-align:left; font-weight:600; padding:10px 14px; border-bottom:2px solid var(--accent); background:var(--accent-soft); font-size:13px; }
+  td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text-secondary); }
+  .priority-1 { background: #FFF5F5; border-left: 4px solid #E53E3E; }
+  .priority-2 { background: #FFFAF0; border-left: 4px solid #DD6B20; }
+  .priority-3 { background: var(--accent-soft); border-left: 4px solid var(--accent); }
+  .priority-4 { background: var(--bg); border-left: 4px solid var(--text-muted); }
+  .badge { display:inline-block; padding:2px 10px; border-radius:50px; font-size:11px; font-weight:600; }
+  .badge-1 { background:#E53E3E; color:#fff; }
+  .badge-2 { background:#DD6B20; color:#fff; }
+  .badge-3 { background:var(--accent); color:#fff; }
+  .badge-4 { background:var(--text-muted); color:#fff; }
+  hr { border:none; border-top:1px solid var(--border); margin:32px 0; }
+  .footer { text-align:center; color:var(--text-muted); font-size:13px; padding:16px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+    <div class="label">📋 Prospection</div>
+    <h1>Liste <span class="accent">Prospects</span></h1>
+    <p style="color:var(--text-secondary);margin-bottom:24px;font-size:15px;">Écouen · Ézanville · Sarcelles — Pilote septembre 2026</p>
+
+    <div class="label" style="margin-top:24px;">🔴 PRIORITÉ 1 — CCAS (décideurs)</div>
+    <table>
+      <tr><th>Ville</th><th>Contact</th><th>Téléphone</th><th>Approche</th></tr>
+      <tr class="priority-1">
+        <td><strong>Écouen</strong><br><span style="font-size:12px;color:var(--text-muted);">7 200 hab.</span></td>
+        <td>Catherine DELPRAT (Maire)<br>contact@ecouen.fr</td>
+        <td>01 39 33 09 00</td>
+        <td>Ville de résidence — pilote gratuit Découverte</td>
+      </tr>
+      <tr class="priority-1">
+        <td><strong>Ézanville</strong><br><span style="font-size:12px;color:var(--text-muted);">9 800 hab.</span></td>
+        <td>Eric BATTAGLIA (Maire)<br>m.mairie@ezanville.fr</td>
+        <td>01 39 35 44 80</td>
+        <td>Pilote inter-communal Écouen + Ézanville</td>
+      </tr>
+      <tr class="priority-1">
+        <td><strong>Sarcelles</strong><br><span style="font-size:12px;color:var(--text-muted);">59 000 hab.</span></td>
+        <td>Patrick HADAD (Maire)<br>sarcelles.fr</td>
+        <td>01 34 38 20 00</td>
+        <td>Direction action sociale — gros potentiel</td>
+      </tr>
+    </table>
+
+    <div class="label" style="margin-top:24px;">🟠 PRIORITÉ 2 — Centres Sociaux (relais terrain)</div>
+    <table>
+      <tr><th>Structure</th><th>Ville</th><th>Public</th></tr>
+      <tr class="priority-2"><td>Centre Social d'Écouen</td><td>Écouen</td><td>Seniors + familles</td></tr>
+      <tr class="priority-2"><td>Centre Social Jacques Brel</td><td>Sarcelles</td><td>Multi-accueil, isolés</td></tr>
+      <tr class="priority-2"><td>Centre Social André Malraux</td><td>Sarcelles</td><td>Secteur sud</td></tr>
+      <tr class="priority-2"><td>Espace Présence Insertion (EPI)</td><td>Sarcelles</td><td>Insertion sociale</td></tr>
+    </table>
+
+    <div class="label" style="margin-top:24px;">🟢 PRIORITÉ 3 — Associations locales</div>
+    <table>
+      <tr><th>Association</th><th>Ville</th><th>Type</th></tr>
+      <tr class="priority-3"><td>Association Seniors Écouennais</td><td>Écouen</td><td>Club seniors</td></tr>
+      <tr class="priority-3"><td>Secours Catholique</td><td>Écouen/Ézanville</td><td>Solidarité</td></tr>
+      <tr class="priority-3"><td>Secours Populaire</td><td>Sarcelles</td><td>Aide + lien social</td></tr>
+      <tr class="priority-3"><td>Croix-Rouge</td><td>Sarcelles</td><td>Visites à domicile</td></tr>
+      <tr class="priority-3"><td>Restos du Cœur</td><td>Secteur</td><td>Public isolé</td></tr>
+      <tr class="priority-3"><td>Les Amis de Sarcelles</td><td>Sarcelles</td><td>Culture/seniors</td></tr>
+    </table>
+
+    <div class="label" style="margin-top:24px;">⚫ PRIORITÉ 4 — Financeurs (via CCAS partenaire)</div>
+    <table>
+      <tr><th>Organisme</th><th>Type</th><th>Budget</th><th>Calendrier</th></tr>
+      <tr class="priority-4"><td>Conférence des Financeurs 95</td><td>Appel à projets prévention</td><td>50k-200k€</td><td>Septembre</td></tr>
+      <tr class="priority-4"><td>Fondation de France</td><td>Appel à projets lien social</td><td>10k-50k€</td><td>Permanent</td></tr>
+      <tr class="priority-4"><td>AG2R La Mondiale</td><td>Appels à projets</td><td>5k-30k€</td><td>Variable</td></tr>
+      <tr class="priority-4"><td>Malakoff Humanis</td><td>Appels à projets</td><td>5k-30k€</td><td>Variable</td></tr>
+      <tr class="priority-4"><td>CNSA</td><td>Innovation prévention</td><td>Variable</td><td>Permanent</td></tr>
+    </table>
+    <div class="footer">TimeHeroes — Juillet 2026</div>
+  </div>
+</div>
+</body>
+</html>
