@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Offre Pilote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #F8F5F0; --surface: #FFFFFF; --accent: #00A889;
+    --accent-hover: #008F78; --accent-soft: #E6F7F3;
+    --text: #101010; --text-secondary: #5F6368; --text-muted: #9CA3AF;
+    --border: #E8E1D8; --radius: 16px; --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; min-height: 100vh; }
+  .page { max-width: 1000px; width: 100%; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 48px 56px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .card-sm { padding: 32px 40px; }
+  .label { font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  h1 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 0.02em; font-size: 42px; line-height: 1.1; margin-bottom: 24px; }
+  h2 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 0.02em; font-size: 26px; line-height: 1.2; margin-bottom: 16px; }
+  .accent { color: var(--accent); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-weight: 600; color: var(--text); padding: 12px 16px; border-bottom: 2px solid var(--accent); background: var(--accent-soft); }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+  tr:last-child td { border-bottom: none; }
+  .highlight { background: var(--accent-soft); border-radius: var(--radius-sm); padding: 24px; border-left: 4px solid var(--accent); margin: 16px 0; }
+  .highlight p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+  .phase { padding: 16px 20px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+  .phase .num { font-family: 'Anton', sans-serif; font-size: 16px; color: var(--accent); }
+  .phase h3 { font-size: 14px; font-weight: 600; margin: 4px 0; }
+  .phase p { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+  .badge { display: inline-block; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 600; }
+  .badge-green { background: var(--accent-soft); color: var(--accent); }
+  .badge-gray { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .footer { text-align: center; color: var(--text-muted); font-size: 13px; padding: 16px; }
+  .price-card { text-align: center; padding: 28px 20px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+  .price-card.featured { background: var(--accent-soft); border-color: var(--accent); }
+  .price-card .price { font-family: 'Anton', sans-serif; font-size: 36px; color: var(--accent); }
+  .price-card .price-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 16px; }
+  .price-card .price-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
+  .price-card ul { list-style: none; text-align: left; font-size: 13px; color: var(--text-secondary); line-height: 1.8; padding: 0; }
+  .price-card ul li::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+    <div class="label">📋 Programme pilote</div>
+    <h1>Offre <span class="accent">Pilote</span> TimeHeroes</h1>
+    <p style="font-size:16px;color:var(--text-secondary);line-height:1.6;margin-bottom:28px;">
+    Un programme d'entraide locale de <strong>6 à 8 semaines</strong>, clé en main, pour tester l'impact de la monnaie-temps sur l'isolement social.
+    </p>
+
+    <div class="label">📐 Format</div>
+    <table>
+      <tr><th style="width:180px;">Élément</th><th>Valeur</th></tr>
+      <tr><td>Durée</td><td>6 à 8 semaines</td></tr>
+      <tr><td>Public</td><td>Seniors / personnes isolées / bénévoles locaux</td></tr>
+      <tr><td>Taille</td><td>20 à 50 participants</td></tr>
+      <tr><td>Périmètre</td><td>Quartier, résidence, commune ou association</td></tr>
+      <tr><td>Accompagnement</td><td>Onboarding + suivi facilitateur + bilan d'impact</td></tr>
+      <tr><td>Livrable final</td><td>Rapport d'impact (données, témoignages, 33 KPIs)</td></tr>
+    </table>
+
+    <hr>
+
+    <div class="label">💰 Formules de test</div>
+    <div class="grid-3">
+      <div class="price-card">
+        <div class="price-label">Découverte</div>
+        <div class="price">Gratuit</div>
+        <div class="price-sub">Idéal pour découvrir</div>
+        <ul>
+          <li>Accès plateforme</li>
+          <li>Onboarding inclus</li>
+          <li>Support email</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <div class="price-label">Accompagné</div>
+        <div class="price">500 €</div>
+        <div class="price-sub">Le plus adapté</div>
+        <ul>
+          <li>Tout de la formule Découverte</li>
+          <li>Suivi facilitateur dédié</li>
+          <li>Point hebdomadaire</li>
+          <li>Guide facilitateur</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="price-label">Sur-mesure</div>
+        <div class="price">1 500 €</div>
+        <div class="price-sub">Accompagnement renforcé</div>
+        <ul>
+          <li>Tout de la formule Accompagné</li>
+          <li>Formation équipe terrain</li>
+          <li>Rapport d'impact complet</li>
+          <li>Atelier de lancement</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="label">📅 Déroulement</div>
+    <div class="grid-4">
+      <div class="phase">
+        <div class="num">S1</div>
+        <h3>Onboarding</h3>
+        <p>Création des comptes, présentation TIME, premiers services</p>
+      </div>
+      <div class="phase">
+        <div class="num">S2-3</div>
+        <h3>Lancement</h3>
+        <p>Premiers échanges, accompagnement, résolution des blocages</p>
+      </div>
+      <div class="phase">
+        <div class="num">S4-6</div>
+        <h3>Croissance</h3>
+        <p>Montée en volume, automatisation, observations terrain</p>
+      </div>
+      <div class="phase">
+        <div class="num">S7-8</div>
+        <h3>Bilan</h3>
+        <p>Collecte données, questionnaires bien-être, rapport d'impact</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="label">👤 Rôle du facilitateur</div>
+    <div class="grid-2">
+      <div style="padding:16px;background:var(--bg);border-radius:var(--radius-sm);">
+        <strong>👋 Onboarding</strong>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">Inscrire les participants, expliquer le concept TIME, créer les premiers services</p>
+      </div>
+      <div style="padding:16px;background:var(--bg);border-radius:var(--radius-sm);">
+        <strong>🛡️ Modération</strong>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">Valider les services, gérer les litiges, sécuriser la communauté</p>
+      </div>
+      <div style="padding:16px;background:var(--bg);border-radius:var(--radius-sm);">
+        <strong>🔥 Animation</strong>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">Relancer les participants, proposer des défis, créer une dynamique</p>
+      </div>
+      <div style="padding:16px;background:var(--bg);border-radius:var(--radius-sm);">
+        <strong>📊 Suivi & Bilan</strong>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">Points hebdomadaires, collecte données, contribution au rapport d'impact</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="label">📊 Indicateurs d'impact</div>
+    <table>
+      <tr><th style="width:180px;">Catégorie</th><th>Métriques suivies</th></tr>
+      <tr><td>👥 Membres</td><td>Participants actifs, taux de rétention, nouveaux inscrits</td></tr>
+      <tr><td>📋 Missions</td><td>Services proposés, échanges réalisés, taux de complétion</td></tr>
+      <tr><td>⏱️ TIME</td><td>TIME en circulation, volume échangé, répartition</td></tr>
+      <tr><td>🎯 Bénéficiaires</td><td>Seniors accompagnés, héros mobilisés</td></tr>
+      <tr><td>💚 Qualité</td><td>Score bien-être (5 dimensions), taux de satisfaction</td></tr>
+      <tr><td>💰 Valeur sociale</td><td>Heures × 15€/h (valorisation du bénévolat)</td></tr>
+    </table>
+
+    <div class="highlight" style="margin-top:24px;">
+      <p><strong>🔜 Et après le pilote ?</strong> Déploiement à plus grande échelle, programmes structurés (Lien Social Seniors, Inclusion Numérique), essaimage vers d'autres structures.</p>
+    </div>
+
+    <div class="footer">TimeHeroes — Juillet 2026</div>
+  </div>
+</div>
+</body>
+</html>

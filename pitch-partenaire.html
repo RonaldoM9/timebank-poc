@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Pitch Partenaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #F8F5F0; --surface: #FFFFFF; --accent: #00A889;
+    --accent-hover: #008F78; --accent-soft: #E6F7F3;
+    --text: #101010; --text-secondary: #5F6368; --text-muted: #9CA3AF;
+    --border: #E8E1D8; --radius: 16px; --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; min-height: 100vh; }
+  .page { max-width: 1000px; width: 100%; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 48px 56px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .label { font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  h1 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 0.02em; font-size: 42px; line-height: 1.1; margin-bottom: 24px; }
+  .accent { color: var(--accent); }
+  .pitch-main { font-size: 26px; font-weight: 600; line-height: 1.4; padding: 32px; background: var(--accent-soft); border-radius: var(--radius-sm); border-left: 5px solid var(--accent); margin-bottom: 32px; }
+  .pitch-main::before { content: "“"; font-size: 48px; color: var(--accent); line-height: 0; vertical-align: middle; margin-right: 8px; }
+  .pitch-main::after { content: "”"; font-size: 48px; color: var(--accent); line-height: 0; vertical-align: bottom; margin-left: 4px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .variant-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; }
+  .variant-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .variant-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+  .variant-tag { display: inline-block; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 50px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .concept { display: flex; gap: 16px; margin-top: 24px; }
+  .concept-item { flex: 1; text-align: center; padding: 20px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+  .concept-item .num { font-family: 'Anton', sans-serif; font-size: 28px; color: var(--accent); }
+  .concept-item .desc { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .footer { text-align: center; color: var(--text-muted); font-size: 13px; padding: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+    <div class="label">🎯 Positionnement</div>
+    <h1>Le <span class="accent">pitch</span> TimeHeroes</h1>
+
+    <div class="pitch-main">
+      TimeHeroes aide les organisations locales à activer, sécuriser et mesurer l'entraide autour des personnes isolées, grâce à une monnaie-temps et un pilotage d'impact.
+    </div>
+
+    <div class="label" style="margin-top:32px;">📢 Déclinaisons par contexte</div>
+    <div class="grid-3">
+      <div class="variant-card">
+        <div class="variant-tag">CCAS / Mairie</div>
+        <h3>Lutter contre l'isolement</h3>
+        <p>TimeHeroes outille vos services pour lutter contre l'isolement des seniors via un réseau d'entraide monétisé en temps, avec des indicateurs d'impact social mesurables.</p>
+      </div>
+      <div class="variant-card">
+        <div class="variant-tag">Association</div>
+        <h3>Structurer le bénévolat</h3>
+        <p>TimeHeroes transforme le bénévolat informel en un système d'échange structuré où chaque heure donnée crée du lien et de la réciprocité.</p>
+      </div>
+      <div class="variant-card">
+        <div class="variant-tag">Résidence senior</div>
+        <h3>Animer le quotidien</h3>
+        <p>TimeHeroes permet aux résidents et aux bénévoles d'échanger des services (accompagnement, courses, ateliers) sans argent — juste du temps.</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="label">⏱️ Concept clé</div>
+    <div class="concept">
+      <div class="concept-item">
+        <div class="num">1h</div>
+        <div class="desc">de service donné</div>
+      </div>
+      <div class="concept-item" style="font-size:32px;border:none;background:transparent;">=</div>
+      <div class="concept-item">
+        <div class="num">1 TIME</div>
+        <div class="desc">crédité sur le wallet</div>
+      </div>
+      <div class="concept-item" style="font-size:32px;border:none;background:transparent;">→</div>
+      <div class="concept-item">
+        <div class="num">♻️</div>
+        <div class="desc">réutilisable pour un service</div>
+      </div>
+    </div>
+
+    <div class="footer">TimeHeroes — Juillet 2026</div>
+  </div>
+</div>
+</body>
+</html>
