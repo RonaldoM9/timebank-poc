@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Deck Partenaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #F8F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F3F0EB;
+    --accent: #00A889;
+    --accent-hover: #008F78;
+    --accent-soft: #E6F7F3;
+    --text: #101010;
+    --text-secondary: #5F6368;
+    --text-muted: #9CA3AF;
+    --border: #E8E1D8;
+    --border-light: #F0EBE3;
+    --radius: 16px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.08);
+    --slide-w: 1280px;
+    --slide-h: 720px;
+  }
+  html, body { width: 100%; height: 100%; background: #E8E1D8; color: var(--text); font-family: 'Inter', sans-serif; overflow: hidden; }
+  .deck { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .deck-inner { position: relative; width: var(--slide-w); height: var(--slide-h); transform-origin: center center; }
+  .slide { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; padding: 60px 80px; overflow: hidden; border-radius: 8px; background: var(--bg); }
+  .slide.active { opacity: 1; visibility: visible; }
+  .slide-content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+  .nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; align-items: center; gap: 16px; background: var(--surface); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 50px; padding: 10px 24px; box-shadow: var(--shadow-lg); }
+  .nav-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: all 0.2s; font-size: 16px; }
+  .nav-btn:hover { color: var(--accent); background: var(--accent-soft); }
+  .nav-dots { display: flex; gap: 6px; }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); cursor: pointer; transition: all 0.3s; }
+  .nav-dot.active { background: var(--accent); width: 22px; border-radius: 4px; }
+  .nav-dot:hover { background: var(--text-muted); }
+  .nav-counter { font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
+  h1 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.1; font-size: 48px; }
+  h2 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.1; font-size: 36px; margin-bottom: 8px; }
+  h3 { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 20px; letter-spacing: -0.01em; }
+  .accent { color: var(--accent); }
+  .slide-label { font-size: 13px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card-soft { background: var(--accent-soft); border: none; }
+  .stat-num { font-family: 'Anton', sans-serif; font-size: 42px; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+  .icon-circle { width: 48px; height: 48px; border-radius: 50%; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 12px; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-soft); color: var(--accent); padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: white; padding: 14px 32px; border-radius: 50px; font-weight: 600; font-size: 16px; border: none; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .btn-outline { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
+  .btn-outline:hover { background: var(--accent-soft); }
+  .spacer { flex: 1; }
+  .footer-bar { display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border); margin-top: auto; }
+  .footer-bar .logo { font-family: 'Anton', sans-serif; font-size: 18px; color: var(--accent); }
+  .footer-bar .page { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+  .big-icon { font-size: 64px; margin-bottom: 16px; }
+  .text-center { text-align: center; }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .hero-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; }
+  .hero-sub { font-size: 18px; color: var(--text-secondary); margin-top: 16px; max-width: 600px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="deck">
+<div class="deck-inner">
+
+<!-- SLIDE 1: Problème -->
+<div class="slide active" data-slide="0">
+  <div class="slide-content">
+    <div class="slide-label">Le constat</div>
+    <h1 style="font-size:56px;margin-bottom:24px;">L'entraide est<br><span class="accent">invisible</span> et <span class="accent">non structurée</span></h1>
+    <p style="font-size:18px;color:var(--text-secondary);line-height:1.6;max-width:700px;margin-bottom:40px;">
+    Dans les quartiers et les résidences, des milliers de petits gestes solidaires ont lieu chaque jour, mais personne ne les voit, ne les mesure, ne les valorise.
+    </p>
+    <div class="grid-4">
+      <div class="card card-accent">
+        <div class="stat-num">👴</div>
+        <h3 style="margin:8px 0 4px;">Isolement</h3>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.4;">2M de seniors en situation d'isolement relationnel en France</p>
+      </div>
+      <div class="card card-accent">
+        <div class="stat-num">👀</div>
+        <h3 style="margin:8px 0 4px;">Invisible</h3>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.4;">L'entraide de proximité n'est ni visible, ni valorisée</p>
+      </div>
+      <div class="card card-accent">
+        <div class="stat-num">📋</div>
+        <h3 style="margin:8px 0 4px;">Pas d'outil</h3>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.4;">Aucun outil simple pour piloter l'entraide et mesurer son impact</p>
+      </div>
+      <div class="card card-accent">
+        <div class="stat-num">🤝</div>
+        <h3 style="margin:8px 0 4px;">Bénévolat fragile</h3>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.4;">Le bénévolat classique peine à recruter et à fidéliser</p>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span class="logo">TIMEHEROES</span>
+      <span class="page">01 / 08</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Solution -->
+<div class="slide" data-slide="1">
+  <div class="slide-content">
+    <div class="slide-label">Notre réponse</div>
+    <h1 style="font-size:48px;margin-bottom:8px;">TimeHeroes</h1>
+    <p style="font-size:20px;color:var(--text-secondary);line-height:1.5;max-width:700px;margin-bottom:32px;">
+    Une plateforme qui transforme l'entraide informelle en <strong>un système visible, juste et mesurable</strong>.
+    </p>
+    <div class="grid-3" style="flex:1;">
+      <div class="card card-soft flex-center" style="flex-direction:column;gap:8px;">
+        <div style="font-size:40px;">⏱️</div>
+        <h3>1h de service = 1 TIME</h3>
+        <p style="font-size:14px;color:var(--text-secondary);text-align:center;line-height:1.5;">Pas d'argent. Chaque heure donnée crée un droit à recevoir.</p>
+      </div>
+      <div class="card card-soft flex-center" style="flex-direction:column;gap:8px;">
+        <div style="font-size:40px;">🛡️</div>
+        <h3>Échanges sécurisés</h3>
+        <p style="font-size:14px;color:var(--text-secondary);text-align:center;line-height:1.5;">Système d'escrow : le TIME est bloqué jusqu'à confirmation du service.</p>
+      </div>
+      <div class="card card-soft flex-center" style="flex-direction:column;gap:8px;">
+        <div style="font-size:40px;">📊</div>
+        <h3>Impact mesuré</h3>
+        <p style="font-size:14px;color:var(--text-secondary);text-align:center;line-height:1.5;">33 métriques × 6 catégories pour piloter l'impact social.</p>
+      </div>
+    </div>
+    <div style="margin-top:auto;padding-top:16px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);">
+      <span class="tag">🎯 Cible</span>
+      <span style="font-size:13px;color:var(--text-secondary);">Organisations locales, CCAS, associations, résidences seniors</span>
+      <span class="page" style="font-size:12px;color:var(--text-muted);margin-left:auto;">02 / 08</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Comment ça marche -->
+<div class="slide" data-slide="2">
+  <div class="slide-content">
+    <div class="slide-label">Le fonctionnement</div>
+    <h2>Comment ça <span class="accent">marche</span></h2>
+    <p style="color:var(--text-secondary);margin-bottom:32px;font-size:15px;">Un participant propose un service → un autre le réserve → l'échange a lieu → le TIME est transféré</p>
+    <div style="display:flex;gap:16px;flex:1;align-items:center;">
+      <div class="card flex-center" style="flex-direction:column;gap:8px;flex:1;padding:28px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-family:'Anton',sans-serif;font-size:24px;color:var(--accent);">1</div>
+        <h3>Un héros propose</h3>
+        <p style="font-size:13px;color:var(--text-secondary);">Cours de yoga, accompagnement course, petit bricolage</p>
+      </div>
+      <div style="font-size:28px;color:var(--text-muted);">→</div>
+      <div class="card flex-center" style="flex-direction:column;gap:8px;flex:1;padding:28px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-family:'Anton',sans-serif;font-size:24px;color:var(--accent);">2</div>
+        <h3>Un bénéficiaire réserve</h3>
+        <p style="font-size:13px;color:var(--text-secondary);">Le TIME est bloqué dans l'escrow</p>
+      </div>
+      <div style="font-size:28px;color:var(--text-muted);">→</div>
+      <div class="card flex-center" style="flex-direction:column;gap:8px;flex:1;padding:28px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-family:'Anton',sans-serif;font-size:24px;color:var(--accent);">3</div>
+        <h3>Service réalisé</h3>
+        <p style="font-size:13px;color:var(--text-secondary);">Les deux confirment → le TIME est libéré</p>
+      </div>
+      <div style="font-size:28px;color:var(--text-muted);">→</div>
+      <div class="card flex-center" style="flex-direction:column;gap:8px;flex:1;padding:28px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-family:'Anton',sans-serif;font-size:24px;color:var(--accent);">4</div>
+        <h3>Le héros réutilise</h3>
+        <p style="font-size:13px;color:var(--text-secondary);">Son TIME pour un autre service. Le cercle vertueux.</p>
+      </div>
+    </div>
+    <div style="margin-top:auto;padding-top:16px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);">
+      <span class="tag">⏱️ 1h = 1 TIME</span>
+      <span class="page" style="font-size:12px;color:var(--text-muted);margin-left:auto;">03 / 08</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Rôle du facilitateur -->
+<div class="slide" data-slide="3">
+  <div class="slide-content">
+    <div class="slide-label">L'accompagnement</div>
+    <h2>Le rôle du <span class="accent">facilitateur</span></h2>
+    <p style="color:var(--text-secondary);margin-bottom:28px;font-size:15px;">Un acteur clé sur le terrain, formé et outillé par TimeHeroes</p>
+    <div class="grid-2" style="flex:1;">
+      <div class="card card-accent" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:32px;">👋</div>
+        <h3>Onboarding</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.5;">Inscrire les participants, expliquer le concept TIME, créer les premiers services</p>
+      </div>
+      <div class="card card-accent" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:32px;">🛡️</div>
+        <h3>Modération</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.5;">Valider les services proposés, résoudre les litiges, sécuriser la communauté</p>
+      </div>
+      <div class="card card-accent" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:32px;">🔥</div>
+        <h3>Animation</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.5;">Relancer les participants, proposer des défis, créer une dynamique de groupe</p>
+      </div>
+      <div class="card card-accent" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:32px;">📊</div>
+        <h3>Suivi & Bilan</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.5;">Points hebdomadaires avec TimeHeroes, participation au rapport d'impact</p>
+      </div>
+    </div>
+    <div style="margin-top:auto;padding-top:16px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);">
+      <span class="tag">👤 1 facilitateur pour 20-30 participants</span>
+      <span class="page" style="font-size:12px;color:var(--text-muted);margin-left:auto;">04 / 08</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Monnaie-temps / TIME -->
+<div class="slide" data-slide="4">
+  <div class="slide-content">
+    <div class="slide-label">La monnaie</div>
+    <h2>Le <span class="accent">TIME</span>, une monnaie qui a du sens</h2>
+    <p style="color:var(--text-secondary);margin-bottom:28px;font-size:15px;">1 heure de service donnée = 1 TIME crédité. Le temps devient une vraie monnaie d'échange.</p>
+    <div style="display:flex;gap:24px;flex:1;">
+      <div style="flex:1;display:flex;flex-direction:column;gap:16px;">
+        <div class="card flex-center" style="flex-direction:column;gap:8px;padding:32px;text-align:center;flex:1;">
+          <div style="font-size:48px;">⏱️</div>
+          <div class="stat-num" style="font-size:48px;">1h = 1 TIME</div>
+          <p style="font-size:14px;color:var(--text-secondary);">Pas de conversion €. Le temps est la seule mesure de valeur.</p>
+        </div>
+        <div class="card flex-center" style="flex-direction:column;gap:8px;padding:28px;text-align:center;">
+          <div style="font-size:32px;">🔄</div>
+          <h3>Réciprocité</h3>
+          <p style="font-size:13px;color:var(--text-secondary);">Donner crée un droit à recevoir. Tout le monde a quelque chose à offrir.</p>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:16px;">
+        <div class="card flex-center" style="flex-direction:column;gap:8px;padding:28px;text-align:center;">
+          <div style="font-size:32px;">💚</div>
+          <h3>Égalité</h3>
+          <p style="font-size:13px;color:var(--text-secondary);">1h de cours de yoga = 1h de bricolage = 1h d'accompagnement = 1 TIME</p>
+        </div>
+        <div class="card flex-center" style="flex-direction:column;gap:8px;padding:28px;text-align:center;flex:1;">
+          <div style="font-size:48px;">🗳️</div>
+          <h3>Gouvernance partagée</h3>
+          <p style="font-size:14px;color:var(--text-secondary);">Les organisations peuvent flécher leur pot TIME vers des programmes spécifiques (seniors, inclusion numérique…)</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span class="logo">TIMEHEROES</span>
+      <span class="page">05 / 08</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Impact mesurable -->
+<div class="slide" data-slide="5">
+  <div class="slide-content">
+    <div class="slide-label">L'impact</div>
+    <h2>Un impact <span class="accent">concret</span> et <span class="accent">mesuré</span></h2>
+    <p style="color:var(--text-secondary);margin-bottom:24px;font-size:15px;">33 métriques réparties en 6 catégories pour piloter l'impact social de chaque programme</p>
+    <div class="grid-3" style="flex:1;">
+      <div class="card card-soft" style="display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding:20px;">
+        <div class="stat-num">👥</div>
+        <div class="stat-label">Membres</div>
+        <p style="font-size:12px;color:var(--text-muted);">Participants actifs, rétention, nouveaux inscrits</p>
+      </div>
+      <div class="card card-soft" style="display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding:20px;">
+        <div class="stat-num">📋</div>
+        <div class="stat-label">Missions</div>
+        <p style="font-size:12px;color:var(--text-muted);">Services proposés, échanges réalisés, taux de complétion</p>
+      </div>
+      <div class="card card-soft" style="display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding:20px;">
+        <div class="stat-num">⏱️</div>
+        <div class="stat-label">TIME</div>
+        <p style="font-size:12px;color:var(--text-muted);">TIME en circulation, volume échangé, répartition</p>
+      </div>
+      <div class="card card-soft" style="display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding:20px;">
+        <div class="stat-num">🎯</div>
+        <div class="stat-label">Bénéficiaires</div>
+        <p style="font-size:12px;color:var(--text-muted);">Seniors accompagnés, héros mobilisés</p>
+      </div>
+      <div class="card card-soft" style="display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding:20px;">
+        <div class="stat-num">💚</div>
+        <div class="stat-label">Qualité</div>
+        <p style="font-size:12px;color:var(--text-muted);">Score bien-être (5 dimensions), satisfaction</p>
+      </div>
+      <div class="card card-soft" style="display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding:20px;">
+        <div class="stat-num">💰</div>
+        <div class="stat-label">Valeur sociale</div>
+        <p style="font-size:12px;color:var(--text-muted);">Heures × 15€/h = valorisation du bénévolat</p>
+      </div>
+    </div>
+    <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 20px;display:flex;align-items:center;gap:12px;">
+      <span class="tag">📈 Bien-être</span>
+      <span style="font-size:13px;color:var(--text-secondary);">5 dimensions mesurées avant/après : isolement, capacité à demander de l'aide, sentiment d'utilité, confiance, envie de contribuer</span>
+    </div>
+    <div class="footer-bar">
+      <span class="logo">TIMEHEROES</span>
+      <span class="page">06 / 08</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Format du pilote -->
+<div class="slide" data-slide="6">
+  <div class="slide-content">
+    <div class="slide-label">Le pilote</div>
+    <h2>Format du <span class="accent">pilote</span></h2>
+    <p style="color:var(--text-secondary);margin-bottom:24px;font-size:15px;">Un programme clé en main pour tester la monnaie-temps sur votre territoire</p>
+    <div style="display:flex;gap:16px;flex:1;">
+      <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+        <div class="card" style="display:flex;gap:16px;align-items:center;">
+          <div style="font-size:32px;min-width:48px;text-align:center;">📅</div>
+          <div>
+            <strong>Durée</strong>
+            <p style="font-size:13px;color:var(--text-secondary);">6 à 8 semaines</p>
+          </div>
+        </div>
+        <div class="card" style="display:flex;gap:16px;align-items:center;">
+          <div style="font-size:32px;min-width:48px;text-align:center;">👥</div>
+          <div>
+            <strong>Participants</strong>
+            <p style="font-size:13px;color:var(--text-secondary);">20 à 50 personnes (seniors, bénévoles, habitants)</p>
+          </div>
+        </div>
+        <div class="card" style="display:flex;gap:16px;align-items:center;">
+          <div style="font-size:32px;min-width:48px;text-align:center;">🎓</div>
+          <div>
+            <strong>Accompagnement</strong>
+            <p style="font-size:13px;color:var(--text-secondary);">Onboarding + suivi facilitateur + bilan impact</p>
+          </div>
+        </div>
+        <div class="card" style="display:flex;gap:16px;align-items:center;">
+          <div style="font-size:32px;min-width:48px;text-align:center;">📊</div>
+          <div>
+            <strong>Livrable final</strong>
+            <p style="font-size:13px;color:var(--text-secondary);">Rapport d'impact complet (données, témoignages, KPIs)</p>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+        <h3 style="margin-bottom:4px;">📋 Phases du pilote</h3>
+        <div class="card card-accent" style="display:flex;gap:12px;align-items:center;padding:14px 20px;">
+          <span style="font-family:'Anton',sans-serif;color:var(--accent);font-size:18px;">S1</span>
+          <span style="font-size:13px;">Onboarding : comptes, concept, premiers services</span>
+        </div>
+        <div class="card card-accent" style="display:flex;gap:12px;align-items:center;padding:14px 20px;">
+          <span style="font-family:'Anton',sans-serif;color:var(--accent);font-size:18px;">S2-3</span>
+          <span style="font-size:13px;">Lancement : mise en relation, premiers échanges</span>
+        </div>
+        <div class="card card-accent" style="display:flex;gap:12px;align-items:center;padding:14px 20px;">
+          <span style="font-family:'Anton',sans-serif;color:var(--accent);font-size:18px;">S4-6</span>
+          <span style="font-size:13px;">Croissance : montée en volume, observations terrain</span>
+        </div>
+        <div class="card card-accent" style="display:flex;gap:12px;align-items:center;padding:14px 20px;">
+          <span style="font-family:'Anton',sans-serif;color:var(--accent);font-size:18px;">S7-8</span>
+          <span style="font-size:13px;">Bilan : collecte données, questionnaires, rapport</span>
+        </div>
+        <div style="margin-top:auto;display:flex;gap:8px;">
+          <span class="tag">🆓 Découverte : gratuit</span>
+          <span class="tag">🤝 Accompagné : 500€</span>
+          <span class="tag">🎯 Sur-mesure : 1500€</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span class="logo">TIMEHEROES</span>
+      <span class="page">07 / 08</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Appel à action -->
+<div class="slide" data-slide="7">
+  <div class="slide-content">
+    <div class="hero-wrap">
+      <div class="slide-label">Passons à l'action</div>
+      <h1 style="font-size:56px;margin-bottom:16px;">Prêt·e à lancer<br><span class="accent">votre pilote</span> ?</h1>
+      <p style="font-size:18px;color:var(--text-secondary);max-width:550px;line-height:1.6;margin-bottom:40px;">
+      Septembre 2026 : lancez votre premier programme d'entraide locale avec TimeHeroes.<br>
+      Accompagnement complet, impact mesuré, zéro risque.
+      </p>
+      <div style="display:flex;gap:16px;">
+        <div class="btn">🚀 Démarrer un pilote</div>
+        <div class="btn btn-outline">📞 Prendre RDV</div>
+      </div>
+      <div style="margin-top:32px;display:flex;gap:24px;align-items:center;">
+        <span style="font-size:14px;color:var(--text-muted);">timeheroes.fr</span>
+        <span style="color:var(--border);">|</span>
+        <span style="font-size:14px;color:var(--text-muted);">Ronald Mounien</span>
+        <span style="color:var(--border);">|</span>
+        <span style="font-size:14px;color:var(--text-muted);">MBA ESSEC</span>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span class="logo">TIMEHEROES</span>
+      <span class="page">08 / 08</span>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn" onclick="prevSlide()">◀</button>
+  <div class="nav-dots" id="dots"></div>
+  <span class="nav-counter"><span id="current">1</span>/<span id="total">8</span></span>
+  <button class="nav-btn" onclick="nextSlide()">▶</button>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function update() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  document.getElementById('current').textContent = current + 1;
+  document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+}
+
+function nextSlide() { if (current < total - 1) { current++; update(); } }
+function prevSlide() { if (current > 0) { current--; update(); } }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextSlide();
+  if (e.key === 'ArrowLeft') prevSlide();
+});
+
+// Create dots
+const dots = document.getElementById('dots');
+for (let i = 0; i < total; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => { current = i; update(); };
+  dots.appendChild(dot);
+}
+</script>
+
+</body>
+</html>
