@@ -41,7 +41,7 @@ export default function BookServiceClient({
   const [selectedSlot, setSelectedSlot] = useState<{ startAt: string; endAt: string } | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
-  const totalTime = service.ratePerHour * hours;
+  const totalTime = 1 * hours;
   const insufficient = balance < totalTime;
 
   // Fetch available slots when hours change
@@ -147,7 +147,7 @@ export default function BookServiceClient({
                 Tarif
               </div>
               <span className="text-tb-accent font-semibold text-sm">
-                {service.ratePerHour} TIME / heure
+                1 TIME / heure
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -253,7 +253,7 @@ export default function BookServiceClient({
             <div className="bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl p-4">
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-[#6b7280]">
-                  {service.ratePerHour} TIME × {hours}h
+                  1 TIME × {hours}h
                 </span>
                 <span className="text-[#111111] font-semibold">
                   {totalTime} TIME

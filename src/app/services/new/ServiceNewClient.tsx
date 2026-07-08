@@ -125,7 +125,7 @@ export default function ServiceNewClient() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
+              <div className="sm:col-span-2">
                 <label htmlFor="category" className="block text-sm font-medium text-tb-text-secondary mb-1.5">
                   Catégorie
                 </label>
@@ -144,24 +144,13 @@ export default function ServiceNewClient() {
                   <p className="text-red-400 text-xs mt-1">{errors.category[0]}</p>
                 )}
               </div>
+            </div>
 
-              <div>
-                <label htmlFor="ratePerHour" className="block text-sm font-medium text-tb-text-secondary mb-1.5">
-                  Tarif (TIME/h)
-                </label>
-                <input
-                  id="ratePerHour"
-                  name="ratePerHour"
-                  type="number"
-                  min="1"
-                  step="1"
-                  placeholder="2"
-                  className="w-full bg-tb-bg border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors"
-                />
-                {errors?.ratePerHour && (
-                  <p className="text-red-400 text-xs mt-1">{errors.ratePerHour[0]}</p>
-                )}
-              </div>
+            <div className="bg-tb-bg border border-tb-border rounded-xl px-4 py-3">
+              <p className="text-sm text-tb-text-secondary flex items-center gap-2">
+                <Clock className="w-4 h-4 text-tb-accent" />
+                <span>1h de service = <strong className="text-tb-accent">1 TIME</strong> — le temps est la seule monnaie.</span>
+              </p>
             </div>
 
             {/* ─── Lot 18 — Missions Solidaires ──────────────────────────────── */}

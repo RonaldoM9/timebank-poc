@@ -26,7 +26,7 @@ export default function PublicServiceCard({
             {category}
           </span>
           <span className="text-tb-accent font-semibold text-sm whitespace-nowrap ml-2">
-            {ratePerHour} TIME/h
+            1 TIME/h
           </span>
         </div>
         <h3 className="font-semibold text-tb-text-primary mb-1 line-clamp-1 group-hover:text-tb-accent transition-colors">

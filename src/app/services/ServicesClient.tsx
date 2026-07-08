@@ -270,7 +270,7 @@ export default function ServicesClient({ initialServices }: { initialServices: S
                         {service.category}
                       </span>
                       <span className="text-tb-accent font-semibold text-sm whitespace-nowrap ml-2">
-                        {service.ratePerHour} TIME/h
+                        1 TIME/h
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 mb-1.5">

@@ -20,7 +20,6 @@ const createServiceSchema = z.object({
   title: z.string().min(3, "Le titre doit faire au moins 3 caractères"),
   description: z.string().min(10, "La description doit faire au moins 10 caractères"),
   category: z.string().min(1, "La catégorie est requise"),
-  ratePerHour: z.coerce.number().int().positive("Le tarif doit être un nombre entier positif"),
   // Lot 18 — Missions Solidaires
   isSolidarityMission: z.coerce.boolean().optional().default(false),
   solidarityCategory: z.string().optional(),
@@ -58,7 +57,6 @@ export async function createService(formData: FormData) {
     title: formData.get("title"),
     description: formData.get("description"),
     category: formData.get("category"),
-    ratePerHour: formData.get("ratePerHour"),
   };
 
   const parsed = createServiceSchema.safeParse(raw);
@@ -67,7 +65,7 @@ export async function createService(formData: FormData) {
     return { errors: fieldErrors };
   }
 
-  const { title, description, category, ratePerHour, isSolidarityMission, solidarityCategory, solidarityReason } = parsed.data;
+  const { title, description, category, isSolidarityMission, solidarityCategory, solidarityReason } = parsed.data;
 
   // Validation: solidarity fields required if mission is solidarity
   if (isSolidarityMission && !solidarityCategory) {
@@ -96,7 +94,7 @@ export async function createService(formData: FormData) {
       title,
       description,
       category,
-      ratePerHour,
+      ratePerHour: 1,
       providerId: user.id,
       status: "active",
       ...solidarityData,

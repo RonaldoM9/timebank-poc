@@ -99,7 +99,7 @@ export default function MyServicesClient({ services }: { services: Service[] }) 
                     <span className="bg-tb-surface-elevated border border-tb-border rounded-lg px-2 py-0.5">
                       {service.category}
                     </span>
-                    <span>{service.ratePerHour} TIME/h</span>
+                    1 TIME/h
                     <span>
                       Créé le{" "}
                       {new Date(service.createdAt).toLocaleDateString("fr-FR")}

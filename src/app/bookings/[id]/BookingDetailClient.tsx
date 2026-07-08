@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, User, Shield, Calendar, CheckCircle, XCircle, Hourglass, AlertTriangle, QrCode, RefreshCw, Smartphone, Copy, HeartHandshake } from "lucide-react";
 import { completeBooking, cancelBooking } from "@/app/services/actions";
+import { fundBookingFromCommunityPot } from "@/app/wallet/community-pot-actions";
 import { generateQRToken } from "@/app/services/qr-actions";
 import { generateNFCToken } from "@/app/services/nfc-actions";
 import { createRatingAction } from "@/app/ratings/actions";
@@ -136,6 +137,14 @@ export default function BookingDetailClient({
   const [nfcSuccessMsg, setNfcSuccessMsg] = useState<string | null>(null);
   const [nfcCopied, setNfcCopied] = useState(false);
 
+  // Community Pot funding state (staff only)
+  const [fundAmount, setFundAmount] = useState(booking.totalTime);
+  const [fundReason, setFundReason] = useState("");
+  const [fundSubmitting, setFundSubmitting] = useState(false);
+  const [fundError, setFundError] = useState<string | null>(null);
+  const [fundSuccess, setFundSuccess] = useState(false);
+  const [fundModalOpen, setFundModalOpen] = useState(false);
+
   // For countdown display
   const [timeLeft, setTimeLeft] = useState<string>("");
 
@@ -261,6 +270,33 @@ export default function BookingDetailClient({
       document.body.removeChild(textarea);
       setNfcCopied(true);
       setTimeout(() => setNfcCopied(false), 2000);
+    }
+  }
+
+  async function handleFundFromCommunityPot() {
+    if (!fundAmount || fundAmount <= 0) {
+      setFundError("Le montant doit être supérieur à 0.");
+      return;
+    }
+    setFundSubmitting(true);
+    setFundError(null);
+
+    const result = await fundBookingFromCommunityPot(
+      booking.id,
+      fundAmount,
+      fundReason.trim() || undefined
+    );
+
+    if ("error" in result) {
+      setFundError(result.error);
+      setFundSubmitting(false);
+    } else {
+      setFundSuccess(true);
+      setFundSubmitting(false);
+      setFundModalOpen(false);
+      setTimeout(() => {
+        router.refresh();
+      }, 1500);
     }
   }
 
@@ -392,10 +428,10 @@ export default function BookingDetailClient({
             </div>
             <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4">
               <span className="text-tb-text-secondary text-xs uppercase tracking-wider font-semibold">
-                Tarif horaire
+                Valeur horaire
               </span>
               <p className="text-tb-text-primary text-lg font-semibold mt-1">
-                {booking.service.ratePerHour} TIME/h
+                1 TIME/h
               </p>
             </div>
             <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4">
@@ -437,6 +473,90 @@ export default function BookingDetailClient({
                   ({booking.communityPotAmount} TIME).
                 </p>
               </div>
+            </div>
+          )}
+
+          {/* ─── Admin/Facilitator — Fund from Community Pot ─── */}
+          {isPending && (userRole === "ADMIN" || userRole === "FACILITATOR") && !booking.fundedByCommunityPot && (
+            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <HeartHandshake className="w-5 h-5 text-tb-accent" />
+                <h2 className="text-sm font-semibold text-tb-text-primary uppercase tracking-wider">
+                  Pot commun TimeHeroes
+                </h2>
+              </div>
+
+              {fundSuccess ? (
+                <div className="bg-tb-accent/10 border border-tb-accent/20 rounded-xl p-4 text-center">
+                  <CheckCircle className="w-8 h-8 text-tb-accent mx-auto mb-2" />
+                  <p className="text-tb-accent font-semibold">Mission financée par le pot commun !</p>
+                  <p className="text-tb-text-secondary text-sm mt-1">
+                    {fundAmount} TIME prélevés du pot commun.
+                  </p>
+                </div>
+              ) : fundModalOpen ? (
+                <div className="space-y-4">
+                  <p className="text-tb-text-secondary text-sm">
+                    Financer cette mission depuis le pot commun TimeHeroes.
+                  </p>
+                  <div>
+                    <label className="block text-xs text-tb-text-secondary mb-1.5">Montant (TIME)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={fundAmount}
+                      onChange={(e) => setFundAmount(Number(e.target.value))}
+                      className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-tb-text-secondary mb-1.5">Raison (optionnelle)</label>
+                    <input
+                      type="text"
+                      value={fundReason}
+                      onChange={(e) => setFundReason(e.target.value)}
+                      placeholder="Ex: Mission solidaire..."
+                      className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors text-sm"
+                    />
+                  </div>
+                  {fundError && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                      <p className="text-red-400 text-sm">{fundError}</p>
+                    </div>
+                  )}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleFundFromCommunityPot}
+                      disabled={fundSubmitting}
+                      className="flex-1 bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 text-white font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
+                    >
+                      {fundSubmitting ? "Financement..." : "Confirmer le financement"}
+                    </button>
+                    <button
+                      onClick={() => { setFundModalOpen(false); setFundError(null); }}
+                      disabled={fundSubmitting}
+                      className="bg-tb-surface border border-tb-border text-tb-text-secondary hover:text-tb-text-primary font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-tb-text-secondary text-sm mb-4">
+                    Financer cette mission avec le pot commun TimeHeroes pour permettre à un membre sans TIME de bénéficier de ce service.
+                  </p>
+                  <button
+                    onClick={() => setFundModalOpen(true)}
+                    className="bg-tb-accent hover:bg-tb-accent-hover text-white font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <HeartHandshake className="w-4 h-4" />
+                      Financer avec le pot commun
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

@@ -121,7 +121,7 @@ function BookingCard({
               </span>
             )}
             <span>
-              {booking.hours}h × {booking.service.ratePerHour} TIME/h ={" "}
+              {booking.hours}h × 1 TIME/h={" "}
               <span className="text-tb-accent font-semibold">{booking.totalTime} TIME</span>
             </span>
           </div>
