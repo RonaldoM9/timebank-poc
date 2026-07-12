@@ -3,9 +3,6 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "./DashboardClient";
-import { getTotalXp, getLevelFromXp } from "@/lib/gamification";
-import { getDashboardStats } from "@/lib/dashboard";
-import { getCommunityPot } from "@/lib/community-pot";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -13,57 +10,40 @@ export default async function DashboardPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, name: true, timeBalance: true, walletAddress: true, reputation: true, city: true, department: true, serviceRadiusKm: true, availableOnline: true },
+    select: { id: true, name: true, timeBalance: true, city: true },
   });
-
   if (!user) redirect("/auth/signin");
 
-  const services = await prisma.service.findMany({
-    where: { providerId: user.id },
-    select: { id: true, status: true },
-  });
-
-  const activeCount = services.filter((s) => s.status === "active").length;
-  const inactiveCount = services.filter((s) => s.status === "inactive").length;
-
-  const [myBookingsCount, missionsCount, recentTransactions, ratingsReceivedCount, dashboardStats, communityPot] = await Promise.all([
-    prisma.booking.count({ where: { clientId: user.id, status: "pending" } }),
+  const [pendingCount, recentTransactions, serviceCount] = await Promise.all([
     prisma.booking.count({
-      where: { service: { providerId: user.id }, status: "pending" },
+      where: {
+        OR: [
+          { clientId: user.id, status: "pending" },
+          { service: { providerId: user.id }, status: "pending" },
+        ],
+      },
     }),
     prisma.transaction.findMany({
-      where: {
-        OR: [{ fromId: user.id }, { toId: user.id }],
-        type: { in: ["escrow", "release", "refund"] },
-      },
+      where: { OR: [{ fromId: user.id }, { toId: user.id }] },
       orderBy: { createdAt: "desc" },
       take: 3,
+      select: { id: true, type: true, amount: true, createdAt: true },
     }),
-    prisma.rating.count({ where: { toId: user.id } }),
-    getDashboardStats(user.id),
-    getCommunityPot(),
+    prisma.service.count({
+      where: { status: "active", providerId: { not: user.id } },
+    }),
   ]);
-
-  const totalXp = await getTotalXp(user.id);
-  const heroLevel = getLevelFromXp(totalXp);
-  const badgesCount = await prisma.userBadge.count({ where: { userId: user.id } });
 
   return (
     <DashboardClient
-      user={{ ...user, reputation: user.reputation }}
-      activeServices={activeCount}
-      inactiveServices={inactiveCount}
-      myBookingsCount={myBookingsCount}
-      missionsCount={missionsCount}
+      user={{ id: user.id, name: user.name, timeBalance: user.timeBalance, city: user.city }}
+      pendingCount={pendingCount}
       recentTransactions={recentTransactions.map((tx) => ({
         ...tx,
         createdAt: tx.createdAt.toISOString(),
       }))}
-      ratingsReceivedCount={ratingsReceivedCount}
-      heroLevel={heroLevel}
-      badgesCount={badgesCount}
-      dashboardStats={dashboardStats}
-      communityPotBalance={communityPot.balance}
+      serviceCount={serviceCount}
+      walletBalance={user.timeBalance}
     />
   );
 }
