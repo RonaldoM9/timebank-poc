@@ -32,12 +32,6 @@ export default function PublicHeader() {
           >
             Impact
           </Link>
-          <a
-            href="#how-it-works"
-            className="text-sm text-tb-text-secondary hover:text-tb-text-primary transition-colors"
-          >
-            Comment ça marche
-          </a>
           <Link
             href="/auth/signin"
             className="text-sm px-4 py-2 rounded-xl bg-tb-accent text-white font-semibold hover:bg-tb-accent-hover transition-colors"
@@ -80,13 +74,6 @@ export default function PublicHeader() {
             >
               Impact
             </Link>
-            <a
-              href="#how-it-works"
-              className="text-sm text-tb-text-secondary hover:text-tb-text-primary transition-colors"
-              onClick={() => setMenuOpen(false)}
-            >
-              Comment ça marche
-            </a>
             <Link
               href="/auth/signin"
               className="text-sm px-4 py-2 rounded-xl bg-tb-accent text-white font-semibold hover:bg-tb-accent-hover transition-colors text-center"
