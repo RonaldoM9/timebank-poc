@@ -1,0 +1,35 @@
+{
+	"appId": "com.timeheroes.app",
+	"appName": "TimeHeroes",
+	"webDir": ".next",
+	"server": {
+		"url": "https://timeheroes.fr",
+		"cleartext": false
+	},
+	"android": {
+		"allowMixedContent": false
+	},
+	"ios": {
+		"contentInset": "always"
+	},
+	"plugins": {
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
+		},
+		"SplashScreen": {
+			"launchShowDuration": 1500,
+			"launchAutoHide": true,
+			"backgroundColor": "#2BB286",
+			"androidScaleType": "CENTER_CROP",
+			"showSpinner": false
+		},
+		"StatusBar": {
+			"style": "DARK",
+			"backgroundColor": "#2BB286"
+		}
+	}
+}
