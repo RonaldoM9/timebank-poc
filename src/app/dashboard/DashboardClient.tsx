@@ -18,10 +18,16 @@ interface Props {
   walletBalance: number;
 }
 
+const TX_ICON: Record<string, string> = {
+  escrow: "📅",
+  release: "✅",
+  refund: "↩️",
+};
+
 const TX_LABEL: Record<string, string> = {
-  escrow: "📅 Réservation",
-  release: "✅ Mission terminée",
-  refund: "↩️ Remboursement",
+  escrow: "Réservation",
+  release: "Mission terminée",
+  refund: "Remboursement",
 };
 
 export default function DashboardClient({
@@ -126,11 +132,11 @@ export default function DashboardClient({
                 return (
                   <Link
                     key={tx.id}
-                    href="/wallet"
+                    href="/wallet/history"
                     className="flex items-center gap-3 px-4 py-3 hover:bg-tb-bg/50 transition-colors group"
                   >
                     <span className="text-base">
-                      {TX_LABEL[tx.type]?.split(" ")[0] || "📄"}
+                      {TX_ICON[tx.type] || "📄"}
                     </span>
                     <span className="flex-1 text-sm text-tb-text-primary">
                       {TX_LABEL[tx.type] || tx.type}
