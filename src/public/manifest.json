@@ -1,0 +1,36 @@
+{
+  "name": "TimeHeroes",
+  "short_name": "TimeHeroes",
+  "description": "Échangez du temps, pas de l'argent — la banque du temps des héros du quotidien",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#F8F5F0",
+  "theme_color": "#2BB286",
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "lang": "fr-FR",
+  "categories": ["community", "social", "utilities"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard TimeHeroes"
+    }
+  ]
+}

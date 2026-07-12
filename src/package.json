@@ -19,6 +19,14 @@
     "seed:senior-program": "tsx prisma/seed-senior-program.ts"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/push-notifications": "^8.1.1",
+    "@capacitor/share": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.2",
+    "@capgo/capacitor-nfc": "^8.2.2",
     "@next/font": "^14.2.15",
     "@prisma/client": "^6.6.0",
     "bcryptjs": "^3.0.3",
