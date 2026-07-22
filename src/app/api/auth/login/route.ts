@@ -14,21 +14,22 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const callbackUrl = formData.get("callbackUrl") as string || "/dashboard";
 
     if (!email || !password) {
-      return NextResponse.redirect(new URL("/auth/signin?error=missing", origin));
+      return NextResponse.redirect(new URL(`/auth/signin?error=missing&callbackUrl=${encodeURIComponent(callbackUrl)}`, origin));
     }
 
     // Find user
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return NextResponse.redirect(new URL("/auth/signin?error=invalid", origin));
+      return NextResponse.redirect(new URL(`/auth/signin?error=invalid&callbackUrl=${encodeURIComponent(callbackUrl)}`, origin));
     }
 
     // Verify password
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return NextResponse.redirect(new URL("/auth/signin?error=invalid", origin));
+      return NextResponse.redirect(new URL(`/auth/signin?error=invalid&callbackUrl=${encodeURIComponent(callbackUrl)}`, origin));
     }
 
     // Manual CSRF: get token + cookie, then pass both
@@ -61,8 +62,8 @@ export async function POST(req: NextRequest) {
     const allCookies = loginRes.headers.getSetCookie();
     console.log("Cookies from login:", JSON.stringify(allCookies));
 
-    // Build response with redirect to dashboard on the correct host
-    const response = NextResponse.redirect(new URL("/dashboard", origin));
+    // Build response with redirect to callbackUrl on the correct host
+    const response = NextResponse.redirect(new URL(callbackUrl.startsWith("/") ? callbackUrl : "/dashboard", origin));
 
     // Forward session-token cookie from NextAuth's response
     if (allCookies && allCookies.length > 0) {

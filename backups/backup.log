@@ -1,0 +1,17 @@
+[main 10067c4] 📦 Backup base SQLite — 2026-07-12
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 backups/db-2026-07-12.db
+To https://github.com/RonaldoM9/timebank-poc.git
+   4520afd..10067c4  main -> main
+✅ Backup 2026-07-12 terminé — 868K
+🔍 Scanning for secrets...
+✅ Scan skipped (no analyzable files).
+[main c0aceaf] 📦 Backup base SQLite — 2026-07-19
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 backups/db-2026-07-19.db
+remote: error: GH006: Protected branch update failed for refs/heads/main.        
+remote: 
+remote: - Changes must be made through a pull request.        
+To https://github.com/RonaldoM9/timebank-poc.git
+ ! [remote rejected] main -> main (protected branch hook declined)
+error: failed to push some refs to 'https://github.com/RonaldoM9/timebank-poc.git'

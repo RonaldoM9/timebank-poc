@@ -362,6 +362,13 @@ export default function WalletClient({
                 <Plus className="w-4 h-4" />
                 Gagner des TIME
               </Link>
+              <Link
+                href="/wallet/transfer"
+                className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-sm font-medium rounded-xl px-5 py-2.5 transition-all duration-300"
+              >
+                <ArrowUpRight className="w-4 h-4" />
+                Transférer du TIME
+              </Link>
             </div>
           </div>
         </div>

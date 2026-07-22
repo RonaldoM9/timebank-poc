@@ -24,6 +24,8 @@ const createServiceSchema = z.object({
   isSolidarityMission: z.coerce.boolean().optional().default(false),
   solidarityCategory: z.string().optional(),
   solidarityReason: z.string().optional(),
+  // Lot 22 — Organisation rattachée
+  organizationId: z.string().optional(),
 });
 
 export type ServiceItem = {
@@ -57,6 +59,7 @@ export async function createService(formData: FormData) {
     title: formData.get("title"),
     description: formData.get("description"),
     category: formData.get("category"),
+    organizationId: formData.get("organizationId"),
   };
 
   const parsed = createServiceSchema.safeParse(raw);
@@ -65,7 +68,7 @@ export async function createService(formData: FormData) {
     return { errors: fieldErrors };
   }
 
-  const { title, description, category, isSolidarityMission, solidarityCategory, solidarityReason } = parsed.data;
+  const { title, description, category, isSolidarityMission, solidarityCategory, solidarityReason, organizationId } = parsed.data;
 
   // Validation: solidarity fields required if mission is solidarity
   if (isSolidarityMission && !solidarityCategory) {
@@ -98,6 +101,7 @@ export async function createService(formData: FormData) {
       providerId: user.id,
       status: "active",
       ...solidarityData,
+      ...(organizationId ? { organizationId } : {}),
     },
   });
 

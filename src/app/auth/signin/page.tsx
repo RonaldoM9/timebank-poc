@@ -11,10 +11,11 @@ const errorMessages: Record<string, string> = {
 };
 
 export default async function SigninPage(props: {
-  searchParams?: Promise<{ error?: string }>;
+  searchParams?: Promise<{ error?: string; callbackUrl?: string }>;
 }) {
   const searchParams = await props.searchParams;
   const error = searchParams?.error;
+  const callbackUrl = searchParams?.callbackUrl || "/dashboard";
   const errorMsg = error ? errorMessages[error] || "Erreur inconnue" : null;
 
   return (
@@ -43,8 +44,9 @@ export default async function SigninPage(props: {
             </div>
           )}
 
-          {/* Native HTML form — POST to custom login endpoint (no CSRF needed) */}
+          {/* Native HTML form — POST to custom login endpoint */}
           <form action="/api/auth/login" method="POST" className="space-y-4">
+            <input type="hidden" name="callbackUrl" value={callbackUrl} />
             <div>
               <label className="block text-sm mb-1.5 text-tb-text-secondary">
                 Email
@@ -84,6 +86,7 @@ export default async function SigninPage(props: {
             <form action="/api/auth/login" method="POST" className="space-y-2">
               <input type="hidden" name="email" value="demo@timeheroes.fr" />
               <input type="hidden" name="password" value="TimeHeroes2026!" />
+              <input type="hidden" name="callbackUrl" value={callbackUrl} />
               <button
                 type="submit"
                 className="w-full font-semibold rounded-xl px-4 py-3 transition-colors text-sm bg-tb-surface border border-tb-accent text-tb-accent"

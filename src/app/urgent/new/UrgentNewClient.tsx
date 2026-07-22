@@ -16,12 +16,16 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
   const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string[]> | null>(null);
   const [pending, setPending] = useState(false);
-  const [total, setTotal] = useState(0);
+  const [timeMode, setTimeMode] = useState<'hours' | 'time'>('hours');
+  const [inputHours, setInputHours] = useState('');
+  const [inputTime, setInputTime] = useState('');
 
-  function calcTotal() {
-    const hours = parseInt((document.querySelector<HTMLInputElement>('input[name="hours"]')?.value) || "0", 10);
-    const rate = parseInt((document.querySelector<HTMLInputElement>('input[name="ratePerHour"]')?.value) || "0", 10);
-    setTotal(hours * rate);
+  function calcFromHours() {
+    // no-op: heures drive time now
+  }
+
+  function calcFromTime() {
+    // no-op: time drives heures
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -193,56 +197,72 @@ export default function UrgentNewClient({ prefill }: { prefill: { city?: string;
               </label>
             </div>
 
-            {/* TIME */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="hours" className="block text-sm font-medium text-gray-500 mb-1.5">
-                  Heures estimées
-                </label>
-                <input
-                  id="hours"
-                  name="hours"
-                  type="number"
-                  min="1"
-                  step="1"
-                  placeholder="2"
-                  onChange={calcTotal}
-                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
-                />
-                {errors?.hours && (
-                  <p className="text-red-400 text-xs mt-1">{errors.hours[0]}</p>
-                )}
+            {/* TIME — choix basculant Heures ↔ TIME */}
+            <div className="bg-[#f59e0b]/5 border border-[#f59e0b]/20 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2 text-center justify-center">
+                <span className="text-xs font-medium text-gray-500">Je sais combien de</span>
+                <div className="flex bg-white border border-gray-200 rounded-lg overflow-hidden text-sm">
+                  <button
+                    type="button"
+                    onClick={() => { setTimeMode('hours'); calcFromHours(); }}
+                    className={`px-3 py-1 text-xs font-medium transition-colors ${timeMode === 'hours' ? 'bg-[#f59e0b] text-black' : 'text-gray-500 hover:text-gray-700'}`}
+                  >
+                    heures
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setTimeMode('time'); calcFromTime(); }}
+                    className={`px-3 py-1 text-xs font-medium transition-colors ${timeMode === 'time' ? 'bg-[#f59e0b] text-black' : 'text-gray-500 hover:text-gray-700'}`}
+                  >
+                    TIME
+                  </button>
+                </div>
               </div>
-              <div>
-                <label htmlFor="ratePerHour" className="block text-sm font-medium text-gray-500 mb-1.5">
-                  Tarif (TIME/h)
-                </label>
-                <input
-                  id="ratePerHour"
-                  name="ratePerHour"
-                  type="number"
-                  min="1"
-                  max="3"
-                  step="1"
-                  placeholder="2"
-                  onChange={calcTotal}
-                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
-                />
-                <p className="text-[10px] text-gray-400 mt-1">1, 2 ou 3 TIME/h max</p>
-                {errors?.ratePerHour && (
-                  <p className="text-red-400 text-xs mt-1">{errors.ratePerHour[0]}</p>
-                )}
+
+              <input type="hidden" name="ratePerHour" value="1" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="hours" className="block text-xs font-medium text-gray-500 mb-1">
+                    Heures estimées
+                  </label>
+                  <input
+                    id="hours"
+                    name="hours"
+                    type="number"
+                    min="1"
+                    step="1"
+                    placeholder="2"
+                    value={inputHours}
+                    onChange={(e) => { setInputHours(e.target.value); setTimeMode('hours'); setInputTime(String(Number(e.target.value) || 0)); }}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
+                  />
+                  {errors?.hours && (
+                    <p className="text-red-400 text-xs mt-1">{errors.hours[0]}</p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="timeAmount" className="block text-xs font-medium text-gray-500 mb-1">
+                    TIME
+                  </label>
+                  <input
+                    id="timeAmount"
+                    name="timeAmount"
+                    type="number"
+                    min="1"
+                    step="1"
+                    placeholder="2"
+                    value={inputTime}
+                    onChange={(e) => { setInputTime(e.target.value); setTimeMode('time'); setInputHours(String(Number(e.target.value) || 0)); }}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#f59e0b] transition-colors"
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1">1 h = 1 TIME</p>
+                  {errors?.timeAmount && (
+                    <p className="text-red-400 text-xs mt-1">{errors.timeAmount[0]}</p>
+                  )}
+                </div>
               </div>
             </div>
-
-            {/* Total */}
-            {total > 0 && (
-              <div className="bg-[#f59e0b]/5 border border-[#f59e0b]/20 rounded-xl p-4 text-center">
-                <span className="text-gray-500 text-sm">Total : </span>
-                <span className="text-2xl font-bold text-[#f59e0b]">{total}</span>
-                <span className="text-gray-500 text-sm"> TIME</span>
-              </div>
-            )}
 
             <button
               type="submit"

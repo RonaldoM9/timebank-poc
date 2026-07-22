@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { getOrganizationBySlug } from "@/lib/organizations";
+import { prisma } from "@/lib/prisma";
 import OrganizationDetailClient from "./OrganizationDetailClient";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -23,6 +24,22 @@ export default async function OrganizationDetailPage({
   const session = await getServerSession(authOptions);
   const org = await getOrganizationBySlug(slug);
   if (!org) notFound();
+
+  const userId = (session?.user as any)?.id;
+
+  // Fetch user's membership role
+  let myRole: string | null = null;
+  if (userId) {
+    const membership = await prisma.organizationMember.findUnique({
+      where: { organizationId_userId: { organizationId: org.id, userId } },
+      select: { role: true, status: true },
+    });
+    myRole = membership?.status === "ACTIVE" ? membership.role : null;
+    // ADMIN global bypass — peut gérer même sans être membre
+    if (!myRole && (session?.user as any)?.role === "ADMIN") {
+      myRole = "ADMIN";
+    }
+  }
 
   const orgData = {
     id: org.id,
@@ -51,6 +68,7 @@ export default async function OrganizationDetailPage({
     <OrganizationDetailClient
       organization={orgData}
       user={session?.user ? { id: (session.user as any).id, name: session.user.name || "" } : null}
+      myRole={myRole}
     />
   );
 }

@@ -1,560 +1,589 @@
-#!/usr/bin/env python3
-"""Generate a professional TimeHeroes MBA pitch deck in .pptx format."""
+"""TimeHeroes — Cours : Transformer le site en app mobile (powerpoint)"""
 
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
-import math
 
-# ── Color palette ──
-BG = RGBColor(0x0a, 0x0a, 0x0a)
-SURFACE = RGBColor(0x11, 0x11, 0x11)
-SURFACE2 = RGBColor(0x18, 0x18, 0x18)
-SURFACE3 = RGBColor(0x1f, 0x1f, 0x1f)
-ACCENT = RGBColor(0x00, 0xd4, 0xaa)
-ACCENT_DARK = RGBColor(0x00, 0xb8, 0x94)
-TEXT = RGBColor(0xf5, 0xf5, 0xf5)
-TEXT_SEC = RGBColor(0xa3, 0xa3, 0xa3)
-TEXT_MUTED = RGBColor(0x6b, 0x6b, 0x6b)
-BORDER = RGBColor(0x26, 0x26, 0x26)
-WHITE = RGBColor(0xff, 0xff, 0xff)
-ORANGE = RGBColor(0xf0, 0xa5, 0x00)
-PURPLE = RGBColor(0x7c, 0x5c, 0xfc)
+# ─── PALETTE LIGHT (TimeHeroes) ──────────────────────────────────────
+BG = RGBColor(0xF8, 0xF5, 0xF0)
+SURFACE = RGBColor(0xFF, 0xFF, 0xFF)
+SURFACE2 = RGBColor(0xF0, 0xED, 0xE8)
+ACCENT = RGBColor(0x2B, 0xB2, 0x86)
+ACCENT_DARK = RGBColor(0x00, 0x8F, 0x78)
+TEXT = RGBColor(0x1A, 0x1A, 0x1A)
+TEXT_SEC = RGBColor(0x6B, 0x6B, 0x6B)
+TEXT_MUTED = RGBColor(0x9A, 0x9A, 0x9A)
+BORDER = RGBColor(0xE5, 0xE0, 0xD8)
+WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+AMBER = RGBColor(0xF5, 0x9E, 0x0B)
+PINK = RGBColor(0xEC, 0x48, 0x99)
+PURPLE = RGBColor(0x7C, 0x3A, 0xED)
+GREEN = RGBColor(0x10, 0xB9, 0x81)
+
+W = Inches(13.33)
+H = Inches(7.5)
 
 prs = Presentation()
-prs.slide_width = Inches(13.333)
-prs.slide_height = Inches(7.5)
-SW = prs.slide_width
-SH = prs.slide_height
+prs.slide_width = W
+prs.slide_height = H
+BLANK = prs.slide_layouts[6]  # blank layout
 
-# ── Helper functions ──
 
-def set_slide_bg(slide, color):
-    bg = slide.background
-    fill = bg.fill
+# ─── HELPERS ─────────────────────────────────────────────────────────
+
+def set_bg(slide, color):
+    fill = slide.background.fill
     fill.solid()
     fill.fore_color.rgb = color
 
-def add_rect(slide, left, top, width, height, fill_color, line_color=None):
-    shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, width, height)
-    shape.fill.solid()
-    shape.fill.fore_color.rgb = fill_color
-    if line_color:
-        shape.line.color.rgb = line_color
-        shape.line.width = Pt(1)
+def rect(slide, l, t, w, h, color=WHITE, border=None, radius=None):
+    shape_type = MSO_SHAPE.ROUNDED_RECTANGLE if radius else MSO_SHAPE.RECTANGLE
+    s = slide.shapes.add_shape(shape_type, l, t, w, h)
+    s.fill.solid()
+    s.fill.fore_color.rgb = color
+    if border:
+        s.line.color.rgb = border
+        s.line.width = Pt(1)
     else:
-        shape.line.fill.background()
-    return shape
+        s.line.fill.background()
+    if radius:
+        s.adjustments[0] = radius
+    return s
 
-def add_rounded_rect(slide, left, top, width, height, fill_color, line_color=None):
-    shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
-    shape.fill.solid()
-    shape.fill.fore_color.rgb = fill_color
-    if line_color:
-        shape.line.color.rgb = line_color
-        shape.line.width = Pt(1)
-    else:
-        shape.line.fill.background()
-    # Adjust corner radius
-    shape.adjustments[0] = 0.05
-    return shape
+def circle(slide, l, t, size, color):
+    s = slide.shapes.add_shape(MSO_SHAPE.OVAL, l, t, size, size)
+    s.fill.solid()
+    s.fill.fore_color.rgb = color
+    s.line.fill.background()
+    return s
 
-def add_textbox(slide, left, top, width, height, text, font_size=18, color=TEXT, bold=False, alignment=PP_ALIGN.LEFT, font_name='Calibri'):
-    txBox = slide.shapes.add_textbox(left, top, width, height)
-    tf = txBox.text_frame
-    tf.word_wrap = True
-    p = tf.paragraphs[0]
-    p.text = text
-    p.font.size = Pt(font_size)
-    p.font.color.rgb = color
-    p.font.bold = bold
-    p.font.name = font_name
-    p.alignment = alignment
-    return txBox
+def textbox(slide, l, t, w, h):
+    tb = slide.shapes.add_textbox(l, t, w, h)
+    tb.text_frame.word_wrap = True
+    return tb.text_frame
 
-def add_multiline_textbox(slide, left, top, width, height, lines, default_size=14, default_color=TEXT_SEC, default_align=PP_ALIGN.LEFT, font_name='Calibri'):
-    """lines: list of (text, size, color, bold)"""
-    txBox = slide.shapes.add_textbox(left, top, width, height)
-    tf = txBox.text_frame
-    tf.word_wrap = True
-    for i, line_data in enumerate(lines):
-        if isinstance(line_data, str):
-            text, size, color, bold = line_data, default_size, default_color, False
-        else:
-            text = line_data[0]
-            size = line_data[1] if len(line_data) > 1 else default_size
-            color = line_data[2] if len(line_data) > 2 else default_color
-            bold = line_data[3] if len(line_data) > 3 else False
-        if i == 0:
-            p = tf.paragraphs[0]
-        else:
-            p = tf.add_paragraph()
-        p.text = text
-        p.font.size = Pt(size)
-        p.font.color.rgb = color
-        p.font.bold = bold
-        p.font.name = font_name
-        p.alignment = default_align
-        p.space_after = Pt(4)
-    return txBox
-
-def add_tag(slide, left, top, text, fill=None):
-    """Small pill-shaped tag"""
-    if fill is None:
-        fill = SURFACE2
-    shape = add_rounded_rect(slide, left, top, Inches(1.8), Inches(0.32), fill, BORDER)
-    add_textbox(slide, left + Inches(0.12), top + Inches(0.02), Inches(1.5), Inches(0.28),
-                text, font_size=10, color=ACCENT, alignment=PP_ALIGN.CENTER)
-    return shape
-
-# ══════════════════════════════════════════════
-# SLIDE 1 — TITLE
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])  # blank
-set_slide_bg(slide, BG)
-
-# Hero label
-add_textbox(slide, Inches(4.5), Inches(1.0), Inches(4.5), Inches(0.5),
-            "⚡ STRATEGIC PROJECT", font_size=16, color=ACCENT,
-            alignment=PP_ALIGN.CENTER, font_name='Calibri')
-
-# Main title
-add_textbox(slide, Inches(1.5), Inches(1.6), Inches(10.5), Inches(2.0),
-            "TIMEHEROES", font_size=80, color=TEXT,
-            alignment=PP_ALIGN.CENTER, font_name='Arial Black')
-
-# Subtitle
-add_textbox(slide, Inches(1.5), Inches(3.4), Inches(10.5), Inches(1.0),
-            "Une banque du temps moderne pour les héros du quotidien",
-            font_size=22, color=TEXT_SEC, alignment=PP_ALIGN.CENTER)
-
-# Tags
-tags_x = [Inches(3.2), Inches(5.7), Inches(7.8)]
-tags_text = ["🎯 POC fonctionnel", "🏗️ 12 lots livrés", "🚀 timeheroes.fr"]
-for i, (x, txt) in enumerate(zip(tags_x, tags_text)):
-    w = Inches(0.3 + len(txt) * 0.16)
-    shape = add_rounded_rect(slide, x, Inches(4.6), w, Inches(0.38), SURFACE2, BORDER)
-    shape.adjustments[0] = 0.5
-    add_textbox(slide, x + Inches(0.08), Inches(4.63), w, Inches(0.35),
-                txt, font_size=12, color=ACCENT, alignment=PP_ALIGN.CENTER)
-
-# Author
-add_textbox(slide, Inches(3.5), Inches(6.0), Inches(6.5), Inches(0.5),
-            "Ronald Mounien — MBA ESSEC Executive 2026", font_size=14, color=TEXT_MUTED,
-            alignment=PP_ALIGN.CENTER)
-
-# ══════════════════════════════════════════════
-# SLIDE 2 — PROBLEM
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
-
-add_tag(slide, Inches(0.6), Inches(0.5), "Pourquoi ce projet ?")
-
-add_textbox(slide, Inches(0.6), Inches(1.0), Inches(9.0), Inches(1.2),
-            "Le temps, dernière ressource vraiment égale",
-            font_size=44, color=TEXT, font_name='Arial Black')
-
-# Three problem cards
-problems = [
-    ("🤝", "Lien social en déclin",
-     "Nos quartiers se fragmentent. 1 Français sur 3\nne connaît pas ses voisins. Les plateformes\nmarchandes ne font que consumer ce lien."),
-    ("💸", "Barrière économique",
-     "Aide informatique, soutien scolaire, bricolage —\nces services existent mais sont inaccessibles\nà ceux qui n'ont pas les moyens de payer."),
-    ("📉", "Engagement non valorisé",
-     "Des millions d'heures de bénévolat ne laissent\naucune trace. Pas de reconnaissance, pas de CV,\npas de valorisation professionnelle."),
-]
-
-card_w = Inches(3.8)
-card_h = Inches(3.8)
-start_x = Inches(0.6)
-gap = Inches(0.3)
-card_y = Inches(2.6)
-
-for i, (emoji, title, desc) in enumerate(problems):
-    x = start_x + i * (card_w + gap)
-    card = add_rounded_rect(slide, x, card_y, card_w, card_h, SURFACE2, BORDER)
-    card.adjustments[0] = 0.04
-    add_textbox(slide, x + Inches(0.3), card_y + Inches(0.3), Inches(0.6), Inches(0.6),
-                emoji, font_size=32, color=TEXT)
-    add_textbox(slide, x + Inches(0.3), card_y + Inches(1.1), card_w - Inches(0.6), Inches(0.5),
-                title, font_size=18, color=TEXT, bold=True)
-    add_textbox(slide, x + Inches(0.3), card_y + Inches(1.7), card_w - Inches(0.6), Inches(1.8),
-                desc, font_size=13, color=TEXT_SEC)
-
-# ══════════════════════════════════════════════
-# SLIDE 3 — SOLUTION
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
-
-add_tag(slide, Inches(0.6), Inches(0.5), "La solution")
-
-add_textbox(slide, Inches(0.6), Inches(1.0), Inches(9.0), Inches(1.0),
-            "Une banque du temps — 1 heure = 1 TIME",
-            font_size=44, color=TEXT, font_name='Arial Black')
-
-add_textbox(slide, Inches(0.6), Inches(2.0), Inches(11.0), Inches(1.0),
-            "TimeHeroes est une plateforme où chaque compétence devient une monnaie d'échange.\nPas d'argent. Du temps contre du temps. Avec des mécanismes modernes pour\nsécuriser, valoriser et gamifier l'entraide.",
-            font_size=16, color=TEXT_SEC)
-
-# Three value props
-props = [
-    ("🔒", "Escrow TIME",
-     "Les TIME sont bloqués pendant la\nmission. Libérés uniquement après\nvalidation des deux parties."),
-    ("✅", "QR Code & NFC",
-     "Validation de complétion par QR\ncode scanné ou tag NFC. Zéro\nfriction entre héros."),
-    ("🏆", "Gamification Hero",
-     "XP, badges, niveaux, quêtes et\nrécompenses. Chaque heure\nd'entraide compte."),
-]
-
-for i, (emoji, title, desc) in enumerate(props):
-    x = start_x + i * (card_w + gap)
-    y = Inches(3.2)
-    card = add_rounded_rect(slide, x, y, card_w, Inches(3.2), SURFACE2, BORDER)
-    card.adjustments[0] = 0.04
-    add_textbox(slide, x + Inches(card_w/2 - 0.3), y + Inches(0.3), Inches(0.7), Inches(0.6),
-                emoji, font_size=36, color=TEXT, alignment=PP_ALIGN.CENTER)
-    add_textbox(slide, x + Inches(0.3), y + Inches(1.2), card_w - Inches(0.6), Inches(0.5),
-                title, font_size=18, color=TEXT, bold=True, alignment=PP_ALIGN.CENTER)
-    add_textbox(slide, x + Inches(0.3), y + Inches(1.8), card_w - Inches(0.6), Inches(1.5),
-                desc, font_size=14, color=TEXT_SEC, alignment=PP_ALIGN.CENTER)
-
-# ══════════════════════════════════════════════
-# SLIDE 4 — FEATURES (9 cards in 3x3)
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
-
-add_tag(slide, Inches(0.6), Inches(0.3), "Fonctionnalités")
-add_textbox(slide, Inches(0.6), Inches(0.65), Inches(8.0), Inches(0.8),
-            "Tout ce qu'un héros mérite d'avoir",
-            font_size=36, color=TEXT, font_name='Arial Black')
-
-features = [
-    ("🏪", "Marketplace", "Recherche, filtres par catégories,\ndistance et localisation."),
-    ("💰", "Wallet & TIME", "Portefeuille TIME avec historique,\ntransferts, mint initial."),
-    ("📅", "Booking & Escrow", "Réservation, blocage en escrow,\nannulation, complétion."),
-    ("⭐", "Réputation", "Système de notes et avis\npost-mission."),
-    ("🆘", "Urgent Help", "Mode demande urgente. La\ncommunauté répond vite."),
-    ("📍", "Local Heroes", "Géolocalisation déclarative.\nHéros dans ton quartier."),
-    ("📱", "QR / NFC", "Validation physique de\ncomplétion par scan/tag."),
-    ("🎮", "Gamification", "XP, badges, niveaux, quêtes\net récompenses."),
-    ("🎯", "Pot Commun", "Financement solidaire des\nmissions communautaires."),
-]
-
-fw = Inches(3.85)
-fh = Inches(1.35)
-cols = 3
-padding_x = Inches(0.35)
-padding_y = Inches(0.25)
-start_fx = Inches(0.6)
-start_fy = Inches(1.6)
-
-for i, (emoji, title, desc) in enumerate(features):
-    col = i % cols
-    row = i // cols
-    x = start_fx + col * (fw + padding_x)
-    y = start_fy + row * (fh + padding_y)
-    
-    card = add_rounded_rect(slide, x, y, fw, fh, SURFACE2, BORDER)
-    card.adjustments[0] = 0.04
-    add_textbox(slide, x + Inches(0.2), y + Inches(0.2), Inches(0.4), Inches(0.5),
-                emoji, font_size=24)
-    add_textbox(slide, x + Inches(0.7), y + Inches(0.15), Inches(2.8), Inches(0.4),
-                title, font_size=15, color=TEXT, bold=True)
-    add_textbox(slide, x + Inches(0.7), y + Inches(0.55), Inches(2.9), Inches(0.7),
-                desc, font_size=12, color=TEXT_SEC)
-
-# ══════════════════════════════════════════════
-# SLIDE 5 — GAMIFICATION DIFFERENTIATOR
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
-
-add_tag(slide, Inches(0.6), Inches(0.5), "⭐ Différentiateur clé")
-add_textbox(slide, Inches(0.6), Inches(1.0), Inches(9.0), Inches(1.0),
-            "Gamification Hero : ton entraide devient ton XP",
-            font_size=40, color=TEXT, font_name='Arial Black')
-
-gitems = [
-    ("⭐", "5 Niveaux", "Débutant → Héros Légendaire.\nChaque niveau débloque des privilèges."),
-    ("🎖️", "Badges", "Badges thématiques pour les\nactions spéciales et l'engagement."),
-    ("📋", "Quêtes", "Défis quotidiens et missions\nspéciales pour rester engagé."),
-]
-
-for i, (emoji, title, desc) in enumerate(gitems):
-    x = start_x + i * (card_w + gap)
-    y = Inches(2.4)
-    card = add_rounded_rect(slide, x, y, card_w, Inches(2.8), SURFACE2, BORDER)
-    card.adjustments[0] = 0.04
-    add_textbox(slide, x + Inches(0.3), y + Inches(0.3), Inches(0.5), Inches(0.5),
-                emoji, font_size=28)
-    add_textbox(slide, x + Inches(0.3), y + Inches(0.9), card_w - Inches(0.6), Inches(0.5),
-                title, font_size=22, color=ACCENT, bold=True)
-    add_textbox(slide, x + Inches(0.3), y + Inches(1.5), card_w - Inches(0.6), Inches(1.2),
-                desc, font_size=14, color=TEXT_SEC)
-
-# Highlight box
-hl = add_rounded_rect(slide, Inches(0.6), Inches(5.6), Inches(12.0), Inches(1.3), SURFACE2, BORDER)
-hl.adjustments[0] = 0.04
-add_multiline_textbox(slide, Inches(0.9), Inches(5.75), Inches(11.5), Inches(1.2), [
-    ("≠ Différence fondamentale :", 14, ACCENT, True),
-    ("La plupart des time banks s'arrêtent au matching. TimeHeroes transforme chaque échange en expérience engageante —", 13, TEXT_SEC, False),
-    ("comme un RPG social où plus tu aides, plus tu montes en grade. Et ça devient un CV de l'engagement.", 13, TEXT_SEC, False),
-])
-
-# ══════════════════════════════════════════════
-# SLIDE 6 — USER JOURNEY
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
-
-add_tag(slide, Inches(0.6), Inches(0.5), "Parcours utilisateur")
-add_textbox(slide, Inches(0.6), Inches(1.0), Inches(9.0), Inches(0.8),
-            "Du besoin → au héros en 5 minutes",
-            font_size=40, color=TEXT, font_name='Arial Black')
-
-steps_left = [
-    ("1", "Je crée mon compte Hero",
-     "Inscription rapide avec email. Ou connexion démo\n1-clic pour tester immédiatement."),
-    ("2", "Je propose ou je cherche",
-     "Je publie ce que je sais faire, ou je trouve\nquelqu'un pour m'aider. Filtres par catégorie."),
-    ("3", "Je réserve en quelques clics",
-     "Les TIME sont bloqués en escrow. Le héros\nest prévenu. La mission est officielle."),
-]
-steps_right = [
-    ("4", "La mission se réalise",
-     "Cours de guitare, aide déménagement, soutien\nscolaire… le temps s'échange."),
-    ("5", "Je valide par QR/NFC",
-     "Un scan. Un tag. Les TIME sont libérés.\nLes deux parties notent l'expérience."),
-    ("6", "Je gagne XP + badges 🏆",
-     "Ma réputation grandit. Mon niveau grimpe.\nMon CV d'engagement s'enrichit."),
-]
-
-def draw_steps(slide, steps, offset_x, start_y=Inches(2.2)):
-    step_h = Inches(1.3)
-    for i, (num, title, desc) in enumerate(steps):
-        y = start_y + i * (step_h + Inches(0.15))
-        # Number circle
-        shape = slide.shapes.add_shape(MSO_SHAPE.OVAL, offset_x, y, Inches(0.5), Inches(0.5))
-        shape.fill.solid()
-        shape.fill.fore_color.rgb = SURFACE2
-        shape.line.color.rgb = ACCENT
-        shape.line.width = Pt(1.5)
-        tf = shape.text_frame
-        tf.word_wrap = False
+def p_add(tf, text="", size=14, bold=False, color=TEXT, align=PP_ALIGN.LEFT, name="Calibri"):
+    if len(tf.paragraphs) == 1 and tf.paragraphs[0].text == '' and not text:
         p = tf.paragraphs[0]
-        p.text = num
-        p.font.size = Pt(18)
-        p.font.color.rgb = ACCENT
-        p.font.bold = True
-        p.alignment = PP_ALIGN.CENTER
-        tf.paragraphs[0].space_before = Pt(0)
-        
-        add_textbox(slide, offset_x + Inches(0.7), y - Inches(0.02), Inches(5.0), Inches(0.35),
-                    title, font_size=16, color=TEXT, bold=True)
-        add_textbox(slide, offset_x + Inches(0.7), y + Inches(0.35), Inches(5.0), Inches(0.7),
-                    desc, font_size=12, color=TEXT_SEC)
+    elif len(tf.paragraphs) == 1 and tf.paragraphs[0].text == '':
+        p = tf.paragraphs[0]
+    else:
+        p = tf.add_paragraph()
+    p.text = text
+    p.font.size = Pt(size)
+    p.font.bold = bold
+    p.font.color.rgb = color
+    p.font.name = name
+    p.alignment = align
+    p.space_after = Pt(4)
+    return p
 
-draw_steps(slide, steps_left, Inches(0.6))
-draw_steps(slide, steps_right, Inches(6.8))
+def add_run(p, text, size=14, bold=False, color=TEXT):
+    r = p.add_run()
+    r.text = text
+    r.font.size = Pt(size)
+    r.font.bold = bold
+    r.font.color.rgb = color
+    r.font.name = "Calibri"
+    return r
 
-# ══════════════════════════════════════════════
-# SLIDE 7 — METRICS
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
+def card(slide, l, t, w, h, title="", body="", accent=None):
+    c = rect(slide, l, t, w, h, SURFACE, BORDER, 0.02)
+    if accent:
+        rect(slide, l + Inches(0.05), t + Inches(0.1), Inches(0.04), h - Inches(0.2), accent)
+    tf = textbox(slide, l + Inches(0.25), t + Inches(0.15), w - Inches(0.5), h - Inches(0.3))
+    if title:
+        p_add(tf, title, 14, True, TEXT)
+    if body:
+        p_add(tf, body, 11, False, TEXT_SEC)
 
-add_tag(slide, Inches(0.6), Inches(0.5), "Chiffres & Réalisation")
-add_textbox(slide, Inches(0.6), Inches(1.0), Inches(9.0), Inches(0.8),
-            "Du concept à la réalité en 2 mois",
-            font_size=40, color=TEXT, font_name='Arial Black')
 
-# Big stats
-stats = [
-    ("12", "Lots fonctionnels\nlivrés"),
-    ("22+", "Routes /\npages"),
-    ("10", "Catégories de\nservices"),
-    ("5", "Niveaux\nHero"),
+def new_slide():
+    slide = prs.slides.add_slide(BLANK)
+    set_bg(slide, BG)
+    return slide
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 1 — TITLE
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+set_bg(s, ACCENT_DARK)
+# Decorative circles
+circle(s, Inches(-1), Inches(-1), Inches(3), RGBColor(0x22, 0xCC, 0xA0))
+circle(s, Inches(11), Inches(5), Inches(4), RGBColor(0x00, 0xAA, 0x88))
+circle(s, Inches(10), Inches(-2), Inches(2.5), RGBColor(0x00, 0x99, 0x77))
+
+tf = textbox(s, Inches(1.5), Inches(1.5), Inches(10), Inches(1))
+p_add(tf, "📱 Transformer TimeHeroes en App Mobile", 40, True, WHITE, PP_ALIGN.LEFT, "Calibri Light")
+
+tf = textbox(s, Inches(1.5), Inches(3), Inches(10), Inches(1.5))
+p_add(tf, "Cours complet : les 3 options pour passer du web au mobile\nPWA · Capacitor · React Native", 18, False, RGBColor(0xCC, 0xFA, 0xE8), PP_ALIGN.LEFT)
+
+# Infos
+tf = textbox(s, Inches(1.5), Inches(5.5), Inches(5), Inches(1))
+p_add(tf, "Projet : TimeHeroes — Banque du Temps", 12, False, RGBColor(0xAA, 0xEE, 0xDD))
+p_add(tf, "Stack actuel : Next.js 16 · Prisma · SQLite · Caddy", 12, False, RGBColor(0xAA, 0xEE, 0xDD))
+p_add(tf, "Juillet 2026", 12, False, RGBColor(0xAA, 0xEE, 0xDD))
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 2 — POURQUOI PASSER EN MOBILE ?
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+# Title
+tf = textbox(s, Inches(0.8), Inches(0.5), Inches(8), Inches(0.6))
+p_add(tf, "🎯 Pourquoi passer en mobile ?", 30, True, TEXT)
+# Sub
+tf = textbox(s, Inches(0.8), Inches(1.2), Inches(10), Inches(0.5))
+p_add(tf, "Le web ça marche, mais le mobile ouvre des super-pouvoirs", 14, False, TEXT_SEC)
+
+data = [
+    ("📷 Scanner un QR code", "❌ Pas de caméra native", "✅ Scan natif"),
+    ("📱 Valider par NFC", "❌ Pas de NFC en Web", "✅ Tap to validate"),
+    ("🔔 Notifications push", "⚠️ Si onglet ouvert", "✅ Push natif toujours"),
+    ("📴 Mode hors-ligne", "❌ Pas de cache durable", "✅ Cache offline"),
+    ("🏠 Icône écran d'accueil", "⚠️ Dépend du navigateur", "✅ Permanente"),
 ]
+for i, (label, web, mobile) in enumerate(data):
+    y = Inches(2) + Inches(i * 1)
+    card(s, Inches(0.8), y, Inches(5.5), Inches(0.85), "", label, None)
+    rect(s, Inches(6.5), y, Inches(2.5), Inches(0.85), RGBColor(0xFE, 0xF0, 0xF0), RGBColor(0xFE, 0xCB, 0xCB))
+    tf = textbox(s, Inches(6.6), y + Inches(0.15), Inches(2.3), Inches(0.6))
+    p_add(tf, web, 11, False, RGBColor(0xB9, 0x1C, 0x1C), PP_ALIGN.CENTER)
+    rect(s, Inches(9.2), y, Inches(2.5), Inches(0.85), RGBColor(0xEC, 0xFD, 0xF5), RGBColor(0x6E, 0xE7, 0xB7))
+    tf = textbox(s, Inches(9.3), y + Inches(0.15), Inches(2.3), Inches(0.6))
+    p_add(tf, mobile, 11, True, ACCENT_DARK, PP_ALIGN.CENTER)
 
-for i, (num, label) in enumerate(stats):
-    x = start_x + i * (Inches(2.9) + Inches(0.25))
-    y = Inches(2.2)
-    card = add_rounded_rect(slide, x, y, Inches(2.9), Inches(2.0), SURFACE2, BORDER)
-    card.adjustments[0] = 0.04
-    add_textbox(slide, x, y + Inches(0.2), Inches(2.9), Inches(0.8),
-                num, font_size=48, color=ACCENT, bold=True, alignment=PP_ALIGN.CENTER, font_name='Arial Black')
-    add_textbox(slide, x + Inches(0.2), y + Inches(1.1), Inches(2.5), Inches(0.8),
-                label, font_size=13, color=TEXT_SEC, alignment=PP_ALIGN.CENTER)
 
-# Detail boxes
-details = [
-    ("Lots livrés", "Auth & Wallet · Marketplace · Booking & Escrow ·\nRating & Reputation · Local Heroes · Urgent Help ·\nNFC Proof · Gamification · Demo Seed · Landing Page"),
-    ("Stack", "Next.js 16 · TypeScript · Prisma 6 · SQLite ·\nTailwind v4 · NextAuth · Zod"),
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 3 — LES 3 CHEMINS
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+tf = textbox(s, Inches(0.8), Inches(0.5), Inches(10), Inches(0.6))
+p_add(tf, "🛤️ Les 3 chemins possibles", 30, True, TEXT)
+tf = textbox(s, Inches(0.8), Inches(1.2), Inches(10), Inches(0.4))
+p_add(tf, "Trois stratégies complémentaires, pas concurrentes", 14, False, TEXT_SEC)
+
+options = [
+    ("PWA", "1 jour · 0€", "Site web qui s'installe\ncomme une app", ACCENT, "✅ Zéro coût\n✅ 100% code réutilisé\n❌ Pas de NFC"),
+    ("Capacitor", "3-5 jours · ~124€/an", "WebView native\n+ pont NFC/Camera", PURPLE, "✅ NFC natif\n✅ 95% code réutilisé\n❌ Perf WebView"),
+    ("React Native", "4-8 sem · 10k-32k€", "App 100% native\nréécrite de zéro", AMBER, "✅ Performance max\n✅ NFC + tout natif\n❌ 2 codebases"),
 ]
+for i, (name, time, desc, accent_color, pros) in enumerate(options):
+    x = Inches(0.8) + Inches(i * 4.2)
+    # Card
+    c = rect(s, x, Inches(1.9), Inches(3.8), Inches(5), SURFACE, BORDER, 0.02)
+    # Accent top bar
+    rect(s, x, Inches(1.9), Inches(3.8), Inches(0.06), accent_color)
+    # Circle with number
+    circle(s, x + Inches(1.4), Inches(2.2), Inches(1), accent_color)
+    tf = textbox(s, x + Inches(1.4), Inches(2.2), Inches(1), Inches(1))
+    tf.paragraphs[0].alignment = PP_ALIGN.CENTER
+    p_add(tf, str(i+1), 32, True, WHITE, PP_ALIGN.CENTER, "Calibri Light")
+    # Name
+    tf = textbox(s, x + Inches(0.3), Inches(3.4), Inches(3.2), Inches(0.5))
+    p_add(tf, name, 22, True, TEXT, PP_ALIGN.CENTER, "Calibri Light")
+    # Time
+    tf = textbox(s, x + Inches(0.3), Inches(3.9), Inches(3.2), Inches(0.4))
+    p_add(tf, time, 12, True, accent_color, PP_ALIGN.CENTER)
+    # Description
+    tf = textbox(s, x + Inches(0.3), Inches(4.3), Inches(3.2), Inches(0.6))
+    p_add(tf, desc, 11, False, TEXT_SEC, PP_ALIGN.CENTER)
+    # Pros/cons
+    tf = textbox(s, x + Inches(0.3), Inches(5.0), Inches(3.2), Inches(1.5))
+    for line in pros.split("\n"):
+        p_add(tf, line, 10, False, TEXT_SEC)
 
-for i, (title, content) in enumerate(details):
-    x = start_x + i * (Inches(6.0) + Inches(0.3))
-    y = Inches(4.6)
-    card = add_rounded_rect(slide, x, y, Inches(6.0), Inches(2.2), SURFACE2, BORDER)
-    card.adjustments[0] = 0.04
-    add_textbox(slide, x + Inches(0.3), y + Inches(0.2), Inches(5.5), Inches(0.4),
-                title, font_size=12, color=TEXT_MUTED, bold=False)
-    add_textbox(slide, x + Inches(0.3), y + Inches(0.65), Inches(5.5), Inches(1.3),
-                content, font_size=13, color=TEXT_SEC)
 
-# ══════════════════════════════════════════════
-# SLIDE 8 — ARCHITECTURE
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 4 — PWA DÉTAIL
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+# Decorative bg
+rect(s, Inches(0), Inches(0), Inches(4.5), H, ACCENT)
+tf = textbox(s, Inches(0.8), Inches(0.6), Inches(3.2), Inches(1.5))
+p_add(tf, "📲", 48, False, WHITE)
+p_add(tf, "PWA", 36, True, WHITE, name="Calibri Light")
+p_add(tf, "Progressive Web App", 14, False, RGBColor(0xBB, 0xF7, 0xE0))
+p_add(tf, "1 jour · 0€", 12, True, RGBColor(0x88, 0xF0, 0xD0))
 
-add_tag(slide, Inches(0.6), Inches(0.5), "Architecture & Déploiement")
-add_textbox(slide, Inches(0.6), Inches(1.0), Inches(9.0), Inches(0.8),
-            "Production ready",
-            font_size=40, color=TEXT, font_name='Arial Black')
-add_textbox(slide, Inches(0.6), Inches(1.7), Inches(9.0), Inches(0.5),
-            "Une stack moderne, un déploiement VPS réel",
-            font_size=16, color=TEXT_SEC)
+# Content on the right
+x = Inches(5)
+tf = textbox(s, x, Inches(0.5), Inches(8), Inches(0.5))
+p_add(tf, "Un site web qui se comporte comme une app", 22, True, TEXT, name="Calibri Light")
 
-# Stack tags
-stack = ["Next.js 16", "TypeScript", "Prisma 6", "SQLite", "Tailwind v4", "NextAuth", "Zod"]
-for i, item in enumerate(stack):
-    col = i % 4
-    row = i // 4
-    x = Inches(0.6) + col * Inches(2.8)
-    y = Inches(2.4) + row * Inches(0.42)
-    shape = add_rounded_rect(slide, x, y, Inches(2.5), Inches(0.35), SURFACE2, BORDER)
-    shape.adjustments[0] = 0.5
-    add_textbox(slide, x + Inches(0.08), y + Inches(0.02), Inches(2.3), Inches(0.3),
-                item, font_size=12, color=TEXT_SEC, alignment=PP_ALIGN.CENTER)
-
-# Deployment flow
-flow_box = add_rounded_rect(slide, Inches(0.6), Inches(3.5), Inches(5.5), Inches(2.5), SURFACE2, BORDER)
-flow_box.adjustments[0] = 0.04
-add_textbox(slide, Inches(0.9), Inches(3.6), Inches(5.0), Inches(0.4),
-            "Déploiement", font_size=14, color=ACCENT, bold=True)
-
-deploy_lines = [
-    "Client → HTTPS timeheroes.fr",
-    "  → Caddy (SSL) → localhost:3096",
-    "    → Next.js (programmatic server)",
-    "      → Prisma → SQLite",
+items = [
+    "📄 manifest.json → icône + thème + écran d'accueil",
+    "⚙️ Service Worker → cache offline + notifications push",
+    "📱 ✅ Fonctionne hors-ligne (pages en cache)",
+    "🔔 ✅ Notifications push (Web Push API)",
+    "📷 ⚠️ QR code via caméra Web (getUserMedia)",
+    "❌ NFC : impossible en WebView",
 ]
-add_multiline_textbox(slide, Inches(0.9), Inches(4.1), Inches(5.0), Inches(1.6),
-                      [(l, 13, TEXT_SEC, False) for l in deploy_lines])
+for i, item in enumerate(items):
+    y = Inches(1.3) + Inches(i * 0.65)
+    rect(s, x, y, Inches(7.8), Inches(0.5), SURFACE, BORDER, 0.02)
+    tf = textbox(s, x + Inches(0.2), y + Inches(0.08), Inches(7.4), Inches(0.35))
+    p_add(tf, item, 12, False, TEXT)
 
-# Demo box
-demo_box = add_rounded_rect(slide, Inches(6.5), Inches(3.5), Inches(6.0), Inches(2.5), SURFACE2, ACCENT)
-demo_box.adjustments[0] = 0.04
-demo_box.line.width = Pt(2)
-add_textbox(slide, Inches(6.8), Inches(3.7), Inches(5.5), Inches(0.4),
-            "🌐  timeheroes.fr", font_size=20, color=TEXT, bold=True)
-add_textbox(slide, Inches(6.8), Inches(4.2), Inches(5.5), Inches(0.4),
-            "Hébergé sur VPS Hetzner · Domaine OVH · SSL Let's Encrypt",
-            font_size=12, color=TEXT_SEC)
+# Examples
+tf = textbox(s, x, Inches(5.5), Inches(8), Inches(0.4))
+p_add(tf, "🌍 Exemples célèbres de PWA", 16, True, TEXT, name="Calibri Light")
+ex = ["Twitter (X)", "Pinterest (+40% de temps)", "Starbucks (commande offline)", "Uber (version allégée)"]
+for i, e in enumerate(ex):
+    tf = textbox(s, x + Inches(i * 2), Inches(6), Inches(1.9), Inches(0.5))
+    rect(s, x + Inches(i * 2), Inches(6), Inches(1.9), Inches(0.5), SURFACE, BORDER, 0.02)
+    tf = textbox(s, x + Inches(i * 2) + Inches(0.1), Inches(6) + Inches(0.08), Inches(1.7), Inches(0.35))
+    p_add(tf, e, 10, False, TEXT_SEC, PP_ALIGN.CENTER)
 
-add_textbox(slide, Inches(6.8), Inches(4.8), Inches(5.5), Inches(0.3),
-            "⚠️  Testez la démo", font_size=13, color=TEXT_MUTED)
-add_textbox(slide, Inches(6.8), Inches(5.1), Inches(5.5), Inches(0.3),
-            "Email : demo@timeheroes.fr", font_size=14, color=TEXT, bold=True)
-add_textbox(slide, Inches(6.8), Inches(5.4), Inches(5.5), Inches(0.3),
-            "Mot de passe : TimeHeroes2026!", font_size=14, color=TEXT, bold=True)
-add_textbox(slide, Inches(6.8), Inches(5.8), Inches(5.5), Inches(0.3),
-            "Ou utilisez le bouton ⚡ Connexion démo 1-clic",
-            font_size=12, color=TEXT_SEC)
 
-# ══════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 5 — CAPACITOR DÉTAIL
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+rect(s, Inches(0), Inches(0), Inches(4.5), H, PURPLE)
+tf = textbox(s, Inches(0.8), Inches(0.6), Inches(3.2), Inches(1.5))
+p_add(tf, "🔌", 48, False, WHITE)
+p_add(tf, "Capacitor", 36, True, WHITE, name="Calibri Light")
+p_add(tf, "Wrapper natif autour du site", 14, False, RGBColor(0xDD, 0xD6, 0xFC))
+p_add(tf, "3-5 jours · ~124€/an", 12, True, RGBColor(0xCC, 0xC0, 0xF5))
+
+x = Inches(5)
+tf = textbox(s, x, Inches(0.5), Inches(8), Inches(0.5))
+p_add(tf, "Le pont entre le web et le natif", 22, True, TEXT, name="Calibri Light")
+
+# Architecture diagram
+rect(s, x, Inches(1.2), Inches(7.8), Inches(2.5), SURFACE, BORDER, 0.02)
+items_y = [
+    (Inches(0.3), "🌐 WebView (ton site Next.js)", ACCENT),
+    (Inches(0.9), "⬇️  Pont JS → Natif (Capacitor Plugins)", PURPLE),
+    (Inches(1.5), "📱 Android (Kotlin)  ·  iOS (Swift)", AMBER),
+]
+for dy, label, color in items_y:
+    tf = textbox(s, x + Inches(0.3), Inches(1.3) + dy, Inches(7), Inches(0.5))
+    p_add(tf, label, 13, True if "⬇️" in label else False, color if "⬇️" in label else TEXT)
+
+# Feature grid
+features = [
+    ("📱 NFC natif", "✅ Validation par tap", ACCENT),
+    ("🔔 Push natif", "✅ FCM + APN", ACCENT),
+    ("📷 Caméra QR", "✅ Plugin Capacitor", ACCENT),
+    ("📴 Offline", "✅ Workbox cache", ACCENT),
+    ("💾 95% code réutilisé", "✅ Next.js inchangé", ACCENT),
+    ("🔄 Mise à jour", "✅ rebuild + npx cap sync", ACCENT),
+]
+for i, (feat, desc, color) in enumerate(features):
+    fx = x + Inches(i % 3 * 2.7)
+    fy = Inches(4.2) + Inches(i // 3 * 1.2)
+    rect(s, fx, fy, Inches(2.5), Inches(1), SURFACE, BORDER, 0.02)
+    tf = textbox(s, fx + Inches(0.15), fy + Inches(0.1), Inches(2.2), Inches(0.8))
+    p_add(tf, feat, 12, True, color)
+    p_add(tf, desc, 10, False, TEXT_SEC)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 6 — REACT NATIVE DÉTAIL
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+rect(s, Inches(0), Inches(0), Inches(4.5), H, AMBER)
+tf = textbox(s, Inches(0.8), Inches(0.6), Inches(3.2), Inches(1.5))
+p_add(tf, "⚛️", 48, False, WHITE)
+p_add(tf, "React Native", 36, True, WHITE, name="Calibri Light")
+p_add(tf, "App 100% native (réécriture UI)", 14, False, RGBColor(0xFE, 0xF3, 0xC7))
+p_add(tf, "4-8 semaines · 10k-32k€", 12, True, RGBColor(0xFD, 0xE6, 0x8A))
+
+x = Inches(5)
+tf = textbox(s, x, Inches(0.5), Inches(8), Inches(0.5))
+p_add(tf, "Le grand frère premium", 22, True, TEXT, name="Calibri Light")
+
+# Architecture
+rect(s, x, Inches(1.2), Inches(7.8), Inches(2), SURFACE, BORDER, 0.02)
+tf = textbox(s, x + Inches(0.3), Inches(1.35), Inches(7.2), Inches(1.7))
+p_add(tf, "Architecture :", 14, True, TEXT)
+p_add(tf, "┌──────────────────────────────┐", 10, False, TEXT_MUTED)
+p_add(tf, "│  App React Native (Expo)       │  ← UI réécrite", 10, False, TEXT)
+p_add(tf, "│  ├── Écrans natifs (FlatList…)  │", 10, False, TEXT)
+p_add(tf, "│  ├── NFC · Camera · Push        │", 10, False, TEXT)
+p_add(tf, "│  └── Appelle /api/ de Next.js   │", 10, False, TEXT)
+p_add(tf, "└──────────────────────────────┘", 10, False, TEXT_MUTED)
+
+# Pros/cons
+tf = textbox(s, x, Inches(3.6), Inches(3.8), Inches(0.4))
+p_add(tf, "✅ Avantages", 16, True, GREEN, name="Calibri Light")
+pros = ["Performance native (60fps)", "UX mobile authentique", "Tout l'accès natif", "Expo EAS Build (cloud)"]
+for i, p in enumerate(pros):
+    tf = textbox(s, x + Inches(i % 2 * 2), Inches(4.1) + Inches(i // 2 * 0.5), Inches(1.9), Inches(0.45))
+    rect(s, x + Inches(i % 2 * 2), Inches(4.1) + Inches(i // 2 * 0.5), Inches(1.9), Inches(0.45), SURFACE, BORDER, 0.02)
+    tf = textbox(s, x + Inches(i % 2 * 2) + Inches(0.1), Inches(4.1) + Inches(i // 2 * 0.5) + Inches(0.08), Inches(1.7), Inches(0.3))
+    p_add(tf, p, 10, False, TEXT)
+
+tf = textbox(s, x + Inches(4), Inches(3.6), Inches(3.8), Inches(0.4))
+p_add(tf, "❌ Inconvénients", 16, True, RGBColor(0xDC, 0x26, 0x26), name="Calibri Light")
+cons = ["Temps : 4-8 semaines", "Deux codebases à maintenir", "Coût dev : 10k-32k€", "Fragmentation iOS/Android"]
+for i, c in enumerate(cons):
+    tf = textbox(s, x + Inches(4) + Inches(i % 2 * 2), Inches(4.1) + Inches(i // 2 * 0.5), Inches(1.9), Inches(0.45))
+    rect(s, x + Inches(4) + Inches(i % 2 * 2), Inches(4.1) + Inches(i // 2 * 0.5), Inches(1.9), Inches(0.45), SURFACE, BORDER, 0.02)
+    tf = textbox(s, x + Inches(4) + Inches(i % 2 * 2) + Inches(0.1), Inches(4.1) + Inches(i // 2 * 0.5) + Inches(0.08), Inches(1.7), Inches(0.3))
+    p_add(tf, c, 10, False, TEXT)
+
+# Famous apps
+tf = textbox(s, x, Inches(5.5), Inches(8), Inches(0.4))
+p_add(tf, "🏆 Apps célèbres en React Native", 16, True, TEXT, name="Calibri Light")
+apps = ["Instagram", "Uber Eats", "Coinbase", "Walmart", "Discord", "Airbnb (avant)"]
+for i, app in enumerate(apps):
+    tf = textbox(s, x + Inches(i * 1.3), Inches(6), Inches(1.2), Inches(0.5))
+    rect(s, x + Inches(i * 1.3), Inches(6), Inches(1.2), Inches(0.5), SURFACE, BORDER, 0.02)
+    tf = textbox(s, x + Inches(i * 1.3) + Inches(0.05), Inches(6) + Inches(0.08), Inches(1.1), Inches(0.35))
+    p_add(tf, app, 10, False, TEXT_SEC, PP_ALIGN.CENTER)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 7 — TABLEAU COMPARATIF
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+tf = textbox(s, Inches(0.8), Inches(0.4), Inches(10), Inches(0.6))
+p_add(tf, "📊 Comparatif détaillé", 30, True, TEXT, name="Calibri Light")
+
+headers = ["Critère", "PWA", "Capacitor", "React Native"]
+cols_x = [Inches(0.8), Inches(4), Inches(6.8), Inches(9.6)]
+col_w = [Inches(3), Inches(2.6), Inches(2.6), Inches(2.6)]
+
+# Header row
+for i, h in enumerate(headers):
+    rect(s, cols_x[i], Inches(1.2), col_w[i], Inches(0.45), ACCENT_DARK)
+    tf = textbox(s, cols_x[i] + Inches(0.1), Inches(1.2), col_w[i] - Inches(0.2), Inches(0.45))
+    p_add(tf, h, 11, True, WHITE, PP_ALIGN.CENTER if i > 0 else PP_ALIGN.LEFT)
+
+rows = [
+    ("Effort", "1 jour", "3-5 jours", "4-8 semaines"),
+    ("Code réutilisé", "100%", "~95%", "~40% (API)"),
+    ("NFC natif", "❌", "✅", "✅"),
+    ("Notifications push", "✅ Web Push", "✅ FCM/APN", "✅ FCM/APN"),
+    ("Performance", "Moyenne", "Bonne", "Excellente"),
+    ("App Store", "❌", "✅", "✅"),
+    ("Coût fixe", "0€", "~124€/an", "~124€/an + dev"),
+    ("Coût dev (est.)", "0€ (toi)", "0€ (toi)", "10k-32k€"),
+    ("Maintenance", "Faible", "Faible", "Élevée"),
+    ("Recommandation", "POC/MVP", "✅ Prod NFC", "Scale 10k+"),
+]
+for ri, (label, *vals) in enumerate(rows):
+    y = Inches(1.7) + Inches(ri * 0.48)
+    bg = SURFACE if ri % 2 == 0 else SURFACE2
+    rect(s, Inches(0.8), y, Inches(11.7), Inches(0.45), bg)
+    tf = textbox(s, Inches(0.9), y + Inches(0.05), Inches(3), Inches(0.35))
+    p_add(tf, label, 10, True, TEXT)
+    for vi, v in enumerate(vals):
+        tf = textbox(s, cols_x[vi+1] + Inches(0.1), y + Inches(0.05), col_w[vi+1] - Inches(0.2), Inches(0.35))
+        color = ACCENT if v == "✅" or v == "✅ Prod NFC" else (RGBColor(0xDC, 0x26, 0x26) if v == "❌" else TEXT_SEC)
+        p_add(tf, v, 10, "✅" in v, color, PP_ALIGN.CENTER)
+
+# Highlight recommendation row
+rect(s, Inches(0.8), Inches(6.38), Inches(11.7), Inches(0.45), RGBColor(0xEC, 0xFD, 0xF5), ACCENT)
+tf = textbox(s, Inches(0.9), Inches(6.4), Inches(11.5), Inches(0.4))
+p_add(tf, "🎯 Recommandé pour TimeHeroes : Capacitor (NFC natif, 95% de code conservé, déploiement rapide)", 12, True, ACCENT_DARK, PP_ALIGN.CENTER)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 8 — NFC FOCUS
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+set_bg(s, RGBColor(0x05, 0x2E, 0x16))
+circle(s, Inches(-0.5), Inches(5), Inches(3), RGBColor(0x00, 0x66, 0x44))
+circle(s, Inches(11), Inches(-1), Inches(2.5), RGBColor(0x00, 0x55, 0x33))
+
+tf = textbox(s, Inches(0.8), Inches(0.5), Inches(12), Inches(0.6))
+p_add(tf, "📡 Focus : NFC et QR Code", 30, True, WHITE, name="Calibri Light")
+tf = textbox(s, Inches(0.8), Inches(1.2), Inches(12), Inches(0.4))
+p_add(tf, "La validation des missions par tap NFC, un argument différenciant fort pour la fondation", 14, False, RGBColor(0xAA, 0xEE, 0xDD))
+
+# QR vs NFC comparison
+for i, (title, items) in enumerate([
+    ("📷 QR Code (actuel)", [
+        "📸 Scan avec la caméra",
+        "⏱️ ~5 secondes par scan",
+        "💰 0€ (écran uniquement)",
+        "📱 Tous les téléphones",
+        "⚠️ Moins confort pour les seniors",
+    ]),
+    ("📡 NFC (futur)", [
+        "🤝 Tap à ~4 cm",
+        "⏱️ ~0.5 seconde",
+        "💰 ~0,30€ par tag NFC",
+        "📱 Smartphones récents",
+        "✅ Marche même téléphone éteint",
+    ]),
+]):
+    x = Inches(1) + Inches(i * 6)
+    rect(s, x, Inches(1.9), Inches(5.5), Inches(3.5), RGBColor(0x0A, 0x0A, 0x0A), RGBColor(0x15, 0x15, 0x15), 0.02)
+    tf = textbox(s, x + Inches(0.3), Inches(2.1), Inches(4.9), Inches(0.5))
+    p_add(tf, title, 18, True, ACCENT if i == 1 else WHITE, name="Calibri Light")
+    for j, item in enumerate(items):
+        tf = textbox(s, x + Inches(0.3), Inches(2.8) + Inches(j * 0.45), Inches(4.9), Inches(0.4))
+        p_add(tf, item, 11, False, RGBColor(0xCC, 0xCC, 0xCC))
+
+# Recommendation
+rect(s, Inches(1), Inches(5.8), Inches(11.3), Inches(1.2), RGBColor(0x0A, 0x2E, 0x1A), ACCENT, 0.02)
+tf = textbox(s, Inches(1.3), Inches(5.9), Inches(10.7), Inches(1))
+p_add(tf, "💡 Recommandation : Garder les deux", 16, True, WHITE)
+p_add(tf, "QR code pour le POC immédiat, NFC en upgrade pour la version Capacitor.", 12, False, RGBColor(0xBB, 0xF7, 0xE0))
+p_add(tf, "Les tags NFC coûtent 0,30€ pièce → 30€ pour 100 tags. Les seniors n'auront qu'à taper leur téléphone.", 12, False, RGBColor(0xBB, 0xF7, 0xE0))
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # SLIDE 9 — ROADMAP
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
-
-add_tag(slide, Inches(0.6), Inches(0.5), "Feuille de route")
-add_textbox(slide, Inches(0.6), Inches(1.0), Inches(9.0), Inches(0.8),
-            "La suite de l'aventure TimeHeroes",
-            font_size=40, color=TEXT, font_name='Arial Black')
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+tf = textbox(s, Inches(0.8), Inches(0.4), Inches(10), Inches(0.6))
+p_add(tf, "🗺️ Roadmap recommandée pour TimeHeroes", 30, True, TEXT, name="Calibri Light")
 
 phases = [
-    ("✅ Fait — POC (Juin 2026)", ACCENT,
-     ["Auth, Wallet, Marketplace",
-      "Booking & Escrow",
-      "QR/NFC, Gamification",
-      "Urgent Help, Local Heroes",
-      "Landing page, seed data"]),
-    ("🎯 En cours — MVP", ORANGE,
-     ["Dashboard admin analytics",
-      "Notifications temps réel",
-      "Messagerie intégrée",
-      "Onboarding enrichi",
-      "PostgreSQL scale"]),
-    ("🌟 Vision — Long terme", PURPLE,
-     ["Records of Achievement",
-      "Portfolio bénévole / CV",
-      "Réseau coopératives ESS",
-      "Application mobile",
-      "API publique"]),
+    ("Phase 1", "PWA", "1 jour · 0€", "Démo fondation", ACCENT, [
+        "Ajouter manifest.json à Next.js",
+        "Installer @serwist/next (service worker)",
+        "Ajouter les icônes 192×192 et 512×512",
+        "✅ Ajouter à l'écran d'accueil",
+    ]),
+    ("Phase 2", "Capacitor", "3-5 jours · 124€", "Pilote CCAS", PURPLE, [
+        "Initialiser Capacitor dans le projet",
+        "Plugin NFC + Push + Camera",
+        "Adapter validation QR → NFC + QR",
+        "Build APK + Archive iOS",
+        "✅ App complète NFC",
+    ]),
+    ("Phase 3", "React Native", "4-8 sem · 10k€+", "Scale 10k+ users", AMBER, [
+        "Nouveau projet Expo",
+        "Réécrire les écrans clés",
+        "Brancher sur l'API existante",
+        "Animer avec Reanimated 2",
+        "✅ App 100% native premium",
+    ]),
 ]
+for i, (phase, name, time, goal, accent_color, steps) in enumerate(phases):
+    x = Inches(0.8) + Inches(i * 4.2)
+    # Card
+    rect(s, x, Inches(1.3), Inches(3.8), Inches(5.8), SURFACE, BORDER, 0.02)
+    # Accent bar
+    rect(s, x, Inches(1.3), Inches(3.8), Inches(0.06), accent_color)
+    # Phase header
+    tf = textbox(s, x + Inches(0.2), Inches(1.5), Inches(3.4), Inches(0.4))
+    p_add(tf, f"{phase}", 11, True, accent_color)
+    tf = textbox(s, x + Inches(0.2), Inches(1.9), Inches(3.4), Inches(0.4))
+    p_add(tf, f"{name}  ·  {time}", 14, True, TEXT, name="Calibri Light")
+    # Goal badge
+    rect(s, x + Inches(0.2), Inches(2.4), Inches(2), Inches(0.35), accent_color)
+    tf = textbox(s, x + Inches(0.25), Inches(2.4), Inches(1.9), Inches(0.35))
+    p_add(tf, f"🎯 {goal}", 9, True, WHITE, PP_ALIGN.CENTER)
+    # Steps
+    for j, step in enumerate(steps):
+        tf = textbox(s, x + Inches(0.2), Inches(3.0) + Inches(j * 0.5), Inches(3.4), Inches(0.45))
+        p_add(tf, f"  {step}", 10, False, TEXT_SEC)
 
-phase_w = Inches(3.8)
-for i, (label, accent, items) in enumerate(phases):
-    x = start_x + i * (phase_w + gap)
-    y = Inches(2.2)
-    
-    # Phase card
-    card = add_rounded_rect(slide, x, y, phase_w, Inches(4.5), SURFACE2, BORDER)
-    card.adjustments[0] = 0.04
-    
-    # Color accent bar at top
-    bar = add_rect(slide, x + Inches(0.05), y + Inches(0.05), phase_w - Inches(0.1), Inches(0.04), accent)
-    
-    add_textbox(slide, x + Inches(0.25), y + Inches(0.3), phase_w - Inches(0.5), Inches(0.35),
-                label, font_size=13, color=accent, bold=True)
-    
-    for j, item in enumerate(items):
-        iy = y + Inches(0.85) + j * Inches(0.55)
-        add_textbox(slide, x + Inches(0.25), iy, phase_w - Inches(0.5), Inches(0.35),
-                    f"→  {item}", font_size=13, color=TEXT_SEC)
+# Decision tree at bottom
+tf = textbox(s, Inches(0.8), Inches(7.2), Inches(11.5), Inches(0.4))
+p_add(tf, "💡  Arbre de décision : NFC nécessaire ? → OUI → Capacitor.  |  Budget ? → 0€ → PWA.  |  Scale 10k+ → React Native.", 11, False, TEXT_SEC, PP_ALIGN.CENTER)
 
-# ══════════════════════════════════════════════
-# SLIDE 10 — CTA / VISION
-# ══════════════════════════════════════════════
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_slide_bg(slide, BG)
 
-add_textbox(slide, Inches(2.0), Inches(1.2), Inches(9.5), Inches(0.6),
-            "🌍 L'AVENIR DE L'ENTRAIDE", font_size=18, color=ACCENT,
-            alignment=PP_ALIGN.CENTER)
-add_textbox(slide, Inches(0.8), Inches(2.0), Inches(11.5), Inches(1.2),
-            "L'engagement citoyen devient\nun actif professionnel",
-            font_size=48, color=TEXT, alignment=PP_ALIGN.CENTER, font_name='Arial Black')
-add_multiline_textbox(slide, Inches(1.5), Inches(3.5), Inches(10.5), Inches(1.2), [
-    ("TimeHeroes, c'est plus qu'une app. C'est un nouveau standard pour", 17, TEXT_SEC, False),
-    ("reconnaître, valoriser et monétiser l'engagement de chacun.", 17, TEXT_SEC, False),
-    ("Le temps est la seule vraie richesse. Échangeons-la.", 15, TEXT_MUTED, False),
-], default_align=PP_ALIGN.CENTER)
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 10 — GLOSSAIRE
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+tf = textbox(s, Inches(0.8), Inches(0.4), Inches(10), Inches(0.6))
+p_add(tf, "📖 Glossaire technique", 30, True, TEXT, name="Calibri Light")
 
-# CTA Box
-cta = add_rounded_rect(slide, Inches(3.0), Inches(5.0), Inches(7.5), Inches(1.5), SURFACE2, ACCENT)
-cta.adjustments[0] = 0.04
-cta.line.width = Pt(2)
-add_textbox(slide, Inches(3.3), Inches(5.1), Inches(7.0), Inches(0.5),
-            "🚀  timeheroes.fr", font_size=28, color=ACCENT, bold=True, alignment=PP_ALIGN.CENTER)
-add_textbox(slide, Inches(3.3), Inches(5.6), Inches(7.0), Inches(0.4),
-            "📧  demo@timeheroes.fr  •  Mot de passe : TimeHeroes2026!",
-            font_size=14, color=TEXT_SEC, alignment=PP_ALIGN.CENTER)
+terms = [
+    ("PWA", "Progressive Web App — site web installable comme une app"),
+    ("Service Worker", "Script JS en arrière-plan pour cache et push"),
+    ("WebView", "Navigateur embarqué dans une app native"),
+    ("Capacitor", "Pont web → natif (NFC, Camera, Push)"),
+    ("React Native", "Framework pour apps natives en JavaScript/React"),
+    ("NFC", "Near Field Communication — sans contact ~4 cm"),
+    ("FCM / APN", "Firebase Cloud Msg / Apple Push Notification"),
+    ("Escrow", "Séquestre : TIME bloqués jusqu'à validation"),
+    ("Expo / EAS", "Surcouche React Native + build cloud"),
+    ("Workbox", "Librairie Google pour la gestion du cache offline"),
+]
+for i, (term, defn) in enumerate(terms):
+    col = i % 2
+    row = i // 2
+    x = Inches(0.8) + Inches(col * 6.2)
+    y = Inches(1.3) + Inches(row * 1.1)
+    rect(s, x, y, Inches(5.8), Inches(0.9), SURFACE, BORDER, 0.02)
+    tf = textbox(s, x + Inches(0.2), y + Inches(0.08), Inches(5.4), Inches(0.3))
+    p_add(tf, term, 12, True, ACCENT)
+    tf = textbox(s, x + Inches(0.2), y + Inches(0.4), Inches(5.4), Inches(0.4))
+    p_add(tf, defn, 10, False, TEXT_SEC)
 
-# Quote
-add_textbox(slide, Inches(1.5), Inches(6.6), Inches(10.5), Inches(0.6),
-            "\"Le temps est la seule monnaie qui ne s'emprunte pas, ne s'imprime pas, ne se crée pas.\"",
-            font_size=12, color=TEXT_MUTED, alignment=PP_ALIGN.CENTER)
 
-# ── Save ──
-output_path = "/root/projects/timebank-poc/TimeHeroes - MBA Pitch Deck.pptx"
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 11 — BUDGET
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+tf = textbox(s, Inches(0.8), Inches(0.4), Inches(10), Inches(0.6))
+p_add(tf, "💰 Budget estimé (année 1)", 30, True, TEXT, name="Calibri Light")
+
+cols_x = [Inches(0.8), Inches(4.2), Inches(6.8), Inches(9.5)]
+headers = ["Poste", "PWA", "Capacitor", "React Native"]
+for i, h in enumerate(headers):
+    rect(s, cols_x[i], Inches(1.3), Inches(3.2) if i == 0 else Inches(2.4), Inches(0.45), ACCENT_DARK)
+    tf = textbox(s, cols_x[i] + Inches(0.1), Inches(1.3), (Inches(3.2) if i == 0 else Inches(2.4)) - Inches(0.2), Inches(0.45))
+    p_add(tf, h, 11, True, WHITE, PP_ALIGN.CENTER if i > 0 else PP_ALIGN.LEFT)
+
+rows_data = [
+    ("Développement (toi)", "1j × 0€", "5j × 0€", "—"),
+    ("Développeur externe", "—", "—", "20-40j × 500-800€"),
+    ("Apple Developer", "0€", "99€/an", "99€/an"),
+    ("Google Play", "25$ unique", "25$ unique", "25$ unique"),
+    ("Firebase (notifications)", "Gratuit", "Gratuit", "Gratuit"),
+    ("Tags NFC", "—", "~30€ (100 tags)", "—"),
+    ("", "", "", ""),
+    ("Total année 1", "~25$", "~180€", "10 000 - 32 000€"),
+]
+for ri, (label, *vals) in enumerate(rows_data):
+    y = Inches(1.8) + Inches(ri * 0.5)
+    bg = SURFACE if ri % 2 == 0 else SURFACE2
+    is_total = "Total" in label
+    rect(s, Inches(0.8), y, Inches(11.7), Inches(0.45), bg, ACCENT if is_total else None if is_total else BORDER)
+    tf = textbox(s, Inches(0.9), y + Inches(0.05), Inches(3.2), Inches(0.35))
+    p_add(tf, label, 10, is_total, TEXT)
+    for vi, v in enumerate(vals):
+        tf = textbox(s, cols_x[vi+1] + Inches(0.1), y + Inches(0.05), (Inches(2.4) if vi < 2 else Inches(2.4)) - Inches(0.2), Inches(0.35))
+        c = ACCENT if "0€" in v or "Gratuit" in v or "~25" in v or "~180" in v else (RGBColor(0xDC, 0x26, 0x26) if "32" in v else TEXT_SEC)
+        bold = any(x in v for x in ["~25", "~180", "10 ", "32"])
+        p_add(tf, v, 10, bold, c, PP_ALIGN.CENTER)
+
+# ═══════════════════════════════════════════════════════════════════════
+# SLIDE 12 — CONCLUSION
+# ═══════════════════════════════════════════════════════════════════════
+s = new_slide()
+set_bg(s, ACCENT_DARK)
+circle(s, Inches(-0.5), Inches(-0.5), Inches(2.5), RGBColor(0x00, 0xAA, 0x88))
+circle(s, Inches(11), Inches(5), Inches(3.5), RGBColor(0x00, 0x99, 0x77))
+
+tf = textbox(s, Inches(1.5), Inches(1.5), Inches(10), Inches(1))
+p_add(tf, "🎯 Ma recommandation", 40, True, WHITE, PP_ALIGN.LEFT, "Calibri Light")
+
+tf = textbox(s, Inches(1.5), Inches(2.8), Inches(10), Inches(3))
+p_add(tf, "Phase 1 — PWA (1 jour)", 24, True, ACCENT, name="Calibri Light")
+p_add(tf, "Lance la démo fondation avec l'installation sur téléphone.", 14, False, RGBColor(0xBB, 0xF7, 0xE0))
+p_add(tf, "", 10)
+p_add(tf, "Phase 2 — Capacitor (3-5 jours) ← Recommandé", 24, True, AMBER, name="Calibri Light")
+p_add(tf, "Le NFC natif est un argument différenciant fort pour La France s'engage.", 14, False, RGBColor(0xBB, 0xF7, 0xE0))
+p_add(tf, "Tu gardes 95% du code Next.js, tu ajoutes juste le wrapper natif.", 14, False, RGBColor(0xBB, 0xF7, 0xE0))
+p_add(tf, "", 10)
+p_add(tf, "Phase 3 — React Native (4-8 semaines)", 24, True, RGBColor(0xCC, 0xCC, 0xCC), name="Calibri Light")
+p_add(tf, "Uniquement si tu passes à 10 000+ utilisateurs.", 14, False, RGBColor(0xAA, 0xAA, 0xAA))
+
+tf = textbox(s, Inches(1.5), Inches(6.2), Inches(10), Inches(0.6))
+p_add(tf, "Prêt à démarrer la Phase 1 ?", 18, True, WHITE, PP_ALIGN.LEFT)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SAVE & UPLOAD
+# ═══════════════════════════════════════════════════════════════════════
+output_path = "/root/projects/timebank-poc/Cours-App-Mobile-TimeHeroes.pptx"
 prs.save(output_path)
-print(f"✅ Saved: {output_path}")
-print(f"   Slides: {len(prs.slides)}")
+print(f"✅ Saved to {output_path}")
+print(f"📊 Slides: {len(prs.slides)}")

@@ -125,6 +125,7 @@ export default async function BookingDetailPage({
       booking={serialized}
       userId={user.id}
       isClient={isClient}
+      isProvider={isProvider}
       userRole={user.role}
     />
   );

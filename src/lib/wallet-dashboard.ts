@@ -140,6 +140,18 @@ export async function getWalletDashboard(userId: string): Promise<WalletDashboar
   // Community pot current balance
   const pot = await prisma.communityPot.findFirst({ orderBy: { createdAt: "asc" } });
 
+  // Build a name map for all users referenced in transactions (useful for transfers)
+  const userIds = new Set<string>();
+  for (const tx of allTxs) {
+    if (tx.fromId) userIds.add(tx.fromId);
+    if (tx.toId) userIds.add(tx.toId);
+  }
+  const users = await prisma.user.findMany({
+    where: { id: { in: Array.from(userIds) } },
+    select: { id: true, name: true },
+  });
+  const userNameMap = new Map(users.map((u) => [u.id, u.name]));
+
   // Format transactions
   const transactions: WalletTransaction[] = allTxs.map((tx) => {
     // Déterminer le titre de la mission et l'autre participant
@@ -155,6 +167,17 @@ export async function getWalletDashboard(userId: string): Promise<WalletDashboar
         otherPartyName = tx.booking.client?.name ?? null;
       } else if (tx.fromId === userId) {
         otherPartyName = tx.booking.service?.provider?.name ?? null;
+      }
+    }
+
+    // Pour les transferts directs, on cherche le nom de l'autre personne
+    if (tx.type === "transfer" && !tx.booking) {
+      if (tx.toId === userId) {
+        otherPartyName = userNameMap.get(tx.fromId ?? "") ?? null;
+        missionTitle = "Don reçu";
+      } else if (tx.fromId === userId) {
+        otherPartyName = userNameMap.get(tx.toId ?? "") ?? null;
+        missionTitle = "Don envoyé";
       }
     }
 

@@ -19,6 +19,18 @@ export type PotTransactionWithDetails = {
   createdAt: Date;
 };
 
+export type FundedMissionItem = {
+  id: string;
+  bookingId: string;
+  serviceTitle: string;
+  requesterName: string;
+  providerName: string;
+  potAmount: number;
+  status: string;
+  completedAt: Date | null;
+  fundedAt: Date;
+};
+
 export type RequestWithDetails = {
   id: string;
   userId: string;
@@ -153,14 +165,47 @@ export async function getPotTransactions(): Promise<PotTransactionWithDetails[]>
     },
   });
 
-  // Fetch booking titles for transactions linked to bookings
-  const bookingIds = transactions
+  // Collect bookingIds — some from direct link, others resolved via approved requests
+  const directBookingIds = transactions
     .filter((t) => t.bookingId)
     .map((t) => t.bookingId!);
 
-  const bookings = bookingIds.length > 0
+  // For transactions sans bookingId, try to find via approved CommunityPotRequest
+  const txWithoutBooking = transactions.filter((t) => !t.bookingId && t.type === "FUNDING");
+  const resolvedMap = new Map<string, string | null>();
+
+  if (txWithoutBooking.length > 0) {
+    const approvedRequests = await prisma.communityPotRequest.findMany({
+      where: {
+        status: "APPROVED",
+        bookingId: { not: null },
+        amount: { in: txWithoutBooking.map((t) => t.amount) },
+      },
+      select: { amount: true, bookingId: true, createdAt: true },
+    });
+
+    for (const tx of txWithoutBooking) {
+      const match = approvedRequests.find((r) =>
+        r.amount === tx.amount &&
+        Math.abs(r.createdAt.getTime() - tx.createdAt.getTime()) < 300000
+      );
+      resolvedMap.set(tx.id, match?.bookingId ?? null);
+    }
+  }
+
+  // Merge bookingIds directs + résolus
+  const allBookingIds = [
+    ...directBookingIds,
+    ...txWithoutBooking
+      .map((t) => resolvedMap.get(t.id))
+      .filter((id): id is string => id !== null),
+  ];
+
+  const uniqueBookingIds = [...new Set(allBookingIds)];
+
+  const bookings = uniqueBookingIds.length > 0
     ? await prisma.booking.findMany({
-        where: { id: { in: bookingIds } },
+        where: { id: { in: uniqueBookingIds } },
         select: {
           id: true,
           service: { select: { title: true } },
@@ -170,13 +215,49 @@ export async function getPotTransactions(): Promise<PotTransactionWithDetails[]>
 
   const bookingTitles = new Map(bookings.map((b) => [b.id, b.service.title]));
 
-  return transactions.map((t) => ({
-    id: t.id,
-    type: t.type,
-    amount: t.amount,
-    reason: t.reason,
-    userName: t.user?.name ?? null,
-    bookingId: t.bookingId,
-    createdAt: t.createdAt,
+  return transactions.map((t) => {
+    // Résoudre le bookingId : direct, ou via request approuvée
+    let resolvedBookingId = t.bookingId;
+    if (!resolvedBookingId && resolvedMap.has(t.id)) {
+      resolvedBookingId = resolvedMap.get(t.id) ?? null;
+    }
+
+    return {
+      id: t.id,
+      type: t.type,
+      amount: t.amount,
+      reason: t.reason,
+      userName: t.user?.name ?? null,
+      bookingId: resolvedBookingId,
+      createdAt: t.createdAt,
+    };
+  });
+}
+
+/**
+ * Get bookings funded by the community pot, with service and user details.
+ */
+export async function getFundedMissions(): Promise<FundedMissionItem[]> {
+  const bookings = await prisma.booking.findMany({
+    where: { fundedByCommunityPot: true },
+    include: {
+      service: {
+        select: { title: true, providerId: true, provider: { select: { name: true } } },
+      },
+      client: { select: { name: true } },
+    },
+    orderBy: { completedAt: { sort: "desc", nulls: "last" } },
+  });
+
+  return bookings.map((b) => ({
+    id: b.id,
+    bookingId: b.id,
+    serviceTitle: b.service.title,
+    requesterName: b.client.name,
+    providerName: b.service.provider.name,
+    potAmount: b.communityPotAmount ?? 0,
+    status: b.status,
+    completedAt: b.completedAt,
+    fundedAt: b.createdAt,
   }));
 }

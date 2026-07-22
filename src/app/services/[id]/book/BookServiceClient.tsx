@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Clock, Loader2, Coins, User, Zap, Calendar } from "lucide-react";
+import { ArrowLeft, Clock, Loader2, Coins, User, Zap, Calendar, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { createBooking } from "@/app/services/actions";
 import { getProviderSlots } from "@/app/availability/actions";
@@ -40,11 +40,11 @@ export default function BookServiceClient({
   const [slots, setSlots] = useState<AvailableSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<{ startAt: string; endAt: string } | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   const totalTime = 1 * hours;
   const insufficient = balance < totalTime;
 
-  // Fetch available slots when hours change
   useEffect(() => {
     if (isOwner) return;
     setLoadingSlots(true);
@@ -69,161 +69,183 @@ export default function BookServiceClient({
       return;
     }
 
-    router.push("/bookings");
+    setConfirmed(true);
+    setTimeout(() => router.push("/bookings"), 1500);
   }
 
-  // Si le client est le provider, on ne montre pas le formulaire
+  // If owner
   if (isOwner) {
     return (
-      <div className="min-h-screen bg-[#f5f5f5]">
+      <div className="min-h-screen bg-tb-bg">
         <ConnectedHeader />
         <main className="max-w-2xl mx-auto px-4 py-8">
           <Link
             href={`/services/${service.id}`}
-            className="inline-flex items-center gap-2 text-[#6b7280] hover:text-[#111111] transition-colors text-sm mb-6"
+            className="inline-flex items-center gap-2 text-tb-text-secondary hover:text-tb-accent transition-colors text-sm mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour au service
           </Link>
-          <div className="bg-[#ffffff] border border-[#e5e5e5] rounded-2xl p-6 sm:p-8 text-center">
-            <div className="bg-[#00d4aa]/5 border border-tb-accent/20 rounded-xl p-4">
-              <p className="text-tb-accent text-sm font-semibold">
-                Vous êtes le héros de ce service
-              </p>
-              <p className="text-[#6b7280] text-xs mt-1">
-                Vous ne pouvez pas réserver votre propre service
-              </p>
-              <Link
-                href={`/services/${service.id}`}
-                className="inline-block mt-3 text-[#6b7280] hover:text-[#111111] text-sm underline transition-colors"
-              >
-                Retour aux détails
-              </Link>
+          <div className="bg-tb-surface border border-tb-border rounded-2xl p-8 text-center">
+            <div className="w-16 h-16 mx-auto rounded-full bg-tb-accent/10 flex items-center justify-center mb-4">
+              <User className="w-8 h-8 text-tb-accent" />
             </div>
+            <h2 className="text-lg font-bold text-tb-text-primary mb-2">C&apos;est votre service</h2>
+            <p className="text-sm text-tb-text-secondary mb-4">
+              Vous ne pouvez pas réserver votre propre mission.
+            </p>
+            <Link
+              href={`/services/${service.id}`}
+              className="text-sm text-tb-accent hover:underline font-medium"
+            >
+              ← Retour aux détails
+            </Link>
           </div>
         </main>
       </div>
     );
   }
 
+  // Success confirmation
+  if (confirmed) {
+    return (
+      <div className="min-h-screen bg-tb-bg">
+        <ConnectedHeader />
+        <main className="max-w-2xl mx-auto px-4 py-16 text-center">
+          <div className="w-20 h-20 mx-auto rounded-full bg-tb-accent/10 flex items-center justify-center mb-6 animate-bounce-in">
+            <CheckCircle2 className="w-10 h-10 text-tb-accent" />
+          </div>
+          <h2 className="text-2xl font-anton tracking-wide text-tb-text-primary mb-2">
+            Réservation confirmée ! 🎉
+          </h2>
+          <p className="text-sm text-tb-text-secondary mb-6">
+            {totalTime} TIME ont été réservés pour {hours}h avec {service.provider.name}.
+          </p>
+          <div className="w-8 h-8 border-2 border-tb-accent border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs text-tb-text-muted mt-2">Redirection vers mes réservations…</p>
+        </main>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
+    <div className="min-h-screen bg-tb-bg">
       <ConnectedHeader />
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <Link
           href={`/services/${service.id}`}
-          className="inline-flex items-center gap-2 text-[#6b7280] hover:text-[#111111] transition-colors text-sm mb-6"
+          className="inline-flex items-center gap-2 text-tb-text-secondary hover:text-tb-accent transition-colors text-sm mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour au service
         </Link>
 
-        <div className="bg-[#ffffff] border border-[#e5e5e5] rounded-2xl p-6 sm:p-8">
-          {/* En-tête avec label comics */}
+        <div className="bg-tb-surface border border-tb-border rounded-2xl p-6 sm:p-8">
+          {/* Header */}
           <div className="mb-6">
             <span className="font-bangers text-tb-accent text-xs tracking-wider">
               ~ réserve ton super-pouvoir ~
             </span>
-            <h1 className="text-2xl font-anton tracking-wide text-[#111111] mt-1">
+            <h1 className="text-xl sm:text-2xl font-anton tracking-wide text-tb-text-primary mt-1">
               {service.title}
             </h1>
           </div>
 
-          {/* Infos service */}
-          <div className="bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl p-4 mb-6 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#6b7280] text-sm">
-                <User className="w-4 h-4 text-[#9ca3af]" />
+          {/* Service info card */}
+          <div className="bg-tb-bg border border-tb-border rounded-xl p-4 mb-6 space-y-2.5">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-tb-text-secondary flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-tb-text-muted" />
                 Héros
-              </div>
-              <span className="text-[#111111] font-semibold text-sm">
-                {service.provider.name}
               </span>
+              <span className="text-tb-text-primary font-semibold">{service.provider.name}</span>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#6b7280] text-sm">
-                <Zap className="w-4 h-4 text-[#9ca3af]" />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-tb-text-secondary flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-tb-text-muted" />
                 Tarif
-              </div>
-              <span className="text-tb-accent font-semibold text-sm">
-                1 TIME / heure
               </span>
+              <span className="text-tb-accent font-semibold">{service.ratePerHour} TIME / heure</span>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#6b7280] text-sm">
-                <Coins className="w-4 h-4 text-[#9ca3af]" />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-tb-text-secondary flex items-center gap-1.5">
+                <Coins className="w-3.5 h-3.5 text-tb-text-muted" />
                 Ton solde
-              </div>
-              <span
-                className={`font-semibold text-sm ${
-                  insufficient ? "text-red-600" : "text-[#111111]"
-                }`}
-              >
+              </span>
+              <span className={`font-semibold ${insufficient ? "text-red-500" : "text-tb-text-primary"}`}>
                 {balance} TIME
               </span>
             </div>
           </div>
 
-          {/* Message d'erreur */}
+          {/* Error */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
               <p className="text-red-600 text-sm">{error}</p>
             </div>
           )}
 
-          {/* Formulaire */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Step 1: Hours */}
             <div>
-              <label
-                htmlFor="hours"
-                className="block text-sm font-medium text-[#6b7280] mb-1.5"
-              >
-                Nombre d&apos;heures
+              <label htmlFor="hours" className="block text-xs font-semibold text-tb-text-secondary mb-1.5 uppercase tracking-wider">
+                1. Nombre d&apos;heures
               </label>
-              <input
-                id="hours"
-                name="hours"
-                type="number"
-                min="1"
-                step="1"
-                value={hours}
-                onChange={(e) => setHours(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-full bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl px-4 py-2.5 text-[#111111] focus:outline-none focus:border-tb-accent transition-colors"
-              />
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setHours(Math.max(1, hours - 1))}
+                  className="w-10 h-10 rounded-xl bg-tb-bg border border-tb-border flex items-center justify-center text-tb-text-primary hover:border-tb-accent transition-colors font-bold text-lg"
+                >
+                  −
+                </button>
+                <input
+                  id="hours"
+                  name="hours"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={hours}
+                  onChange={(e) => setHours(Math.max(1, parseInt(e.target.value) || 1))}
+                  className="w-20 text-center bg-tb-bg border border-tb-border rounded-xl px-3 py-2.5 text-tb-text-primary text-lg font-bold focus:outline-none focus:border-tb-accent transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setHours(hours + 1)}
+                  className="w-10 h-10 rounded-xl bg-tb-bg border border-tb-border flex items-center justify-center text-tb-text-primary hover:border-tb-accent transition-colors font-bold text-lg"
+                >
+                  +
+                </button>
+                <span className="text-sm text-tb-text-secondary">
+                  heure{hours > 1 ? "s" : ""}
+                </span>
+              </div>
             </div>
 
-            {/* Sélecteur de créneaux */}
+            {/* Step 2: Slot */}
             <div>
-              <label className="block text-sm font-medium text-[#6b7280] mb-1.5">
-                <Calendar className="w-4 h-4 inline mr-1.5 -mt-0.5" />
-                Créneau disponible
+              <label className="block text-xs font-semibold text-tb-text-secondary mb-1.5 uppercase tracking-wider">
+                2. Créneau (optionnel)
               </label>
               {loadingSlots ? (
                 <div className="flex items-center justify-center py-6">
-                  <Loader2 className="w-5 h-5 animate-spin text-[#6b7280]" />
+                  <Loader2 className="w-5 h-5 animate-spin text-tb-text-muted" />
                 </div>
               ) : slots.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {slots.map((slot) => {
-                    const isSelected =
-                      selectedSlot?.startAt === slot.startAt &&
-                      selectedSlot?.endAt === slot.endAt;
+                    const isSelected = selectedSlot?.startAt === slot.startAt && selectedSlot?.endAt === slot.endAt;
                     return (
                       <button
                         key={slot.startAt}
                         type="button"
-                        onClick={() =>
-                          setSelectedSlot(
-                            isSelected
-                              ? null
-                              : { startAt: slot.startAt, endAt: slot.endAt }
-                          )
-                        }
-                        className={`text-left px-4 py-3 rounded-xl border text-sm transition-colors ${
+                        onClick={() => setSelectedSlot(isSelected ? null : { startAt: slot.startAt, endAt: slot.endAt })}
+                        className={`text-left px-4 py-3 rounded-xl border text-sm transition-all ${
                           isSelected
-                            ? "border-tb-accent bg-tb-accent/10 text-tb-accent"
-                            : "border-[#e5e5e5] bg-[#f0f0f0] text-[#111111] hover:border-[#cccccc]"
+                            ? "border-tb-accent bg-tb-accent/10 text-tb-accent font-semibold"
+                            : "border-tb-border bg-tb-bg text-tb-text-primary hover:border-tb-accent/50"
                         }`}
                       >
                         {slot.label}
@@ -232,16 +254,14 @@ export default function BookServiceClient({
                   })}
                 </div>
               ) : (
-                <div className="bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl p-3">
-                  <p className="text-[#6b7280] text-xs">
-                    Ce Hero n&apos;a pas encore ajouté de disponibilité. La
-                    réservation sans créneau reste possible.
+                <div className="bg-tb-bg border border-tb-border rounded-xl p-3">
+                  <p className="text-tb-text-secondary text-xs">
+                    Le héros n&apos;a pas encore ajouté ses disponibilités. Tu pourras convenir d&apos;un créneau après la réservation.
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Champs cachés pour le créneau sélectionné */}
             {selectedSlot && (
               <>
                 <input type="hidden" name="startAt" value={selectedSlot.startAt} />
@@ -249,48 +269,50 @@ export default function BookServiceClient({
               </>
             )}
 
-            {/* Récapitulatif */}
-            <div className="bg-[#f0f0f0] border border-[#e5e5e5] rounded-xl p-4">
+            {/* Step 3: Summary */}
+            <div className="bg-tb-bg border border-tb-border rounded-xl p-4">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-tb-text-muted mb-3">3. Récapitulatif</p>
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-[#6b7280]">
-                  1 TIME × {hours}h
-                </span>
-                <span className="text-[#111111] font-semibold">
-                  {totalTime} TIME
-                </span>
+                <span className="text-tb-text-secondary">{service.ratePerHour} TIME × {hours}h</span>
+                <span className="text-tb-text-primary font-semibold">{totalTime} TIME</span>
               </div>
-              <div className="border-t border-[#e5e5e5] pt-2 flex items-center justify-between">
-                <span className="text-[#6b7280] text-sm font-medium">
-                  Total
-                </span>
-                <span className="text-xl font-bold text-tb-accent">
-                  {totalTime} TIME
-                </span>
+              <div className="border-t border-tb-border pt-2 flex items-center justify-between">
+                <span className="text-tb-text-secondary text-sm font-medium">Total</span>
+                <span className="text-xl font-bold text-tb-accent">{totalTime} TIME</span>
               </div>
             </div>
 
+            {/* Insufficient balance */}
             {insufficient && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3">
-                <p className="text-yellow-600 text-xs">
-                  Solde insuffisant. Il te manque {totalTime - balance} TIME.
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <p className="text-amber-700 text-xs">
+                  ⚠️ Solde insuffisant. Il te manque {totalTime - balance} TIME.{hours > 1 ? " Réduis le nombre d'heures." : ""}
                 </p>
               </div>
             )}
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={pending || insufficient}
-              className="w-full bg-[#00d4aa] hover:bg-[#00b894] disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl py-3 transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl py-3.5 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-tb-accent/20 flex items-center justify-center gap-2 text-sm"
             >
               {pending ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Réservation…
+                  Réservation en cours…
                 </>
               ) : (
-                "Réserver avec mes TIME"
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  Réserver avec mes TIME
+                </>
               )}
             </button>
+
+            <p className="text-[10px] text-tb-text-muted text-center">
+              Les TIME sont séquestrés jusqu&apos;à la validation de la mission
+            </p>
           </form>
         </div>
       </main>

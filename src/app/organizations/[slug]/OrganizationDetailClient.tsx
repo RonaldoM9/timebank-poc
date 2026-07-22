@@ -54,12 +54,14 @@ type OrgData = {
 type Props = {
   organization: OrgData;
   user: { id: string; name: string } | null;
+  myRole: string | null;
 };
 
-export default function OrganizationDetailClient({ organization: org, user }: Props) {
+export default function OrganizationDetailClient({ organization: org, user, myRole }: Props) {
   const router = useRouter();
 
-  const isMember = false; // Will be passed from server later
+  const isMember = myRole !== null;
+  const canManage = myRole === "FACILITATOR" || myRole === "ADMIN" || myRole === "OWNER";
 
   const handleJoin = useCallback(async () => {
     const result = await joinOrganizationAction(org.id);
@@ -82,7 +84,7 @@ export default function OrganizationDetailClient({ organization: org, user }: Pr
 
   return (
     <div className="min-h-screen bg-tb-bg">
-      <ConnectedHeader />
+      <ConnectedHeader orgRole={myRole} />
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Link
           href="/organizations"
@@ -145,7 +147,22 @@ export default function OrganizationDetailClient({ organization: org, user }: Pr
 
           {/* CTA */}
           <div className="flex items-center gap-3 flex-wrap">
-            {user ? (
+            {!user ? (
+              <Link
+                href="/auth/signin"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-tb-accent text-white hover:bg-tb-accent-hover transition-colors"
+              >
+                Connectez-vous pour rejoindre
+              </Link>
+            ) : isMember ? (
+              <Link
+                href={`/organizations/${org.slug}/pot`}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-rose-500 text-white hover:bg-rose-600 transition-colors"
+              >
+                <Heart className="w-4 h-4" />
+                Donner au pot
+              </Link>
+            ) : (
               <button
                 onClick={handleJoin}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-tb-accent text-white hover:bg-tb-accent-hover transition-colors"
@@ -153,13 +170,6 @@ export default function OrganizationDetailClient({ organization: org, user }: Pr
                 <Users className="w-4 h-4" />
                 Rejoindre cette organisation
               </button>
-            ) : (
-              <Link
-                href="/auth/signin"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-tb-accent text-white hover:bg-tb-accent-hover transition-colors"
-              >
-                Connectez-vous pour rejoindre
-              </Link>
             )}
             {org.websiteUrl && (
               <a
@@ -208,20 +218,35 @@ export default function OrganizationDetailClient({ organization: org, user }: Pr
         </div>
 
         {/* Quick links for members */}
-        {user && (
+        {isMember && (
           <div className="mt-6 flex flex-col gap-3">
+            {canManage && (
+              <Link
+                href={`/organizations/${org.slug}/dashboard`}
+                className="flex items-center justify-between bg-tb-accent/5 border border-tb-accent/20 rounded-2xl p-4 hover:bg-tb-accent/10 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Building2 className="w-5 h-5 text-tb-accent" />
+                  <div>
+                    <p className="text-sm font-medium text-tb-text-primary">Accéder au tableau de bord</p>
+                    <p className="text-xs text-tb-text-muted">Gérer les membres, missions, pot et impact</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-tb-accent" />
+              </Link>
+            )}
             <Link
-              href={`/organizations/${org.slug}/dashboard`}
-              className="flex items-center justify-between bg-tb-accent/5 border border-tb-accent/20 rounded-2xl p-4 hover:bg-tb-accent/10 transition-colors"
+              href={`/organizations/${org.slug}/pot`}
+              className="flex items-center justify-between bg-rose-50 border border-rose-200 rounded-2xl p-4 hover:bg-rose-100 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <Building2 className="w-5 h-5 text-tb-accent" />
+                <Heart className="w-5 h-5 text-rose-500" />
                 <div>
-                  <p className="text-sm font-medium text-tb-text-primary">Accéder au tableau de bord</p>
-                  <p className="text-xs text-tb-text-muted">Gérer les membres, missions, pot et impact</p>
+                  <p className="text-sm font-medium text-tb-text-primary">Donner au pot TIME</p>
+                  <p className="text-xs text-tb-text-muted">Contribuer au pot commun de l'organisation</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-tb-accent" />
+              <ChevronRight className="w-5 h-5 text-rose-400" />
             </Link>
             <Link
               href={`/organizations/${org.slug}/programs`}

@@ -32,7 +32,7 @@ export default async function ProgramsPage({
 
   const programs = await getProgramsForOrganization(org.id)
 
-  const canManage = membership && ["OWNER", "ADMIN"].includes(membership.role)
+  const canManage = membership && ["OWNER", "ADMIN", "FACILITATOR"].includes(membership.role)
 
   return (
     <ProgramsListClient

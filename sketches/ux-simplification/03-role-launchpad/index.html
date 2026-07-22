@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Variante 3 : Role Launchpad</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: #f5f2ed;
+    color: #1a1a1a;
+    line-height: 1.5;
+  }
+  :root {
+    --accent: #2BB286;
+    --accent-dark: #008f78;
+    --accent-soft: #e8f5f0;
+    --surface: #ffffff;
+    --border: #e5e0d8;
+    --text: #1a1a1a;
+    --text-secondary: #6b6b6b;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+
+  /* HEADER minimal */
+  .header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245,242,237,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; max-width: 900px; margin: 0 auto;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .logo-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .logo-text { font-weight: 800; font-size: 16px; color: var(--text); letter-spacing: -0.3px; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .time-pill { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-soft); color: var(--accent-dark); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+  .content { padding: 24px 0; max-width: 900px; margin: 0 auto; }
+
+  /* GREETING — simple, chaleureux */
+  .greeting { margin-bottom: 28px; }
+  .greeting h1 { font-size: 24px; font-weight: 800; color: var(--text); }
+  .greeting p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+  .greeting-time { display: inline-block; margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 4px 12px; border-radius: 20px; }
+
+  /* 3 ROLE CARDS — trois grandes cartes "intention" */
+  .role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+  .role-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px 20px;
+    text-decoration: none; color: var(--text);
+    text-align: center; cursor: pointer;
+    transition: all 0.25s;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .role-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(43,178,134,0.12);
+  }
+  .role-card:active { transform: translateY(-1px); }
+  .role-icon {
+    width: 64px; height: 64px; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin-bottom: 4px;
+  }
+  .role-title { font-size: 17px; font-weight: 700; }
+  .role-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .role-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 600;
+    padding: 3px 10px; border-radius: 12px;
+    margin-top: 4px;
+  }
+  .badge-green { background: var(--accent-soft); color: var(--accent-dark); }
+  .badge-amber { background: #fff8e1; color: #856404; }
+  .badge-blue { background: #e8eaf6; color: #3949ab; }
+
+  /* HOT / URGENT callout */
+  .hot-section {
+    background: linear-gradient(135deg, #fff8e1, #fffdf5);
+    border: 1px solid #ffecb3;
+    border-radius: 14px; padding: 16px 20px; margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .hot-left { display: flex; align-items: center; gap: 12px; }
+  .hot-icon { font-size: 24px; }
+  .hot-text { font-size: 14px; font-weight: 600; color: #5d4037; }
+  .hot-sub { font-size: 12px; color: #8d6e63; margin-top: 2px; }
+  .hot-btn {
+    background: #ff8f00; color: white; border: none;
+    padding: 8px 18px; border-radius: 10px;
+    font-size: 12px; font-weight: 700; text-decoration: none;
+    transition: 0.2s;
+  }
+  .hot-btn:hover { background: #e67e00; }
+
+  /* ACTIVITY FEED — compact, 3 items max */
+  .section-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+  .feed-list { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .feed-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; text-decoration: none; color: var(--text);
+    border-bottom: 1px solid var(--border); transition: 0.1s;
+  }
+  .feed-item:last-child { border-bottom: none; }
+  .feed-item:hover { background: #faf8f5; }
+  .feed-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .feed-dot.green { background: var(--accent); }
+  .feed-dot.amber { background: #ffc107; }
+  .feed-dot.blue { background: #5c6bc0; }
+  .feed-body { flex: 1; }
+  .feed-title { font-size: 13px; font-weight: 600; }
+  .feed-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .feed-action { font-size: 11px; color: var(--accent); font-weight: 600; white-space: nowrap; }
+
+  /* RECOMMENDED MISSIONS */
+  .mission-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+  .mini-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px;
+    text-decoration: none; color: var(--text);
+    transition: 0.15s;
+  }
+  .mini-card:hover { border-color: var(--accent); }
+  .mini-card-cat { font-size: 10px; color: var(--accent); font-weight: 700; text-transform: uppercase; }
+  .mini-card-title { font-size: 13px; font-weight: 600; margin: 4px 0; }
+  .mini-card-meta { font-size: 11px; color: var(--text-secondary); }
+  .mini-card-cost { font-size: 12px; font-weight: 700; color: var(--accent); margin-top: 6px; }
+
+  @media (max-width: 640px) {
+    .role-grid { grid-template-columns: 1fr; }
+    .mission-row { grid-template-columns: 1fr; }
+    .hot-section { flex-direction: column; align-items: flex-start; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <a href="#" class="logo"><div class="logo-icon">⏳</div><span class="logo-text">TimeHeroes</span></a>
+    <div class="header-right">
+      <span class="time-pill">💰 4 TIME</span>
+      <div class="avatar">AD</div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- GREETING -->
+  <div class="container">
+    <div class="greeting">
+      <h1>Bonjour Alex 👋</h1>
+      <p>Qu'est-ce que tu veux faire aujourd'hui ?</p>
+      <div class="greeting-time">⏰ Il te reste 4 TIME disponibles</div>
+    </div>
+  </div>
+
+  <!-- 3 ROLE CARDS — la page propose, l'utilisateur choisit -->
+  <div class="container">
+    <div class="role-grid">
+      <a href="/services" class="role-card">
+        <div class="role-icon" style="background:var(--accent-soft);">🔍</div>
+        <div class="role-title">Trouver de l'aide</div>
+        <div class="role-desc">Parcours les missions disponibles près de chez toi et réserve avec tes TIME</div>
+        <span class="role-badge badge-green">12 missions dispo</span>
+      </a>
+      <a href="/services/new" class="role-card">
+        <div class="role-icon" style="background:#f0f0ff;">🙋</div>
+        <div class="role-title">Proposer mon aide</div>
+        <div class="role-desc">Partage ton temps et tes compétences avec ta communauté — gagne des TIME</div>
+        <span class="role-badge badge-amber">+1 TIME/heure</span>
+      </a>
+      <a href="/wallet" class="role-card">
+        <div class="role-icon" style="background:#fce4ec;">💚</div>
+        <div class="role-title">Soutenir le pot commun</div>
+        <div class="role-desc">Contribue aux missions solidaires qui aident les personnes en difficulté</div>
+        <span class="role-badge badge-blue">38 TIME collectés</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- URGENT ALERT -->
+  <div class="container">
+    <div class="hot-section">
+      <div class="hot-left">
+        <span class="hot-icon">⚡</span>
+        <div>
+          <div class="hot-text">2 demandes en attente de réponse</div>
+          <div class="hot-sub">Quelqu'un a besoin de toi — ne le fais pas attendre !</div>
+        </div>
+      </div>
+      <a href="/bookings?received=true" class="hot-btn">Répondre</a>
+    </div>
+  </div>
+
+  <!-- ACTIVITÉ RÉCENTE -->
+  <div class="container">
+    <div class="section-title">Activité récente</div>
+    <div class="feed-list">
+      <a href="/bookings/1" class="feed-item">
+        <span class="feed-dot green"></span>
+        <div class="feed-body">
+          <div class="feed-title">✅ Mission terminée — Aide smartphone</div>
+          <div class="feed-meta">Il y a 2h · avec Sarah Martin · +1 TIME</div>
+        </div>
+        <span class="feed-action">Voir</span>
+      </a>
+      <a href="/bookings/2" class="feed-item">
+        <span class="feed-dot amber"></span>
+        <div class="feed-body">
+          <div class="feed-title">📩 Nouvelle demande — Cours d'anglais</div>
+          <div class="feed-meta">Il y a 5h · Lina Morel a réservé ton service</div>
+        </div>
+        <span class="feed-action">Répondre</span>
+      </a>
+      <a href="/bookings/3" class="feed-item">
+        <span class="feed-dot blue"></span>
+        <div class="feed-body">
+          <div class="feed-title">💬 Message de Karim Benali</div>
+          <div class="feed-meta">Il y a 1 jour · "Merci pour l'aide de samedi !"</div>
+        </div>
+        <span class="feed-action">Lire</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- MISSIONS RECOMMANDÉES -->
+  <div class="container" style="margin-top: 24px;">
+    <div class="section-title">Suggestions pour toi</div>
+    <div class="mission-row">
+      <a href="#" class="mini-card">
+        <div class="mini-card-cat">📱 Tech</div>
+        <div class="mini-card-title">Aide smartphone senior</div>
+        <div class="mini-card-meta">Sarah · Écouen · 6 km</div>
+        <div class="mini-card-cost">1 TIME</div>
+      </a>
+      <a href="#" class="mini-card">
+        <div class="mini-card-cat">🛠️ Bricolage</div>
+        <div class="mini-card-title">Réparation petite étagère</div>
+        <div class="mini-card-meta">Marc · Montreuil · 3 km</div>
+        <div class="mini-card-cost">1 TIME</div>
+      </a>
+    </div>
+  </div>
+
+  <div style="text-align: center; padding: 24px; font-size: 12px; color: var(--text-secondary);">
+    🤝 Chaque heure donnée est un TIME gagné
+  </div>
+
+</div>
+
+</body>
+</html>

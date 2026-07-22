@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Variante 2 : Essential Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: #f5f2ed;
+    color: #1a1a1a;
+    line-height: 1.5;
+  }
+  :root {
+    --accent: #2BB286;
+    --accent-dark: #008f78;
+    --accent-soft: #e8f5f0;
+    --surface: #ffffff;
+    --border: #e5e0d8;
+    --text: #1a1a1a;
+    --text-secondary: #6b6b6b;
+    --text-muted: #9a9a9a;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 16px; }
+
+  .header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245,242,237,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; max-width: 820px; margin: 0 auto;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .logo-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .logo-text { font-weight: 800; font-size: 16px; color: var(--text); letter-spacing: -0.3px; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links a {
+    padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
+    text-decoration: none; color: var(--text-secondary); transition: 0.15s;
+  }
+  .nav-links a:hover, .nav-links a.active { background: var(--accent-soft); color: var(--accent-dark); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .time-pill { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-soft); color: var(--accent-dark); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+  .content { padding: 20px 0; max-width: 820px; margin: 0 auto; }
+
+  /* WELCOME CARD — one compact block */
+  .welcome-card {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    border-radius: 16px; padding: 24px;
+    color: white; margin-bottom: 20px;
+  }
+  .welcome-top { display: flex; align-items: center; justify-content: space-between; }
+  .welcome-left { display: flex; align-items: center; gap: 14px; }
+  .welcome-avatar {
+    width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .welcome-name { font-size: 18px; font-weight: 700; }
+  .welcome-location { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .welcome-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .welcome-right { text-align: right; }
+  .welcome-balance { font-size: 32px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .welcome-balance-label { font-size: 11px; opacity: 0.7; }
+
+  /* THREE BIG STAT CARDS */
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; text-decoration: none;
+    transition: 0.2s; cursor: pointer;
+  }
+  .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(43,178,134,0.10); }
+  .stat-icon { font-size: 20px; margin-bottom: 6px; }
+  .stat-number { font-size: 22px; font-weight: 800; color: var(--text); line-height: 1.2; }
+  .stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .stat-sub { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-size: 14px; font-weight: 700; color: var(--text);
+    margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-title a { font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; }
+
+  /* MISSION CARD compact */
+  .mission-card {
+    display: flex; align-items: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 6px;
+    text-decoration: none; color: var(--text);
+    transition: 0.15s; gap: 12px;
+  }
+  .mission-card:hover { border-color: var(--accent); }
+  .mission-card-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 16px;
+  }
+  .mission-card-body { flex: 1; min-width: 0; }
+  .mission-card-title { font-size: 13px; font-weight: 600; }
+  .mission-card-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .mission-card-cost { font-size: 13px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .mission-card-status {
+    font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 12px;
+    white-space: nowrap;
+  }
+  .status-in-progress { background: #fff3cd; color: #856404; }
+  .status-active { background: var(--accent-soft); color: var(--accent-dark); }
+
+  /* Quick actions — 2 wide btns */
+  .cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .cta-btn {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px;
+    text-decoration: none; color: var(--text);
+    transition: 0.2s;
+  }
+  .cta-btn:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(43,178,134,0.10); transform: translateY(-1px); }
+  .cta-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+  .cta-btn.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .cta-btn-icon { font-size: 24px; }
+  .cta-btn-text { font-size: 14px; font-weight: 600; }
+  .cta-btn-sub { font-size: 11px; opacity: 0.65; margin-top: 2px; }
+
+  /* Pot commun mini */
+  .pot-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; margin-top: 16px;
+    text-decoration: none; color: var(--text);
+    transition: 0.15s;
+  }
+  .pot-bar:hover { border-color: var(--accent); }
+  .pot-bar-left { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .pot-bar-right { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: var(--accent); }
+  .pot-bar-arrow { font-size: 12px; color: var(--text-muted); }
+
+  @media (max-width: 580px) {
+    .stat-row { grid-template-columns: 1fr; gap: 6px; }
+    .cta-row { grid-template-columns: 1fr; }
+    .welcome-badge { display: none; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <a href="#" class="logo"><div class="logo-icon">⏳</div><span class="logo-text">TimeHeroes</span></a>
+    <div class="header-right">
+      <div class="nav-links">
+        <a href="#" class="active">Accueil</a>
+        <a href="/services">Missions</a>
+        <a href="/bookings">Réservations</a>
+        <a href="/wallet">Wallet</a>
+      </div>
+      <span class="time-pill">💰 4 TIME</span>
+      <div class="avatar">AD</div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- WELCOME CARD — tout en un -->
+  <div class="container">
+    <div class="welcome-card">
+      <div class="welcome-top">
+        <div class="welcome-left">
+          <div class="welcome-avatar">AD</div>
+          <div>
+            <div class="welcome-name">Bonjour Alex 👋</div>
+            <div class="welcome-location">📍 Paris · 10 km</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span class="welcome-badge">⭐ Niveau 2 · Local Hero</span>
+          <div class="welcome-right">
+            <div class="welcome-balance">4</div>
+            <div class="welcome-balance-label">TIME</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 STATS SIMPLES au lieu de 5 -->
+  <div class="container">
+    <div class="stat-row">
+      <a href="/bookings" class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-number">2</div>
+        <div class="stat-label">Réservations à traiter</div>
+        <div class="stat-sub">↳ Voir le détail</div>
+      </a>
+      <a href="/bookings?received=true" class="stat-card">
+        <div class="stat-icon">📩</div>
+        <div class="stat-number">3</div>
+        <div class="stat-label">Demandes reçues</div>
+        <div class="stat-sub">↳ Répondre</div>
+      </a>
+      <a href="/wallet" class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-number">38</div>
+        <div class="stat-label">TIME dans le pot commun</div>
+        <div class="stat-sub">↳ Contribuer</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- MES MISSIONS EN COURS -->
+  <div class="container">
+    <div class="section-title">
+      Mes missions en cours
+      <a href="/bookings">Tout voir →</a>
+    </div>
+
+    <a href="#" class="mission-card" style="border-left: 3px solid #ffc107;">
+      <div class="mission-card-icon" style="background:#fff8e1;">🤝</div>
+      <div class="mission-card-body">
+        <div class="mission-card-title">Aide smartphone pour débutants</div>
+        <div class="mission-card-meta">Mercredi 14h · avec Sarah Martin</div>
+      </div>
+      <span class="mission-card-status status-in-progress">En attente</span>
+    </a>
+
+    <a href="#" class="mission-card" style="border-left: 3px solid var(--accent);">
+      <div class="mission-card-icon" style="background:var(--accent-soft);">🛠️</div>
+      <div class="mission-card-body">
+        <div class="mission-card-title">Réparer une étagère</div>
+        <div class="mission-card-meta">Vendredi 10h · avec Marc Simon</div>
+      </div>
+      <span class="mission-card-status status-active">Confirmée</span>
+    </a>
+  </div>
+
+  <!-- MISSIONS DISPONIBLES (top 3) -->
+  <div class="container" style="margin-top: 24px;">
+    <div class="section-title">
+      À proximité
+      <a href="/services">Voir tout →</a>
+    </div>
+
+    <a href="#" class="mission-card">
+      <div class="mission-card-icon" style="background:#f0f0ff;">📚</div>
+      <div class="mission-card-body">
+        <div class="mission-card-title">Conversation anglais débutant</div>
+        <div class="mission-card-meta">Lina Morel · Paris · 5 km</div>
+      </div>
+      <div class="mission-card-cost">1 TIME</div>
+    </a>
+
+    <a href="#" class="mission-card">
+      <div class="mission-card-icon" style="background:#fff5e6;">📱</div>
+      <div class="mission-card-body">
+        <div class="mission-card-title">Cours informatique débutant</div>
+        <div class="mission-card-meta">Hugo Petit · Paris · 5 km</div>
+      </div>
+      <div class="mission-card-cost">1 TIME</div>
+    </a>
+  </div>
+
+  <!-- 2 BIG CTAs -->
+  <div class="container">
+    <div class="cta-row">
+      <a href="/services" class="cta-btn">
+        <span class="cta-btn-icon">🔍</span>
+        <div>
+          <div class="cta-btn-text">Explorer les missions</div>
+          <div class="cta-btn-sub">Trouve un héros près de chez toi</div>
+        </div>
+      </a>
+      <a href="/services/new" class="cta-btn primary">
+        <span class="cta-btn-icon">➕</span>
+        <div>
+          <div class="cta-btn-text">Proposer mon temps</div>
+          <div class="cta-btn-sub">Gagne des TIME en aidant les autres</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- POT COMMUN -->
+  <div class="container">
+    <a href="/wallet" class="pot-bar">
+      <div class="pot-bar-left">
+        <span>💚</span>
+        <span>Pot commun</span>
+      </div>
+      <div class="pot-bar-right">
+        <span>38 TIME</span>
+        <span class="pot-bar-arrow">→</span>
+      </div>
+    </a>
+  </div>
+
+  <div style="text-align: center; padding: 20px; font-size: 11px; color: var(--text-muted);">
+    ~ nous sommes tous des super-héros du quotidien ~
+  </div>
+
+</div>
+
+</body>
+</html>

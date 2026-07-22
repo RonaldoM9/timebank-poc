@@ -58,7 +58,7 @@ export async function generateNFCToken(
     },
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://204.168.193.43:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://204.168.193.43:3096";
   const nfcUrl = `${baseUrl}/complete/nfc/${rawToken}`;
 
   return {

@@ -105,11 +105,13 @@ export default function BookingDetailClient({
   booking,
   userId,
   isClient,
+  isProvider,
   userRole,
 }: {
   booking: BookingDetailData;
   userId: string;
   isClient: boolean;
+  isProvider: boolean;
   userRole?: string;
 }) {
   const router = useRouter();
@@ -226,7 +228,7 @@ export default function BookingDetailClient({
   }
 
   function getQRUrl(): string {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://204.168.193.43:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://204.168.193.43:3096";
     return `${baseUrl}/complete/qr/${qrToken}`;
   }
 
@@ -250,7 +252,7 @@ export default function BookingDetailClient({
   }
 
   function getNFCUrl(): string {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://204.168.193.43:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://204.168.193.43:3096";
     return `${baseUrl}/complete/nfc/${nfcToken}`;
   }
 
@@ -328,8 +330,6 @@ export default function BookingDetailClient({
   const existingRating = booking.rating;
   const showRatingForm = isCompleted && isClient && !existingRating && !ratingSuccess;
   const showRatingDisplay = existingRating || ratingSuccess;
-  const isProvider = !isClient && !userRole?.match(/^(FACILITATOR|ADMIN)$/);
-
   const hasProof = booking.proofOfCompletion;
   const hasReleaseTx = booking.transactions.some((tx) => tx.type === "release");
 
@@ -476,341 +476,162 @@ export default function BookingDetailClient({
             </div>
           )}
 
-          {/* ─── Admin/Facilitator — Fund from Community Pot ─── */}
-          {isPending && (userRole === "ADMIN" || userRole === "FACILITATOR") && !booking.fundedByCommunityPot && (
-            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <HeartHandshake className="w-5 h-5 text-tb-accent" />
-                <h2 className="text-sm font-semibold text-tb-text-primary uppercase tracking-wider">
-                  Pot commun TimeHeroes
-                </h2>
-              </div>
-
-              {fundSuccess ? (
-                <div className="bg-tb-accent/10 border border-tb-accent/20 rounded-xl p-4 text-center">
-                  <CheckCircle className="w-8 h-8 text-tb-accent mx-auto mb-2" />
-                  <p className="text-tb-accent font-semibold">Mission financée par le pot commun !</p>
-                  <p className="text-tb-text-secondary text-sm mt-1">
-                    {fundAmount} TIME prélevés du pot commun.
-                  </p>
-                </div>
-              ) : fundModalOpen ? (
-                <div className="space-y-4">
-                  <p className="text-tb-text-secondary text-sm">
-                    Financer cette mission depuis le pot commun TimeHeroes.
-                  </p>
-                  <div>
-                    <label className="block text-xs text-tb-text-secondary mb-1.5">Montant (TIME)</label>
-                    <input
-                      type="number"
-                      min={1}
-                      value={fundAmount}
-                      onChange={(e) => setFundAmount(Number(e.target.value))}
-                      className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary focus:outline-none focus:border-tb-accent transition-colors text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-tb-text-secondary mb-1.5">Raison (optionnelle)</label>
-                    <input
-                      type="text"
-                      value={fundReason}
-                      onChange={(e) => setFundReason(e.target.value)}
-                      placeholder="Ex: Mission solidaire..."
-                      className="w-full bg-tb-surface border border-tb-border rounded-xl px-4 py-2.5 text-tb-text-primary placeholder:text-tb-text-muted focus:outline-none focus:border-tb-accent transition-colors text-sm"
-                    />
-                  </div>
-                  {fundError && (
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
-                      <p className="text-red-400 text-sm">{fundError}</p>
-                    </div>
-                  )}
-                  <div className="flex gap-3">
-                    <button
-                      onClick={handleFundFromCommunityPot}
-                      disabled={fundSubmitting}
-                      className="flex-1 bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 text-white font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
-                    >
-                      {fundSubmitting ? "Financement..." : "Confirmer le financement"}
-                    </button>
-                    <button
-                      onClick={() => { setFundModalOpen(false); setFundError(null); }}
-                      disabled={fundSubmitting}
-                      className="bg-tb-surface border border-tb-border text-tb-text-secondary hover:text-tb-text-primary font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
-                    >
-                      Annuler
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-tb-text-secondary text-sm mb-4">
-                    Financer cette mission avec le pot commun TimeHeroes pour permettre à un membre sans TIME de bénéficier de ce service.
-                  </p>
-                  <button
-                    onClick={() => setFundModalOpen(true)}
-                    className="bg-tb-accent hover:bg-tb-accent-hover text-white font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <HeartHandshake className="w-4 h-4" />
-                      Financer avec le pot commun
-                    </span>
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Dates de complétion / annulation */}
-          {(booking.completedAt || booking.cancelledAt) && (
-            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6">
-              {booking.completedAt && (
-                <div className="flex items-center gap-2 text-sm">
-                  <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
-                  <span className="text-tb-text-secondary">Complété le</span>
-                  <span className="text-tb-text-primary font-medium">
-                    {new Date(booking.completedAt).toLocaleDateString("fr-FR", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-              )}
-              {booking.cancelledAt && (
-                <div className="flex items-center gap-2 text-sm">
-                  <XCircle className="w-4 h-4 text-tb-text-secondary shrink-0" />
-                  <span className="text-tb-text-secondary">Annulé le</span>
-                  <span className="text-tb-text-primary font-medium">
-                    {new Date(booking.cancelledAt).toLocaleDateString("fr-FR", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-              )}
-              {booking.cancellationReason && (
-                <div className="flex items-start gap-2 text-sm mt-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />
-                  <span className="text-tb-text-secondary">Raison :</span>
-                  <span className="text-tb-text-primary">{booking.cancellationReason}</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ─── PROOF OF COMPLETION ─── */}
-          {hasProof && (
-            <div className="bg-tb-accent/5 border border-tb-accent/20 rounded-xl p-4 mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                {booking.proofOfCompletion!.method === "nfc" ? (
-                  <Smartphone className="w-5 h-5 text-tb-accent" />
-                ) : (
-                  <QrCode className="w-5 h-5 text-tb-accent" />
-                )}
-                <h2 className="text-sm font-semibold text-tb-text-primary uppercase tracking-wider">
-                  Preuve de réalisation
-                </h2>
-              </div>
-              <div className="space-y-1.5 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-tb-text-secondary">Méthode :</span>
-                  <span className="text-tb-text-primary font-medium">
-                    {booking.proofOfCompletion!.method === "nfc"
-                      ? "NFC"
-                      : booking.proofOfCompletion!.method === "qr_code"
-                        ? "QR code"
-                        : booking.proofOfCompletion!.method}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-tb-text-secondary">Validé par :</span>
-                  <span className="text-tb-text-primary font-medium">{booking.proofOfCompletion!.validatorName}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-tb-text-secondary">Provider :</span>
-                  <span className="text-tb-text-primary font-medium">{booking.proofOfCompletion!.providerName}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-tb-text-secondary">Date :</span>
-                  <span className="text-tb-text-primary font-medium">
-                    {new Date(booking.proofOfCompletion!.createdAt).toLocaleDateString("fr-FR", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-              </div>
-              <div className="mt-3">
-                <span className="inline-flex items-center gap-1 text-xs font-bangers tracking-wider rounded-full px-2.5 py-0.5 bg-tb-accent/10 text-tb-accent">
-                  <CheckCircle className="w-3 h-3" />
-                  {booking.proofOfCompletion!.method === "nfc"
-                    ? "Validation NFC confirmée"
-                    : booking.proofOfCompletion!.method === "qr_code"
-                      ? "Validation QR confirmée"
-                      : "Validation manuelle"}
+          {/* ─── ACTION TOOLBAR ─── */}
+          {isPending && !hasProof && (
+            <div className="border-t border-tb-border pt-6 mb-6">
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="text-[10px] font-semibold text-tb-text-muted uppercase tracking-widest">
+                  Actions disponibles
                 </span>
               </div>
-            </div>
-          )}
 
-          {/* ─── QR PROVIDER BLOCK (pending, user is provider) ─── */}
-          {isPending && isProvider && !hasProof && (
-            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <QrCode className="w-5 h-5 text-tb-accent" />
-                <h2 className="text-sm font-semibold text-tb-text-primary uppercase tracking-wider">
-                  Validation QR
-                </h2>
-              </div>
-
-              {!qrToken ? (
-                <div>
-                  <p className="text-tb-text-secondary text-sm mb-4">
-                    Montrez ce QR code au client une fois la mission terminée.
-                    Le client devra le scanner pour confirmer la réalisation et libérer les TIME.
-                  </p>
-                  {qrError && (
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
-                      <p className="text-red-400 text-sm">{qrError}</p>
+              <div className="flex flex-wrap gap-2">
+                {/* ── Pot Commun (staff only) ── */}
+                {(userRole === "ADMIN" || userRole === "FACILITATOR") && !booking.fundedByCommunityPot && (
+                  fundSuccess ? (
+                    <div className="bg-tb-accent/10 border border-tb-accent/20 rounded-xl px-3 py-2 text-xs text-tb-accent flex items-center gap-1.5">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      Financé ({fundAmount} TIME)
                     </div>
-                  )}
+                  ) : fundModalOpen ? (
+                    <div className="w-full bg-tb-surface-elevated border border-tb-border rounded-xl p-3 space-y-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          min={1}
+                          value={fundAmount}
+                          onChange={(e) => setFundAmount(Number(e.target.value))}
+                          className="flex-1 bg-tb-surface border border-tb-border rounded-lg px-3 py-1.5 text-xs text-tb-text-primary focus:outline-none focus:border-tb-accent"
+                          placeholder="Montant"
+                        />
+                        <button
+                          onClick={handleFundFromCommunityPot}
+                          disabled={fundSubmitting}
+                          className="bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 text-white font-semibold rounded-lg px-3 py-1.5 text-xs transition-colors"
+                        >
+                          {fundSubmitting ? "..." : "Confirmer"}
+                        </button>
+                        <button
+                          onClick={() => { setFundModalOpen(false); setFundError(null); }}
+                          className="text-tb-text-muted hover:text-tb-text-secondary text-xs px-2"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      {fundError && <p className="text-red-400 text-[10px]">{fundError}</p>}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setFundModalOpen(true)}
+                      className="inline-flex items-center gap-1.5 bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-2 text-xs font-medium text-tb-text-primary hover:bg-tb-accent/10 hover:border-tb-accent/30 hover:text-tb-accent transition-all"
+                    >
+                      <HeartHandshake className="w-3.5 h-3.5" />
+                      Pot commun
+                    </button>
+                  )
+                )}
+
+                {/* ── QR Validation (provider only) ── */}
+                {isProvider && !qrToken && (
                   <button
                     onClick={handleGenerateQR}
                     disabled={qrGenerating}
-                    className="bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 text-white font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
+                    className="inline-flex items-center gap-1.5 bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-2 text-xs font-medium text-tb-text-primary hover:bg-tb-accent/10 hover:border-tb-accent/30 hover:text-tb-accent transition-all disabled:opacity-50"
                   >
-                    <span className="flex items-center justify-center gap-2">
-                      <QrCode className="w-4 h-4" />
-                      {qrGenerating ? "Génération…" : "Générer le QR de validation"}
-                    </span>
+                    <QrCode className="w-3.5 h-3.5" />
+                    {qrGenerating ? "..." : "QR validation"}
                   </button>
-                </div>
-              ) : (
-                <div>
-                  {qrSuccessMsg && (
-                    <div className="bg-tb-accent/10 border border-tb-accent/20 rounded-xl p-3 mb-4">
-                      <p className="text-tb-accent text-sm">{qrSuccessMsg}</p>
-                    </div>
-                  )}
-                  <div className="flex flex-col items-center gap-3 mb-4">
-                    <div className="bg-white rounded-xl p-4 inline-block">
-                      <QRCode value={getQRUrl()} size={200} />
-                    </div>
-                    <div className="text-center">
-                      {timeLeft && timeLeft !== "Expiré" ? (
-                        <p className="text-tb-text-secondary text-xs">
-                          Expire dans <span className="text-yellow-400 font-mono">{timeLeft}</span>
-                        </p>
-                      ) : timeLeft === "Expiré" ? (
-                        <p className="text-red-400 text-xs">QR expiré</p>
-                      ) : null}
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleGenerateQR}
-                    disabled={qrGenerating}
-                    className="bg-tb-surface border border-tb-border text-tb-text-primary hover:bg-tb-surface-elevated font-semibold rounded-xl py-2 px-4 text-xs transition-colors"
-                  >
-                    <span className="flex items-center justify-center gap-1.5">
-                      <RefreshCw className="w-3.5 h-3.5" />
-                      {qrGenerating ? "Régénération…" : "Régénérer le QR"}
-                    </span>
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+                )}
 
-          {/* ─── NFC PROVIDER BLOCK (pending, user is provider) ─── */}
-          {isPending && isProvider && !hasProof && (
-            <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Smartphone className="w-5 h-5 text-tb-accent" />
-                <h2 className="text-sm font-semibold text-tb-text-primary uppercase tracking-wider">
-                  Validation NFC
-                </h2>
-              </div>
-
-              {!nfcToken ? (
-                <div>
-                  <p className="text-tb-text-secondary text-sm mb-4">
-                    Générez un lien NFC de validation. Écrivez ce lien dans un tag NFC ou partagez-le avec le client. Une fois scanné, le client pourra confirmer la mission et libérer les TIME.
-                  </p>
-                  {nfcError && (
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
-                      <p className="text-red-400 text-sm">{nfcError}</p>
-                    </div>
-                  )}
+                {/* ── NFC Validation (provider only) ── */}
+                {isProvider && !nfcToken && (
                   <button
                     onClick={handleGenerateNFC}
                     disabled={nfcGenerating}
-                    className="bg-tb-accent hover:bg-tb-accent-hover disabled:opacity-50 text-white font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors"
+                    className="inline-flex items-center gap-1.5 bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-2 text-xs font-medium text-tb-text-primary hover:bg-tb-accent/10 hover:border-tb-accent/30 hover:text-tb-accent transition-all disabled:opacity-50"
                   >
-                    <span className="flex items-center justify-center gap-2">
-                      <Smartphone className="w-4 h-4" />
-                      {nfcGenerating ? "Génération…" : "Générer le lien NFC"}
-                    </span>
+                    <Smartphone className="w-3.5 h-3.5" />
+                    {nfcGenerating ? "..." : "NFC"}
                   </button>
-                </div>
-              ) : (
-                <div>
-                  {nfcSuccessMsg && (
-                    <div className="bg-tb-accent/10 border border-tb-accent/20 rounded-xl p-3 mb-4">
-                      <p className="text-tb-accent text-sm">{nfcSuccessMsg}</p>
-                    </div>
-                  )}
+                )}
 
-                  {/* NFC Link display */}
-                  <div className="bg-tb-surface border border-tb-border rounded-xl p-3 mb-3">
-                    <p className="text-tb-text-secondary text-xs mb-1">Lien NFC :</p>
-                    <p className="text-tb-accent text-sm font-mono break-all">{getNFCUrl()}</p>
-                  </div>
-
-                  {/* Copy button */}
+                {/* ── Client: mark completed ── */}
+                {isClient && (
                   <button
-                    onClick={handleCopyNFC}
-                    className="w-full bg-tb-surface border border-tb-border text-tb-text-primary hover:bg-tb-surface-elevated font-semibold rounded-xl py-2.5 px-4 text-sm transition-colors mb-2"
+                    onClick={handleComplete}
+                    className="inline-flex items-center gap-1.5 bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-2 text-xs font-medium text-tb-text-primary hover:bg-emerald-500/10 hover:border-emerald-500/30 hover:text-emerald-400 transition-all"
                   >
-                    <span className="flex items-center justify-center gap-2">
-                      <Copy className="w-4 h-4" />
-                      {nfcCopied ? "Copié !" : "Copier le lien NFC"}
-                    </span>
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    Terminer
                   </button>
+                )}
 
-                  {/* Instructions */}
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 mb-3">
-                    <p className="text-yellow-400 text-xs">
-                      💡 Écrivez ce lien dans un tag NFC avec une app NFC externe (NFC Tools, etc.). Le client touchera le tag pour ouvrir la page de validation.
-                    </p>
+                {/* ── Cancel (client or provider) ── */}
+                {(isClient || isProvider) && (
+                  <button
+                    onClick={handleCancel}
+                    className="inline-flex items-center gap-1.5 bg-tb-surface-elevated border border-tb-border rounded-xl px-3 py-2 text-xs font-medium text-tb-text-primary hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 transition-all"
+                  >
+                    <XCircle className="w-3.5 h-3.5" />
+                    Annuler
+                  </button>
+                )}
+              </div>
+
+              {/* ── QR generated display ── */}
+              {isProvider && qrToken && (
+                <div className="mt-3 bg-tb-surface-elevated border border-tb-border rounded-xl p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <QrCode className="w-4 h-4 text-tb-accent" />
+                    <span className="text-xs font-semibold text-tb-text-primary">QR généré</span>
+                    {timeLeft && timeLeft !== "Expiré" ? (
+                      <span className="text-[10px] text-yellow-400 font-mono ml-auto">{timeLeft}</span>
+                    ) : timeLeft === "Expiré" ? (
+                      <span className="text-[10px] text-red-400 ml-auto">Expiré</span>
+                    ) : null}
                   </div>
+                  {qrSuccessMsg && <p className="text-[10px] text-tb-accent mb-2">{qrSuccessMsg}</p>}
+                  <div className="flex items-center gap-3">
+                    <div className="bg-white rounded-lg p-1 shrink-0">
+                      <QRCode value={getQRUrl()} size={80} />
+                    </div>
+                    <button
+                      onClick={handleGenerateQR}
+                      disabled={qrGenerating}
+                      className="text-[10px] text-tb-text-muted hover:text-tb-text-primary underline transition-colors"
+                    >
+                      {qrGenerating ? "..." : "Régénérer"}
+                    </button>
+                  </div>
+                </div>
+              )}
 
-                  {/* Expiration + QR fallback */}
-                  <div className="flex items-center justify-between">
+              {/* ── NFC generated display ── */}
+              {isProvider && nfcToken && (
+                <div className="mt-2 bg-tb-surface-elevated border border-tb-border rounded-xl p-3">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Smartphone className="w-4 h-4 text-tb-accent" />
+                    <span className="text-xs font-semibold text-tb-text-primary">Lien NFC</span>
                     {nfcTimeLeft && nfcTimeLeft !== "Expiré" ? (
-                      <p className="text-tb-text-secondary text-xs">
-                        Expire dans <span className="text-yellow-400 font-mono">{nfcTimeLeft}</span>
-                      </p>
+                      <span className="text-[10px] text-yellow-400 font-mono ml-auto">{nfcTimeLeft}</span>
                     ) : nfcTimeLeft === "Expiré" ? (
-                      <p className="text-red-400 text-xs">Lien expiré</p>
-                    ) : <span />}
-
+                      <span className="text-[10px] text-red-400 ml-auto">Expiré</span>
+                    ) : null}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 text-[10px] text-tb-accent font-mono truncate bg-tb-surface rounded px-2 py-1">{getNFCUrl()}</code>
+                    <button
+                      onClick={handleCopyNFC}
+                      className="text-[10px] text-tb-text-muted hover:text-tb-text-primary underline shrink-0 transition-colors"
+                    >
+                      {nfcCopied ? "Copié" : "Copier"}
+                    </button>
                     <button
                       onClick={handleGenerateNFC}
                       disabled={nfcGenerating}
-                      className="bg-tb-surface border border-tb-border text-tb-text-primary hover:bg-tb-surface-elevated font-semibold rounded-xl py-2 px-3 text-xs transition-colors"
+                      className="text-[10px] text-tb-text-muted hover:text-tb-text-primary underline shrink-0 transition-colors"
                     >
-                      <span className="flex items-center justify-center gap-1.5">
-                        <RefreshCw className="w-3 h-3" />
-                        {nfcGenerating ? "Régénération…" : "Régénérer"}
-                      </span>
+                      {nfcGenerating ? "..." : "Régén."}
                     </button>
                   </div>
                 </div>
@@ -818,36 +639,11 @@ export default function BookingDetailClient({
             </div>
           )}
 
-          {/* ─── ACTIONS ─── */}
-          {/* Client actions */}
-          {isPending && isClient && !hasProof && (
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              {/* QR is the primary action for client too when QR was generated */}
-              <button
-                onClick={handleComplete}
-                className="flex-1 bg-tb-surface border border-tb-border text-tb-text-primary hover:bg-tb-surface-elevated font-semibold rounded-xl py-3 text-center transition-colors text-sm border border-tb-border"
-              >
-                <span className="flex items-center justify-center gap-2">
-                  <CheckCircle className="w-4 h-4" />
-                  Marquer terminé manuellement
-                </span>
-              </button>
-              <button
-                onClick={handleCancel}
-                className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold rounded-xl py-3 text-center transition-colors text-sm border border-red-500/20"
-              >
-                <span className="flex items-center justify-center gap-2">
-                  <XCircle className="w-4 h-4" />
-                  Annuler la réservation
-                </span>
-              </button>
-            </div>
-          )}
-
-          {isPending && !isClient && !hasProof && !qrToken && (
+          {/* ── Empty state when pending but no actions available ── */}
+          {isPending && !isClient && !hasProof && !qrToken && !isProvider && (
             <div className="bg-tb-surface-elevated border border-tb-border rounded-xl p-4 mb-6 text-center">
               <p className="text-tb-text-secondary text-sm">
-                Réservation en attente — utilisez le bloc "Validation QR" ci-dessus pour générer un QR, ou le client peut marquer comme terminée manuellement.
+                Réservation en attente — le prestataire pourra générer un QR de validation une fois prêt.
               </p>
             </div>
           )}

@@ -23,7 +23,9 @@ import {
   ChevronDown,
   ChevronUp,
   Loader2,
+  Eye,
 } from "lucide-react";
+import Link from "next/link";
 import ConnectedHeader from "@/components/ConnectedHeader";
 import {
   generateRecommendationsAction,
@@ -393,6 +395,40 @@ function TargetItem({
           </div>
         </div>
         <div className="flex items-center gap-2 ml-4">
+          {/* Lien vers le détail de la mission */}
+          {targetType === "URGENT_REQUEST" && (
+            <Link
+              href={`/urgent/${target.id}`}
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors px-3 py-1.5 rounded-lg bg-tb-surface-elevated hover:bg-tb-border"
+            >
+              <Eye className="w-3 h-3" />
+              Voir
+            </Link>
+          )}
+          {targetType === "SOLIDARITY_MISSION" && (
+            <Link
+              href={`/services/${target.id}`}
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors px-3 py-1.5 rounded-lg bg-tb-surface-elevated hover:bg-tb-border"
+            >
+              <Eye className="w-3 h-3" />
+              Voir
+            </Link>
+          )}
+          {targetType === "COLLECTIVE_MISSION" && (
+            <Link
+              href={`/collective-missions/${target.id}`}
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1 text-xs text-tb-text-secondary hover:text-tb-text-primary transition-colors px-3 py-1.5 rounded-lg bg-tb-surface-elevated hover:bg-tb-border"
+            >
+              <Eye className="w-3 h-3" />
+              Voir
+            </Link>
+          )}
           <button
             onClick={(e) => { e.stopPropagation(); handleGenerate(); }}
             disabled={generating}

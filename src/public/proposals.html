@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Propositions UX épurées</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f5f0eb;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #1a1a2e;
+    padding: 30px 20px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 24px; margin-bottom: 6px; }
+  h1 span { color: #2BB286; }
+  .subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+  .proposal {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+  .proposal-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .proposal-header h2 { font-size: 18px; }
+  .proposal-header .tag {
+    background: #2BB286;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .mockup {
+    padding: 30px 28px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .phone {
+    width: 320px;
+    min-height: 580px;
+    background: #fff;
+    border-radius: 32px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #e8e4e0;
+    flex-shrink: 0;
+  }
+  .phone .notch {
+    height: 28px;
+    background: #faf8f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #999;
+    border-bottom: 1px solid #eee;
+  }
+  .phone .screen { padding: 16px 18px 20px; }
+  .desktop {
+    flex: 1;
+    min-width: 340px;
+    min-height: 480px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e8e4e0;
+    padding: 24px 28px;
+  }
+  .greeting { font-size: 16px; font-weight: 700; }
+  .balance-big {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #e8f5ee;
+    color: #1a8f6a;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+  }
+  .big-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    font-weight: 700;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .big-btn .icon { font-size: 36px; margin-bottom: 8px; }
+  .big-btn .label { font-size: 18px; margin-bottom: 4px; }
+  .big-btn .desc { font-size: 12px; opacity: 0.75; font-weight: 400; }
+  .big-btn.need { background: linear-gradient(135deg, #2BB286, #1a8f6a); color: white; }
+  .big-btn.offer { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; }
+  .mini-card {
+    background: #faf8f6;
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mini-card:hover { background: #f0ece6; }
+  .p1-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+  .p1-feed { margin-top: 20px; }
+  .p1-feed-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0ece6;
+    font-size: 13px;
+  }
+  .p1-feed-item:last-child { border: none; }
+  .p1-feed-item .emoji { font-size: 18px; }
+
+  .p2-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .p2-feed-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .p2-feed-item:hover { background: #faf8f6; }
+  .p2-feed-item .av {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .p2-feed-item .av.green { background: #e8f5ee; }
+  .p2-feed-item .av.purple { background: #eef2ff; }
+  .p2-feed-item .av.amber { background: #fef3c7; }
+
+  .fab {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #2BB286;
+    color: white;
+    border: none;
+    font-size: 28px;
+    font-weight: 300;
+    box-shadow: 0 4px 16px rgba(43,178,134,0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .p3-split { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .p3-split .row { display: flex; gap: 10px; }
+  .p3-split .cell {
+    flex: 1;
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .p3-split .cell .e { font-size: 28px; display: block; margin-bottom: 4px; }
+  .p3-split .cell.g1 { background: linear-gradient(135deg, #2BB286, #1a8f6a); }
+  .p3-split .cell.g2 { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+  .p3-split .cell.g3 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .p3-split .cell.g4 { background: linear-gradient(135deg, #ec4899, #db2777); }
+  .p3-split .cell.g5 { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+  .p3-split .cell.g6 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+  .badge-dot { width: 10px; height: 10px; border-radius: 50%; background: #dc2626; display: inline-block; }
+  .sep { border: none; border-top: 1px solid #eee; margin: 12px 0; }
+
+  .cmp-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+  .cmp-table th { text-align: left; padding: 10px 14px; background: #faf8f6; border-bottom: 2px solid #e8e4e0; }
+  .cmp-table td { padding: 10px 14px; border-bottom: 1px solid #f0ece6; }
+  .cmp-table .yes { color: #2BB286; font-weight: 600; }
+  .cmp-table .no { color: #ccc; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>&#x1F3DB;&#xFE0F; <span>TimeHeroes</span> — 3 propositions d&#x27;épuration</h1>
+  <p class="subtitle">Du plus complet au plus radical. L&#x27;objectif : <strong>1 seconde pour comprendre</strong> ce qu&#x27;on peut faire.</p>
+
+  <!-- PROPOSITION A -->
+  <div class="proposal">
+    <div class="proposal-header">
+      <h2>&#x1F343; A. &quot;Humble Accueil&quot;</h2>
+      <span class="tag">Web + App</span>
+    </div>
+    <div class="mockup">
+      <div class="phone">
+        <div class="notch">TimeHeroes</div>
+        <div class="screen">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+            <span class="greeting">Bonjour &#x1F44B;</span>
+            <span class="balance-big">&#x23F1;&#xFE0F; 24 TIME</span>
+          </div>
+          <div class="p1-2col">
+            <a href="/services" class="big-btn need" style="border-radius:16px;padding:20px 12px;">
+              <span class="icon">&#x1F50D;</span>
+              <span class="label" style="font-size:15px;">Trouver<br>de l&#x27;aide</span>
+            </a>
+            <a href="/services/new" class="big-btn offer" style="border-radius:16px;padding:20px 12px;">
+              <span class="icon">&#x1F91D;</span>
+              <span class="label" style="font-size:15px;">Proposer<br>mon temps</span>
+            </a>
+          </div>
+          <hr class="sep">
+          <div style="font-size:11px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Activit&eacute; r&eacute;cente</div>
+          <div class="p1-feed">
+            <div class="p1-feed-item"><span class="emoji">&#x2705;</span> Jardinage chez Marc &mdash; <strong>+3 TIME</strong></div>
+            <div class="p1-feed-item"><span class="emoji">&#x1F4E9;</span> Nouvelle demande : cours d&#x27;anglais</div>
+            <div class="p1-feed-item"><span class="emoji">&#x2B50;</span> Sophie a valid&eacute; ton service</div>
+          </div>
+        </div>
+      </div>
+      <div class="desktop">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <div>
+            <div class="greeting" style="font-size:20px;">Bonjour Benjamin &#x1F44B;</div>
+            <div style="font-size:13px;color:#888;">Qu&#x27;est-ce que tu veux faire aujourd&#x27;hui ?</div>
+          </div>
+          <span class="balance-big" style="font-size:15px;padding:8px 18px;">&#x23F1;&#xFE0F; 24 TIME disponibles</span>
+        </div>
+        <div class="p1-2col" style="grid-template-columns:1fr 1fr;gap:16px;">
+          <a href="/services" class="big-btn need" style="padding:32px 20px;border-radius:20px;">
+            <span class="icon">&#x1F50D;</span>
+            <span class="label">Trouver de l&#x27;aide</span>
+            <span class="desc">Parcours les missions pr&egrave;s de chez toi</span>
+          </a>
+          <a href="/services/new" class="big-btn offer" style="padding:32px 20px;border-radius:20px;">
+            <span class="icon">&#x1F91D;</span>
+            <span class="label">Proposer mon temps</span>
+            <span class="desc">Partage tes comp&eacute;tences, gagne des TIME</span>
+          </a>
+        </div>
+        <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="/bookings" class="mini-card" style="flex:1;">
+            <span>&#x1F4E9;</span>
+            <span><strong>2 demandes</strong> en attente</span>
+            <span class="badge-dot"></span>
+          </a>
+          <a href="/messages" class="mini-card" style="flex:1;">
+            <span>&#x1F4AC;</span>
+            <span><strong>1 message</strong> non lu</span>
+          </a>
+          <a href="/wallet" class="mini-card">
+            <span>&#x1F45B;</span> Mon wallet
+          </a>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 28px 20px;">
+      <p style="font-size:13px;color:#666;">&#x2705; <strong>Pourquoi :</strong> 2 choix + 3 mini-cartes. L&#x27;utilisateur voit imm&eacute;diatement ses deux options principales. Tout le reste (wallet, profil, historique) est dans le menu hamburger.</p>
+    </div>
+  </div>
+
+  <!-- PROPOSITION B -->
+  <div class="proposal">
+    <div class="proposal-header">
+      <h2>&#x1F4EC; B. &quot;Feed + FAB&quot;</h2>
+      <span class="tag">Web + App</span>
+    </div>
+    <div class="mockup">
+      <div class="phone">
+        <div class="notch">TimeHeroes</div>
+        <div class="screen">
+          <div class="p2-header">
+            <span class="greeting">Salut ! &#x1F44B;</span>
+            <span class="balance-big">24 TIME</span>
+          </div>
+          <div class="p2-feed-item">
+            <div class="av green">&#x1F64B;</div>
+            <div>
+              <div><strong>Sophie</strong> a besoin d&#x27;aide en <strong>jardinage</strong></div>
+              <div style="font-size:12px;color:#888;">&Agrave; 2 km &middot; 2 TIME/h</div>
+            </div>
+            <span style="margin-left:auto;font-size:10px;color:#2BB286;font-weight:700;white-space:nowrap;">Je veux aider &#x2192;</span>
+          </div>
+          <div class="p2-feed-item">
+            <div class="av amber">&#x1F4E9;</div>
+            <div>
+              <div><strong>Nouvelle demande</strong> pour ton cours d&#x27;anglais</div>
+              <div style="font-size:12px;color:#888;">Il y a 10 min</div>
+            </div>
+          </div>
+          <div class="p2-feed-item">
+            <div class="av purple">&#x2705;</div>
+            <div>
+              <div><strong>Marc</strong> a valid&eacute; ta mission jardinage</div>
+              <div style="font-size:12px;color:#888;"><strong>+3 TIME</strong> &middot; Il y a 2h</div>
+            </div>
+          </div>
+          <div class="p2-feed-item">
+            <div class="av green">&#x1F331;</div>
+            <div>
+              <div><strong>Aide aux courses</strong> pour Mme Robert</div>
+              <div style="font-size:12px;color:#888;">&Agrave; 800 m &middot; 1 TIME/h</div>
+            </div>
+          </div>
+          <button class="fab">+</button>
+        </div>
+      </div>
+      <div class="desktop">
+        <div class="p2-header" style="margin-bottom:16px;">
+          <div>
+            <div class="greeting" style="font-size:18px;">Salut Benjamin &#x1F44B;</div>
+            <div style="font-size:12px;color:#888;">Ton solde : <strong>24 TIME</strong></div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <a href="/services/new" style="display:inline-flex;align-items:center;gap:6px;background:#2BB286;color:white;padding:8px 18px;border-radius:12px;text-decoration:none;font-weight:700;font-size:13px;">+ Proposer mon temps</a>
+            <a href="/services" style="display:inline-flex;align-items:center;gap:6px;background:#6366f1;color:white;padding:8px 18px;border-radius:12px;text-decoration:none;font-weight:700;font-size:13px;">&#x1F50D; Explorer</a>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="p2-feed-item" style="background:#faf8f6;">
+            <div class="av green">&#x1F64B;</div>
+            <div>
+              <div><strong>Sophie</strong> &middot; Jardinage</div>
+              <div style="font-size:12px;color:#888;">2 km &middot; 2 TIME/h</div>
+            </div>
+          </div>
+          <div class="p2-feed-item" style="background:#faf8f6;">
+            <div class="av amber">&#x1F4E9;</div>
+            <div>
+              <div><strong>Demande</strong> cours d&#x27;anglais</div>
+              <div style="font-size:12px;color:#888;">Il y a 10 min</div>
+            </div>
+          </div>
+          <div class="p2-feed-item" style="background:#faf8f6;">
+            <div class="av purple">&#x2705;</div>
+            <div>
+              <div><strong>Marc</strong> a valid&eacute; ta mission</div>
+              <div style="font-size:12px;color:#888;">+3 TIME</div>
+            </div>
+          </div>
+          <div class="p2-feed-item" style="background:#faf8f6;">
+            <div class="av green">&#x1F331;</div>
+            <div>
+              <div><strong>Courses</strong> pour Mme Robert</div>
+              <div style="font-size:12px;color:#888;">800 m &middot; 1 TIME/h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 28px 20px;">
+      <p style="font-size:13px;color:#666;">&#x2705; <strong>Pourquoi :</strong> L&#x27;activit&eacute; est le contenu principal. Tout part du feed : voir une mission &#x2192; cliquer &#x2192; aider. Le FAB (+) permet de cr&eacute;er. Aucune information superflue.</p>
+    </div>
+  </div>
+
+  <!-- PROPOSITION C -->
+  <div class="proposal">
+    <div class="proposal-header">
+      <h2>&#x1F300; C. &quot;Radical &mdash; 2 gestes max&quot;</h2>
+      <span class="tag">App mobile</span>
+    </div>
+    <div class="mockup" style="justify-content:center;">
+      <div class="phone" style="width:340px;">
+        <div class="notch">TimeHeroes</div>
+        <div class="screen">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <span class="greeting" style="font-size:18px;">Benjamin</span>
+            <span class="balance-big" style="font-size:14px;padding:5px 12px;">24 TIME</span>
+          </div>
+          <div class="p3-split">
+            <div class="row">
+              <a href="/services" class="cell g1">
+                <span class="e">&#x1F50D;</span>
+                Trouver de l&#x27;aide
+              </a>
+              <a href="/services/new" class="cell g2">
+                <span class="e">&#x270B;</span>
+                Proposer mon temps
+              </a>
+            </div>
+            <div class="row">
+              <a href="/bookings" class="cell g3">
+                <span class="e">&#x1F4E9;</span>
+                Mes demandes <span style="display:block;font-size:10px;opacity:0.7;font-weight:400;">(2 en attente)</span>
+              </a>
+              <a href="/wallet" class="cell g4">
+                <span class="e">&#x1F45B;</span>
+                Mon wallet
+              </a>
+            </div>
+            <div class="row">
+              <a href="/messages" class="cell g5">
+                <span class="e">&#x1F4AC;</span>
+                Messages <span style="display:block;font-size:10px;opacity:0.7;font-weight:400;">(1 non lu)</span>
+              </a>
+              <a href="/profile" class="cell g6">
+                <span class="e">&#x1F464;</span>
+                Mon profil
+              </a>
+            </div>
+          </div>
+          <hr class="sep">
+          <div style="font-size:11px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center;">Derni&egrave;re activit&eacute;</div>
+          <div class="p1-feed-item" style="text-align:center;justify-content:center;font-size:12px;">
+            &#x2705; Marc a valid&eacute; ta mission jardinage &#x2192; <strong>+3 TIME</strong>
+          </div>
+        </div>
+      </div>
+      <div class="desktop" style="max-width:400px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(135deg,#faf8f6,#f0ece6);">
+        <div style="text-align:center;">
+          <div style="font-size:48px;margin-bottom:8px;">&#x1F300;</div>
+          <h3 style="font-size:20px;margin-bottom:6px;">Version &quot;App Mobile&quot;</h3>
+          <p style="font-size:13px;color:#666;max-width:300px;margin:0 auto;">
+            La version web reprend la proposition A ou B.<br>
+            <strong>Sur l&#x27;app (Capacitor),</strong> on va encore plus loin :
+            6 tuiles color&eacute;es, pas de scroll infini, pas de texte superflu.
+            L&#x27;utilisateur arrive &#x2192; voit 6 actions possibles &#x2192; tape.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 28px 20px;">
+      <p style="font-size:13px;color:#666;">&#x2705; <strong>Pourquoi :</strong> Tout tient sur un &eacute;cran, sans scroll. Chaque case = une action. Id&eacute;al pour les nouveaux utilisateurs, les seniors (fondation) et le mobile.</p>
+    </div>
+  </div>
+
+  <!-- TABLEAU COMPARATIF -->
+  <div class="proposal" style="padding:28px;">
+    <h2 style="font-size:18px;margin-bottom:16px;">&#x1F4CA; Comparatif des 3 propositions</h2>
+    <table class="cmp-table">
+      <tr>
+        <th>Crit&egrave;re</th>
+        <th>A. Humble Accueil</th>
+        <th>B. Feed + FAB</th>
+        <th>C. Radical (app)</th>
+      </tr>
+      <tr>
+        <td>Sections visibles</td>
+        <td>3</td>
+        <td>2</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>Scroll n&eacute;cessaire ?</td>
+        <td class="no">Non (tout tient)</td>
+        <td class="no">Non (si &lt; 5 items)</td>
+        <td class="yes">Non (1 &eacute;cran)</td>
+      </tr>
+      <tr>
+        <td>Temps pour comprendre</td>
+        <td>2 secondes</td>
+        <td>1 seconde</td>
+        <td>0,5 seconde</td>
+      </tr>
+      <tr>
+        <td>Temps de d&eacute;veloppement</td>
+        <td>&#x2248;1h</td>
+        <td>&#x2248;2h</td>
+        <td>&#x2248;1h30</td>
+      </tr>
+      <tr>
+        <td>Id&eacute;al pour</td>
+        <td>Web + App (bon compromis)</td>
+        <td>Web (contenu riche)</td>
+        <td>App mobile (ultra simple)</td>
+      </tr>
+    </table>
+
+    <div style="margin-top:24px;padding:16px;background:#e8f5ee;border-radius:12px;">
+      <p style="font-size:14px;font-weight:700;color:#1a8f6a;">&#x1F3AF; Ma recommandation</p>
+      <p style="font-size:13px;color:#1a8f6a;margin-top:4px;">
+        <strong>A (Humble Accueil) pour la version web</strong> &mdash; le directeur de la fondation a dit &quot;trop d&#x27;infos&quot;, ici on revient &agrave; l&#x27;essentiel : 2 grands choix + un mini-r&eacute;sum&eacute; en bas.<br>
+        <strong>C (Radical) pour l&#x27;app mobile</strong> &mdash; sur t&eacute;l&eacute;phone, 6 tuiles color&eacute;es, pas de r&eacute;flexion.
+      </p>
+    </div>
+  </div>
+
+  <p style="text-align:center;padding:20px;color:#aaa;font-size:12px;">TimeHeroes &middot; Propositions UX &middot; Juillet 2026</p>
+</div>
+</body>
+</html>

@@ -138,12 +138,32 @@ export default function UrgentDetailClient({
   async function handleGenerateRecommendations() {
     setRecsGenerating(true);
     setRecsError(null);
+
+    // Si des recommandations existent déjà, on recharge simplement
+    if (recommendations.length > 0) {
+      await loadRecommendations();
+      setSuccess("Recommandations rechargées !");
+      setRecsGenerating(false);
+      return;
+    }
+
     const result = await generateRecommendationsAction("URGENT_REQUEST", request.id);
     if (!result.success) {
       setRecsError(result.error);
     } else {
-      setRecommendations(result.data?.recommendations ?? []);
-      setSuccess("Recommandations générées avec succès !");
+      const newRecs = result.data?.recommendations ?? [];
+      if (newRecs.length === 0) {
+        // Tous les candidats déjà proposés — on charge les existantes
+        await loadRecommendations();
+        if (recommendations.length > 0) {
+          setSuccess("Recommandations déjà existantes — les voici.");
+        } else {
+          setRecsError("Aucun nouveau candidat trouvé. Tous les héros disponibles ont déjà été proposés ou sont exclus.");
+        }
+      } else {
+        setRecommendations(newRecs);
+        setSuccess("Recommandations générées avec succès !");
+      }
     }
     setRecsGenerating(false);
   }

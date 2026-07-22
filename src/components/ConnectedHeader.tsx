@@ -21,8 +21,12 @@ import {
   Activity,
   Sparkles,
   Building2,
+  CheckCircle2,
+  XCircle,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
+import { getOrganizationRoleLabel, getRoleBadgeColor, ROLE_PERMISSIONS_LABELS } from "@/lib/organization-labels";
 
 type NavItem = { href: string; label: string; icon: any; role?: string };
 type NavSection = {
@@ -72,14 +76,19 @@ function buildNavSections(isFacilitator: boolean, role: string): NavSection[] {
   return sections;
 }
 
-export default function ConnectedHeader() {
+export default function ConnectedHeader({ orgRole }: { orgRole?: string | null }) {
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopMoreOpen, setDesktopMoreOpen] = useState(false);
+  const [roleInfoOpen, setRoleInfoOpen] = useState(false);
 
   const role = (session?.user as any)?.role;
   const isFacilitator = role === "FACILITATOR" || role === "ADMIN";
   const SECTIONS = buildNavSections(isFacilitator, role);
+
+  const roleColor = orgRole ? getRoleBadgeColor(orgRole) : "";
+  const roleLabel = orgRole ? getOrganizationRoleLabel(orgRole) : "";
+  const permissions = orgRole ? ROLE_PERMISSIONS_LABELS[orgRole] : null;
 
   return (
     <header className="border-b border-tb-border bg-tb-bg/80 backdrop-blur-md sticky top-0 z-50">
@@ -92,12 +101,67 @@ export default function ConnectedHeader() {
           </span>
         </Link>
 
-        {/* Desktop right side — nom + Menu ▼ */}
+        {/* Desktop right side — nom + badge rôle + Menu ▼ */}
         <div className="hidden md:flex items-center gap-3">
           {session?.user?.name && (
             <span className="text-xs text-tb-text-muted truncate max-w-[120px]">
               {session.user.name}
             </span>
+          )}
+
+          {orgRole && (
+            <div className="relative">
+              <button
+                onClick={() => setRoleInfoOpen((prev) => !prev)}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all hover:shadow-sm ${roleColor}`}
+                title="Voir mes droits"
+              >
+                <Info className="w-3 h-3" />
+                {roleLabel}
+              </button>
+
+              {roleInfoOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setRoleInfoOpen(false)}
+                  />
+                  <div className="absolute top-full right-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-xl z-20 p-4 space-y-2">
+                    <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                      <ShieldCheck className="w-4 h-4 text-gray-400" />
+                      <span className="text-xs font-semibold text-gray-800 uppercase tracking-wider">
+                        {roleLabel}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold pb-1">
+                      Permissions
+                    </p>
+                    {permissions?.map((perm) => (
+                      <div
+                        key={perm.label}
+                        className={`flex items-start gap-2 p-1.5 rounded-lg text-xs ${
+                          perm.granted
+                            ? "text-emerald-700"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        {perm.granted ? (
+                          <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 shrink-0 text-emerald-500" />
+                        ) : (
+                          <XCircle className="w-3.5 h-3.5 mt-0.5 shrink-0 text-gray-300" />
+                        )}
+                        <div>
+                          <p className="font-medium">{perm.label}</p>
+                          <p className={`text-[10px] ${perm.granted ? "text-emerald-500" : "text-gray-300"}`}>
+                            {perm.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           )}
 
           <div className="relative">

@@ -90,6 +90,54 @@ export function getOrganizationStatusColor(status: string): string {
   }
 }
 
+// ─── Permissions par rôle (client-safe) ──────────────────────────────
+
+export const ROLE_PERMISSIONS_LABELS: Record<string, { label: string; description: string; granted: boolean }[]> = {
+  OWNER: [
+    { label: "Dashboard privé", description: "Accéder au tableau de bord", granted: true },
+    { label: "Gérer l'organisation", description: "Modifier les informations de l'org", granted: true },
+    { label: "Gérer les membres", description: "Inviter, changer les rôles, retirer", granted: true },
+    { label: "Créer des missions", description: "Proposer des missions aux membres", granted: true },
+    { label: "Gérer le pot TIME", description: "Retraits, financements, ajustements", granted: true },
+    { label: "Consulter le pot TIME", description: "Voir le solde et l'historique", granted: true },
+    { label: "Archiver l'organisation", description: "Mettre fin à l'org", granted: true },
+  ],
+  ADMIN: [
+    { label: "Dashboard privé", description: "Accéder au tableau de bord", granted: true },
+    { label: "Gérer l'organisation", description: "Modifier les informations de l'org", granted: true },
+    { label: "Gérer les membres", description: "Inviter, changer les rôles, retirer", granted: true },
+    { label: "Créer des missions", description: "Proposer des missions aux membres", granted: true },
+    { label: "Gérer le pot TIME", description: "Retraits, financements, ajustements", granted: true },
+    { label: "Consulter le pot TIME", description: "Voir le solde et l'historique", granted: true },
+    { label: "Archiver l'organisation", description: "Réservé au responsable principal", granted: false },
+  ],
+  FACILITATOR: [
+    { label: "Dashboard privé", description: "Accéder au tableau de bord", granted: true },
+    { label: "Créer des missions", description: "Proposer des missions aux membres", granted: true },
+    { label: "Créer des programmes", description: "Lancer des programmes d'action", granted: true },
+    { label: "Consulter le pot TIME", description: "Voir le solde et l'historique", granted: true },
+    { label: "Gérer l'organisation", description: "Modifier les informations de l'org", granted: false },
+    { label: "Gérer les membres", description: "Inviter, changer les rôles, retirer", granted: false },
+    { label: "Gérer le pot TIME", description: "Retraits, financements, ajustements", granted: false },
+    { label: "Archiver l'organisation", description: "Réservé au responsable principal", granted: false },
+  ],
+  MEMBER: [
+    { label: "Consulter le pot TIME", description: "Voir le solde et l'historique", granted: true },
+    { label: "Donner au pot", description: "Contribuer au pot commun (1-10 000 TIME)", granted: true },
+    { label: "Dashboard privé", description: "Réservé aux gestionnaires", granted: false },
+    { label: "Créer des missions", description: "Réservé aux facilitateurs", granted: false },
+    { label: "Gérer les membres", description: "Réservé aux administrateurs", granted: false },
+    { label: "Archiver l'organisation", description: "Réservé au responsable principal", granted: false },
+  ],
+  VIEWER: [
+    { label: "Consulter le pot TIME", description: "Lecture seule", granted: false },
+    { label: "Dashboard privé", description: "Aucun accès", granted: false },
+    { label: "Donner au pot", description: "Pas de droit de don", granted: false },
+    { label: "Créer des missions", description: "Réservé aux facilitateurs", granted: false },
+    { label: "Gérer les membres", description: "Réservé aux administrateurs", granted: false },
+  ],
+};
+
 export function getRoleBadgeColor(role: string): string {
   switch (role) {
     case "OWNER":

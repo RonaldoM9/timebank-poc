@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getFacilitatorDashboard, getFacilitatorRequests, getPotTransactions } from "@/lib/facilitator";
+import { getFacilitatorDashboard, getFacilitatorRequests, getPotTransactions, getFundedMissions } from "@/lib/facilitator";
 import FacilitatorClient from "./FacilitatorClient";
 
 export default async function FacilitatorCommunityPotPage() {
@@ -20,10 +20,11 @@ export default async function FacilitatorCommunityPotPage() {
     redirect("/dashboard");
   }
 
-  const [dashboard, requests, transactions] = await Promise.all([
+  const [dashboard, requests, transactions, fundedMissions] = await Promise.all([
     getFacilitatorDashboard(),
     getFacilitatorRequests(),
     getPotTransactions(),
+    getFundedMissions(),
   ]);
 
   return (
@@ -32,6 +33,7 @@ export default async function FacilitatorCommunityPotPage() {
       dashboard={dashboard}
       requests={requests}
       transactions={transactions}
+      fundedMissions={fundedMissions}
     />
   );
 }

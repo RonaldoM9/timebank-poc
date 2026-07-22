@@ -29,8 +29,8 @@ export default async function NewProgramPage({
     select: { role: true },
   })
 
-  // Only OWNER, ADMIN can create programs
-  if (!membership || !["OWNER", "ADMIN"].includes(membership.role)) {
+  // Only OWNER, ADMIN, or FACILITATOR can create programs
+  if (!membership || !["OWNER", "ADMIN", "FACILITATOR"].includes(membership.role)) {
     notFound()
   }
 

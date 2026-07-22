@@ -269,18 +269,32 @@
 ## 15. Pot TIME organisation
 
 | ID | Test | Attendu |
-|---|---|---|
+|----|------|---------|
 | T149 | Pot créé automatiquement à la création | Balance = 0 |
-| T150 | MEMBRE donne 5 TIME | User -5, pot +5 |
-| T151 | MEMBRE donne 0 TIME | Refus Zod : "positif" |
-| T152 | MEMBRE donne montant négatif | Refus Zod |
-| T153 | MEMBRE donne > solde | Refus : "Solde insuffisant" |
-| T154 | MEMBRE donne > 10000 | Refus Zod |
-| T155 | Transaction DONATION enregistrée | ✅ |
-| T156 | Transaction TIME créée (type: transfer) | ✅ |
-| T157 | OWNER voit historiques transactions pot | ✅ |
-| T158 | MEMBER voit solde pot (limité) | ✅ (VIEW_ORG_POT) |
-| T159 | Non-membre donne au pot | Action vérifie userId |
+| T150 | MEMBRE connecté → page `/organizations/[slug]/pot` | ✅ Page accessible, header = "Donner au pot — {org}" |
+| T151 | FACILITATOR/ADMIN/OWNER → même page | ✅ Header = "Pot TIME — {org}" |
+| T152 | MEMBRE donne 5 TIME | User -5, pot +5, transaction DONATION créée |
+| T153 | MEMBRE donne 0 TIME | Refus Zod : "positif" |
+| T154 | MEMBRE donne montant négatif | Refus Zod |
+| T155 | MEMBRE donne > solde | Refus : "Solde insuffisant" |
+| T156 | MEMBRE donne > 10000 | Refus Zod |
+| T157 | Transaction DONATION enregistrée avec fromUserId, amount, type | ✅ |
+| T158 | Transaction TIME créée (type: transfer) dans ledger global | ✅ |
+| T159 | OWNER voit historique complet des transactions pot | ✅ |
+| T160 | MEMBER voit le même historique (transparence totale) | ✅ |
+| T161 | MEMBER voit le formulaire de don + bouton "Donner" | ✅ |
+| T162 | MEMBER voit la description "Donnez du TIME pour soutenir..." | ✅ |
+| T163 | FACILITATOR voit la description "Gérez le pot commun..." | ✅ |
+| T164 | Carte info adaptée pour MEMBER : "En donnant, vous contribuez..." | ✅ |
+| T165 | Carte info adaptée pour FACILITATOR+ : "En tant que gestionnaire..." | ✅ |
+| T166 | Utilisateur connecté NON membre de l'org → page pot | ✅ Page accessible mais formulaire masqué, message "Vous devez être membre" affiché |
+| T167 | Utilisateur NON connecté → `/organizations/[slug]/pot` | Redirige `/auth/signin` |
+| T168 | Dashboard "Actions rapides → Pot TIME" visible pour MEMBER | ✅ Lien présent avec "Voir le solde · Donner au pot" |
+| T169 | `canManage` = true pour FACILITATOR/ADMIN/OWNER | ✅ Prêt pour futures actions de gestion |
+| T170 | `canManage` = false pour MEMBER | ✅ |
+| T171 | MEMBER donne avec montant décimal (ex: 5.5) | Refus Zod (int requis) |
+| T172 | MEMBER donne 1 TIME (minimum) | Accepté ✅ |
+| T173 | Double don rapide (soumission multiple) | Transaction atomique, pas de double débit |
 
 ---
 

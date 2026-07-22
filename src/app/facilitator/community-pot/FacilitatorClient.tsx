@@ -17,23 +17,25 @@ import {
   Banknote,
   ArrowUpRight,
   ArrowDownRight,
+  Calendar,
 } from "lucide-react";
-import type { FacilitatorDashboardData, RequestWithDetails, PotTransactionWithDetails } from "@/lib/facilitator";
+import type { FacilitatorDashboardData, RequestWithDetails, PotTransactionWithDetails, FundedMissionItem } from "@/lib/facilitator";
 import { approveCommunityPotRequest, rejectCommunityPotRequest } from "./actions";
 import { verifySolidarityMission, rejectSolidarityMission } from "@/app/services/solidarity-actions";
 import SolidarityBadge, { SOLIDARITY_CATEGORY_LABELS } from "@/components/SolidarityBadge";
 import ConnectedHeader from "@/components/ConnectedHeader";
 
-type KpiFilter = "balance" | "donations" | "fundings" | "requests" | "missions" | null;
+type KpiFilter = "balance" | "donations" | "fundings" | "requests" | "missions" | "fundedMissions" | null;
 
 type Props = {
   user: { id: string; name: string; role: string };
   dashboard: FacilitatorDashboardData;
   requests: RequestWithDetails[];
   transactions: PotTransactionWithDetails[];
+  fundedMissions: FundedMissionItem[];
 };
 
-export default function FacilitatorClient({ user, dashboard, requests, transactions }: Props) {
+export default function FacilitatorClient({ user, dashboard, requests, transactions, fundedMissions }: Props) {
   const [pendingRequests, setPendingRequests] = useState(
     requests.filter((r) => r.status === "PENDING")
   );
@@ -143,13 +145,13 @@ export default function FacilitatorClient({ user, dashboard, requests, transacti
       desc: "Voir les demandes en attente",
     },
     {
-      key: "missions" as KpiFilter,
+      key: "fundedMissions" as KpiFilter,
       label: "Missions financées",
       value: String(dashboard.fundedMissions),
       icon: <Users className="w-4 h-4 text-purple-400" />,
       color: "text-purple-400",
-      onClick: () => window.location.href = "/bookings",
-      desc: "Voir les réservations",
+      onClick: () => setActiveKpi(activeKpi === "fundedMissions" ? null : "fundedMissions"),
+      desc: "Voir les missions financées",
     },
   ];
 
@@ -229,26 +231,30 @@ export default function FacilitatorClient({ user, dashboard, requests, transacti
         {/* Transactions detail panel */}
         {showTransactions && (
           <section id="pot-transactions" className="mb-8">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Banknote className="w-5 h-5 text-tb-accent" />
-              Transactions du pot
-              {activeKpi === "donations" && (
-                <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full">
-                  Dons uniquement
-                </span>
-              )}
-              {activeKpi === "fundings" && (
-                <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">
-                  Financements uniquement
-                </span>
-              )}
-              <button
-                onClick={() => setActiveKpi(null)}
-                className="ml-auto text-xs text-tb-text-muted hover:text-tb-text-secondary transition"
-              >
-                ✕ Fermer
-              </button>
-            </h2>
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Banknote className="w-5 h-5 text-tb-accent" />
+                Transactions du pot
+                {activeKpi === "donations" && (
+                  <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full">
+                    Dons uniquement
+                  </span>
+                )}
+                {activeKpi === "fundings" && (
+                  <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">
+                    Financements uniquement
+                  </span>
+                )}
+              </h2>
+              <div className="ml-auto flex items-center gap-2">
+                <button
+                  onClick={() => setActiveKpi(null)}
+                  className="text-xs text-tb-text-muted hover:text-tb-text-secondary transition"
+                >
+                  ✕ Fermer
+                </button>
+              </div>
+            </div>
 
             {filteredTransactions.length === 0 ? (
               <div className="rounded-2xl bg-tb-surface border border-tb-border p-8 text-center text-tb-text-secondary">
@@ -422,7 +428,75 @@ export default function FacilitatorClient({ user, dashboard, requests, transacti
           )}
         </section>
 
-        {/* C. History */}
+        {/* C. Funded Missions */}
+        {activeKpi === "fundedMissions" && (
+          <section id="missions-financees" className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Users className="w-5 h-5 text-purple-400" />
+                Missions financées par le pot
+                <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full">
+                  {fundedMissions.length}
+                </span>
+              </h2>
+              <button
+                onClick={() => setActiveKpi(null)}
+                className="text-xs text-tb-text-muted hover:text-tb-text-secondary transition"
+              >
+                ✕ Fermer
+              </button>
+            </div>
+
+            {fundedMissions.length === 0 ? (
+              <div className="rounded-2xl bg-tb-surface border border-tb-border p-8 text-center text-tb-text-secondary">
+                <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                <p>Aucune mission financée pour le moment.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {fundedMissions.map((m) => (
+                  <div
+                    key={m.id}
+                    className="rounded-2xl bg-tb-surface border border-tb-border p-4 flex items-start justify-between gap-4"
+                  >
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="mt-0.5 text-purple-400">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
+                            {m.status === "completed" ? "Terminée" : m.status === "confirmed" ? "Confirmée" : m.status === "in_progress" ? "En cours" : "En attente"}
+                          </span>
+                          <span className="font-medium">{m.serviceTitle}</span>
+                          <a
+                            href={`/bookings/${m.bookingId}`}
+                            className="text-xs text-blue-400 hover:underline flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            Voir la mission
+                          </a>
+                        </div>
+                        <p className="text-sm text-tb-text-secondary mt-0.5">
+                          {m.requesterName} ← {m.providerName} · <span className="text-purple-400 font-semibold">{m.potAmount} TIME</span>
+                        </p>
+                        {m.completedAt && (
+                          <p className="text-xs text-tb-text-muted mt-0.5">
+                            Terminée le {new Date(m.completedAt).toLocaleDateString("fr-FR", {
+                              day: "numeric", month: "short", year: "numeric",
+                            })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* D. History */}
         <section>
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <FileText className="w-5 h-5 text-tb-text-secondary" />
