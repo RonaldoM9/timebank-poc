@@ -291,12 +291,12 @@ Ce scénario enchaîne toutes les étapes comme un vrai facilitateur utiliserait
 
 | # | Test | Statut |
 |---|------|--------|
-| S1 | Marketplace et découverte | ⬜ |
-| S2 | Réservation P2P | ⬜ |
-| S3 | Messagerie (envoi) | ⬜ |
-| S4 | Messagerie (réponse) | ⬜ |
-| S5 | Changement de statut | ⬜ |
-| S6 | Complétion QR/preuve | ⬜ |
+| S1 | Marketplace et découverte | ✅ |
+| S2 | Réservation P2P | ✅ |
+| S3 | Messagerie (envoi) | ✅ |
+| S4 | Messagerie (réponse) | ✅ |
+| S5 | Changement de statut (QR → completion) | ✅ |
+| S6 | Complétion QR/preuve | ✅ |
 | S7 | Évaluation (rating) | ⬜ |
 | S8 | Wallet et transactions | ⬜ |
 | S9 | Transfert P2P direct | ⬜ |

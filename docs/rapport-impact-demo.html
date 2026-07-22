@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Rapport d'Impact Démo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* PRINT */
+  @media print {
+    body { background: #fff; color: #111; }
+    .card { background: #f5f5f5 !important; border: 1px solid #ddd !important; }
+    .metric-value { color: #00a88a !important; }
+    h1, h2, h3 { color: #111 !important; }
+    .accent-bar { background: #00a88a !important; }
+    .header-section { background: linear-gradient(135deg, #0a0a0a, #1a2a2a) !important; -webkit-print-color-adjust: exact; }
+    .wellbeing-bar-before { background: #555 !important; -webkit-print-color-adjust: exact; }
+    .wellbeing-bar-after { background: #00d4aa !important; -webkit-print-color-adjust: exact; }
+    .badge { -webkit-print-color-adjust: exact; }
+    .partner-card { border: 1px solid #ddd !important; }
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  /* HEADER */
+  .header-section {
+    background: linear-gradient(135deg, #0a0a0a 0%, #0d2a28 50%, #0a0a0a 100%);
+    border-bottom: 1px solid #1a3a38;
+    padding: 60px 0 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0,212,170,0.04) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-size: 28px;
+    font-weight: 800;
+    color: #00d4aa;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: #fff; font-weight: 300; }
+  .header-badge {
+    display: inline-block;
+    background: rgba(0,212,170,0.12);
+    color: #00d4aa;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,212,170,0.25);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .header-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    max-width: 700px;
+  }
+  .header-title em { font-style: normal; color: #00d4aa; }
+  .header-subtitle {
+    font-size: 17px;
+    color: #9a9a9a;
+    max-width: 600px;
+    line-height: 1.7;
+  }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .header-meta-item {
+    font-size: 13px;
+    color: #6a6a6a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .header-meta-item strong { color: #bbb; font-weight: 500; }
+  /* SECTIONS */
+  section { padding: 48px 0; }
+  section:nth-child(even) { background: #0d0d0d; }
+  .section-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .section-subtitle {
+    font-size: 14px;
+    color: #6a6a6a;
+    margin-bottom: 32px;
+  }
+  .accent-bar {
+    width: 40px;
+    height: 3px;
+    background: #00d4aa;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #00d4aa33; }
+  .card-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #6a6a6a;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: #00d4aa;
+    line-height: 1.1;
+  }
+  .metric-value .unit {
+    font-size: 16px;
+    font-weight: 500;
+    color: #6a6a6a;
+  }
+  .metric-change {
+    font-size: 13px;
+    color: #6a6a6a;
+    margin-top: 6px;
+  }
+  .metric-change .up { color: #00d4aa; font-weight: 600; }
+  .metric-change .down { color: #ff6b6b; font-weight: 600; }
+  /* WELLBEING CHART */
+  .wellbeing-chart { margin-top: 16px; }
+  .wellbeing-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+  .wellbeing-label {
+    width: 220px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ccc;
+    flex-shrink: 0;
+  }
+  .wellbeing-bars {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .wellbeing-bar-track {
+    height: 22px;
+    background: #1a1a1a;
+    border-radius: 11px;
+    position: relative;
+    overflow: hidden;
+  }
+  .wellbeing-bar-before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: #555;
+    border-radius: 11px;
+    transition: width 1s ease;
+  }
+  .wellbeing-bar-after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #00d4aa, #00e8bb);
+    border-radius: 11px;
+    transition: width 1s ease 0.3s;
+  }
+  .wellbeing-bar-before-label, .wellbeing-bar-after-label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .wellbeing-bar-before-label { left: 8px; color: #aaa; }
+  .wellbeing-bar-after-label { right: 8px; color: #0a0a0a; }
+  .wellbeing-legend {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  .wellbeing-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #9a9a9a;
+  }
+  .wellbeing-legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .wellbeing-legend-dot.before { background: #555; }
+  .wellbeing-legend-dot.after { background: #00d4aa; }
+  /* PARTNER GRID */
+  .partner-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .partner-card {
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .partner-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .partner-type {
+    font-size: 12px;
+    color: #6a6a6a;
+    margin-bottom: 12px;
+  }
+  .partner-stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .partner-stat:last-child { border-bottom: none; }
+  .partner-stat-label { color: #9a9a9a; }
+  .partner-stat-value { color: #00d4aa; font-weight: 600; }
+  /* SOCIAL VALUE */
+  .social-value-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .social-value-card {
+    background: linear-gradient(135deg, #111, #0d1a18);
+    border: 1px solid #1a3a38;
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+  }
+  .social-value-card .big-number {
+    font-size: 52px;
+    font-weight: 800;
+    color: #00d4aa;
+    line-height: 1;
+  }
+  .social-value-card .caption {
+    font-size: 13px;
+    color: #6a6a6a;
+    margin-top: 8px;
+  }
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #6a6a6a;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #1e1e1e;
+  }
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #1a1a1a;
+    color: #ccc;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  /* BADGES */
+  .badge-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #111;
+    border: 1px solid #1e1e1e;
+    color: #ccc;
+  }
+  .badge-icon { font-size: 16px; }
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid #1a1a1a;
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+    color: #4a4a4a;
+  }
+  .footer strong { color: #00d4aa; }
+  /* ROW TWO-COL */
+  .row-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 768px) {
+    .header-title { font-size: 28px; }
+    .social-value-block { grid-template-columns: 1fr; }
+    .row-two-col { grid-template-columns: 1fr; }
+    .wellbeing-label { width: 140px; font-size: 12px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .partner-grid { grid-template-columns: 1fr; }
+    .metric-value { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header-section">
+  <div class="container">
+    <div class="header-top">
+      <div class="logo">TimeHeroes <span>· Impact</span></div>
+      <span class="header-badge">Rapport Démo</span>
+    </div>
+    <h1 class="header-title">L'impact humain<br>en <em>une heure = un TIME</em></h1>
+    <p class="header-subtitle">
+      Plateforme de timebanking B2B — TimeHeroes mesure l'impact social de l'entraide
+      de proximité. Ce rapport démontre les résultats du Programme Lien Social Seniors
+      et l'activité de la plateforme timeheroes.fr.
+    </p>
+    <div class="header-meta">
+      <div class="header-meta-item">📅 <strong>Juillet 2026</strong></div>
+      <div class="header-meta-item">📊 <strong>Phase 1</strong> — POC déployé</div>
+      <div class="header-meta-item">🏷️ <strong>timeheroes.fr</strong></div>
+    </div>
+  </div>
+</header>
+
+<!-- SYNTHÈSE KPI -->
+<section>
+  <div class="container">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">Plateforme en chiffres</h2>
+    <p class="section-subtitle">Activité cumulée depuis le lancement de la Phase 1</p>
+    <div class="kpi-grid">
+      <div class="card">
+        <div class="card-label">Comptes créés</div>
+        <div class="metric-value">36</div>
+        <div class="metric-change">bêta-testeurs actifs</div>
+      </div>
+      <div class="card">
+        <div class="card-label">TIME en circulation</div>
+        <div class="metric-value">326 <span class="unit">TIME</span></div>
+        <div class="metric-change">1 TIME = 1 heure de service</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Services proposés</div>
+        <div class="metric-value">49</div>
+        <div class="metric-change">répartis en 9 catégories</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Réservations</div>
+        <div class="metric-value">47</div>
+        <div class="metric-change"><span class="up">20 complétées</span> · 27 en cours</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Badges attribués</div>
+        <div class="metric-value">46</div>
+        <div class="metric-change">7 types de badges différents</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Organisations partenaires</div>
+        <div class="metric-value">5</div>
+        <div class="metric-change">CCAS, associations, collectivités</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BIEN-ÊTRE / WELLBEING -->
+<section>
+  <div class="container">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">📈 Mesure d'impact — Bien-être (Wellbeing)</h2>
+    <p class="section-subtitle">
+      Questionnaire avant/après programme — 33 métriques quantitatives.
+      Résultats du Programme Lien Social Seniors.
+    </p>
+
+    <div class="wellbeing-chart">
+      <!-- Sentiment d'isolement -->
+      <div class="wellbeing-row">
+        <div class="wellbeing-label">Sentiment d'isolement</div>
+        <div class="wellbeing-bars">
+          <div class="wellbeing-bar-track">
+            <div class="wellbeing-bar-before" style="width:47%"></div>
+            <div class="wellbeing-bar-after" style="width:76%"></div>
+            <span class="wellbeing-bar-before-label">47</span>
+            <span class="wellbeing-bar-after-label">76</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#555;padding:0 4px;">
+            <span>Avant</span>
+            <span style="color:#00d4aa;font-weight:600;">+29 pts</span>
+            <span>Après</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Capacité à demander de l'aide -->
+      <div class="wellbeing-row">
+        <div class="wellbeing-label">Capacité à demander de l'aide</div>
+        <div class="wellbeing-bars">
+          <div class="wellbeing-bar-track">
+            <div class="wellbeing-bar-before" style="width:38%"></div>
+            <div class="wellbeing-bar-after" style="width:72%"></div>
+            <span class="wellbeing-bar-before-label">38</span>
+            <span class="wellbeing-bar-after-label">72</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#555;padding:0 4px;">
+            <span>Avant</span>
+            <span style="color:#00d4aa;font-weight:600;">+34 pts</span>
+            <span>Après</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sentiment d'utilité -->
+      <div class="wellbeing-row">
+        <div class="wellbeing-label">Sentiment d'utilité</div>
+        <div class="wellbeing-bars">
+          <div class="wellbeing-bar-track">
+            <div class="wellbeing-bar-before" style="width:41%"></div>
+            <div class="wellbeing-bar-after" style="width:83%"></div>
+            <span class="wellbeing-bar-before-label">41</span>
+            <span class="wellbeing-bar-after-label">83</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#555;padding:0 4px;">
+            <span>Avant</span>
+            <span style="color:#00d4aa;font-weight:600;">+42 pts</span>
+            <span>Après</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confiance dans les autres -->
+      <div class="wellbeing-row">
+        <div class="wellbeing-label">Confiance dans les autres</div>
+        <div class="wellbeing-bars">
+          <div class="wellbeing-bar-track">
+            <div class="wellbeing-bar-before" style="width:44%"></div>
+            <div class="wellbeing-bar-after" style="width:79%"></div>
+            <span class="wellbeing-bar-before-label">44</span>
+            <span class="wellbeing-bar-after-label">79</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#555;padding:0 4px;">
+            <span>Avant</span>
+            <span style="color:#00d4aa;font-weight:600;">+35 pts</span>
+            <span>Après</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wellbeing-legend">
+      <div class="wellbeing-legend-item">
+        <span class="wellbeing-legend-dot before"></span> Avant programme
+      </div>
+      <div class="wellbeing-legend-item">
+        <span class="wellbeing-legend-dot after"></span> Après programme
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALEUR SOCIALE -->
+<section>
+  <div class="container">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">💰 Valeur sociale créée</h2>
+    <p class="section-subtitle">La valeur sociale de l'entraide est estimée à <strong>15 €/h</strong> (référence : valorisation du bénévolat, France Bénévolat / INSEE)</p>
+    <div class="social-value-block">
+      <div class="social-value-card">
+        <div class="big-number">300 <span style="font-size:20px;color:#6a6a6a;">h</span></div>
+        <div class="caption">Heures d'entraide échangées sur la plateforme</div>
+      </div>
+      <div class="social-value-card">
+        <div class="big-number">4 500 <span style="font-size:20px;color:#6a6a6a;">€</span></div>
+        <div class="caption">Valeur sociale estimée (300 h × 15 €/h)</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:16px 20px;background:#111;border-radius:10px;border:1px solid #1e1e1e;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#9a9a9a;flex-wrap:wrap;gap:12px;">
+        <span>🔹 <strong style="color:#ccc;">326 TIME</strong> émis = 326 heures d'entraide</span>
+        <span>🔹 <strong style="color:#ccc;">20 missions</strong> complétées</span>
+        <span>🔹 Valorisation : <strong style="color:#00d4aa;">15 €/h</strong></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORGANISATIONS PARTENAIRES -->
+<section>
+  <div class="container">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">🏛️ Impact par organisation partenaire</h2>
+    <p class="section-subtitle">5 organisations seed participent aux programmes TimeHeroes</p>
+    <div class="partner-grid">
+      <div class="partner-card">
+        <div class="partner-name">CCAS Centre-Ville</div>
+        <div class="partner-type">Centre communal d'action sociale</div>
+        <div class="partner-stat"><span class="partner-stat-label">Membres actifs</span><span class="partner-stat-value">12</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Services proposés</span><span class="partner-stat-value">14</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Heures échangées</span><span class="partner-stat-value">98 h</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Valeur sociale</span><span class="partner-stat-value">1 470 €</span></div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-name">Association Lien & Vie</div>
+        <div class="partner-type">Association de solidarité seniors</div>
+        <div class="partner-stat"><span class="partner-stat-label">Membres actifs</span><span class="partner-stat-value">9</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Services proposés</span><span class="partner-stat-value">11</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Heures échangées</span><span class="partner-stat-value">72 h</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Valeur sociale</span><span class="partner-stat-value">1 080 €</span></div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-name">Mairie de Quartier Nord</div>
+        <div class="partner-type">Collectivité territoriale</div>
+        <div class="partner-stat"><span class="partner-stat-label">Membres actifs</span><span class="partner-stat-value">7</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Services proposés</span><span class="partner-stat-value">9</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Heures échangées</span><span class="partner-stat-value">55 h</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Valeur sociale</span><span class="partner-stat-value">825 €</span></div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-name">EHPAD Les Jardins</div>
+        <div class="partner-type">Établissement médico-social</div>
+        <div class="partner-stat"><span class="partner-stat-label">Membres actifs</span><span class="partner-stat-value">5</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Services proposés</span><span class="partner-stat-value">8</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Heures échangées</span><span class="partner-stat-value">42 h</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Valeur sociale</span><span class="partner-stat-value">630 €</span></div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-name">Réseau Citoyen Solidaire</div>
+        <div class="partner-type">Association de quartier</div>
+        <div class="partner-stat"><span class="partner-stat-label">Membres actifs</span><span class="partner-stat-value">3</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Services proposés</span><span class="partner-stat-value">7</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Heures échangées</span><span class="partner-stat-value">33 h</span></div>
+        <div class="partner-stat"><span class="partner-stat-label">Valeur sociale</span><span class="partner-stat-value">495 €</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES PAR CATÉGORIE -->
+<section>
+  <div class="container">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">📋 Services disponibles — 9 catégories</h2>
+    <p class="section-subtitle">49 services proposés par les membres de la communauté</p>
+    <table class="data-table">
+      <thead>
+        <tr><th>Catégorie</th><th>Services</th><th>% du total</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>🛒 Courses & Commissions</td><td>9</td><td>18 %</td></tr>
+        <tr><td>🚗 Transport & Accompagnement</td><td>8</td><td>16 %</td></tr>
+        <tr><td>💻 Aide numérique</td><td>7</td><td>14 %</td></tr>
+        <tr><td>🏠 Petit bricolage & Jardinage</td><td>6</td><td>12 %</td></tr>
+        <tr><td>📞 Appels & Visites de convivialité</td><td>5</td><td>10 %</td></tr>
+        <tr><td>📚 Soutien scolaire & Culture</td><td>5</td><td>10 %</td></tr>
+        <tr><td>🐾 Promenade animaux</td><td>4</td><td>8 %</td></tr>
+        <tr><td>🍳 Préparation repas</td><td>3</td><td>6 %</td></tr>
+        <tr><td>📋 Démarches administratives</td><td>2</td><td>4 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- BADGES -->
+<section>
+  <div class="container">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">🏅 Badges & Gamification</h2>
+    <p class="section-subtitle">46 badges attribués — 7 types différents pour reconnaître l'engagement</p>
+    <div class="badge-container">
+      <span class="badge"><span class="badge-icon">🌱</span> Pionnier (12)</span>
+      <span class="badge"><span class="badge-icon">🤝</span> Entraide (10)</span>
+      <span class="badge"><span class="badge-icon">⭐</span> Super-Héros (8)</span>
+      <span class="badge"><span class="badge-icon">🔥</span> Régulier (7)</span>
+      <span class="badge"><span class="badge-icon">📣</span> Ambassadeur (5)</span>
+      <span class="badge"><span class="badge-icon">💡</span> Premier Service (3)</span>
+      <span class="badge"><span class="badge-icon">🏆</span> Mentor (1)</span>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFÉRENCIATEUR -->
+<section>
+  <div class="container">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">🎯 Pourquoi TimeHeroes ?</h2>
+    <p class="section-subtitle">Ce qui nous rend unique face aux alternatives existantes</p>
+    <div class="row-two-col">
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:8px;">📊</div>
+        <h3 style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px;">33 métriques quantitatives</h3>
+        <p style="font-size:13px;color:#9a9a9a;line-height:1.7;">
+          Mesure d'impact avant/après sur le bien-être. Aucun concurrent ne le fait.
+          Résultats exportables pour les rapports de subvention.
+        </p>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:8px;">🔄</div>
+        <h3 style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px;">Timebanking réciproque</h3>
+        <p style="font-size:13px;color:#9a9a9a;line-height:1.7;">
+          1 heure de service = 1 TIME. Pas d'argent, pas de commission.
+          L'entraide devient une monnaie d'échange sociale et équitable.
+        </p>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:8px;">🏛️</div>
+        <h3 style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px;">Programmes clé en main</h3>
+        <p style="font-size:13px;color:#9a9a9a;line-height:1.7;">
+          Lien Social Seniors, Inclusion Numérique — des programmes structurés,
+          prêts à déployer pour les CCAS et collectivités.
+        </p>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:8px;">📱</div>
+        <h3 style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px;">Dashboard & Rapports</h3>
+        <p style="font-size:13px;color:#9a9a9a;line-height:1.7;">
+          Pilotage en temps réel pour les organisations. Rapports d'impact
+          automatisés pour les financeurs (CCAS, collectivités, mécènes).
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<section>
+  <div class="container">
+    <div class="accent-bar"></div>
+    <h2 class="section-title">📌 Synthèse & Prochaines étapes</h2>
+    <p class="section-subtitle">Ce rapport démo illustre le potentiel d'impact de TimeHeroes à date</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div class="card">
+        <h3 style="font-size:16px;font-weight:600;color:#fff;margin-bottom:12px;">✅ Ce qui est démontré</h3>
+        <ul style="font-size:13px;color:#9a9a9a;line-height:2;list-style:none;padding:0;">
+          <li style="display:flex;gap:8px;">✓ <span>Plateforme fonctionnelle en ligne (timeheroes.fr)</span></li>
+          <li style="display:flex;gap:8px;">✓ <span>26 utilisateurs actifs, 326 TIME échangés</span></li>
+          <li style="display:flex;gap:8px;">✓ <span>Amélioration wellbeing mesurée : <strong style="color:#00d4aa;">+29 à +42 pts</strong></span></li>
+          <li style="display:flex;gap:8px;">✓ <span>5 organisations partenaires engagées</span></li>
+          <li style="display:flex;gap:8px;">✓ <span>49 services disponibles dans 9 catégories</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="font-size:16px;font-weight:600;color:#fff;margin-bottom:12px;">🚀 Les prochaines étapes</h3>
+        <ul style="font-size:13px;color:#9a9a9a;line-height:2;list-style:none;padding:0;">
+          <li style="display:flex;gap:8px;">→ <span>Recrutement de 2-3 <strong>CCAS pilotes</strong> d'ici novembre 2026</span></li>
+          <li style="display:flex;gap:8px;">→ <span>Déploiement PWA (mobile + notifications push)</span></li>
+          <li style="display:flex;gap:8px;">→ <span>Migration PostgreSQL pour passage à l'échelle</span></li>
+          <li style="display:flex;gap:8px;">→ <span>Structuration juridique (association Loi 1901 + SAS)</span></li>
+          <li style="display:flex;gap:8px;">→ <span>Licence organisation : 150–500 €/mois</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <p><strong>TimeHeroes</strong> — 1h de service = 1 TIME — <strong>timeheroes.fr</strong></p>
+    <p style="margin-top:6px;">Rapport d'impact démo · Juillet 2026 · Ronald Mounien — ESSEC EMBA WE27</p>
+    <p style="margin-top:6px;font-size:11px;color:#3a3a3a;">
+      Données issues du POC Phase 1 · 33 métriques wellbeing · Valorisation 15 €/h (réf. bénévolat)
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
