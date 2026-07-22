@@ -292,7 +292,15 @@ Ce scénario enchaîne toutes les étapes comme un vrai facilitateur utiliserait
 | # | Test | Statut |
 |---|------|--------|
 | S1 | Marketplace et découverte | ✅ |
-| S2 | Réservation P2P | ✅ |
+|| S2 | Réservation P2P | ✅ |
+|| S7 | Évaluation (rating) | 🔄 Interface dispo — test scan QR requis pour completion complète |
+|| S8 | Wallet et transactions | 🔄 Flux escrow + release visible |
+|| S9 | Transfert P2P direct | ⬜ |
+|| S10 | Créer urgence | ⬜ |
+|| S11 | Répondre à une urgence | ⬜ |
+|| S12 | Dashboard Pot Commun | ⬜ |
+|| S13-S28 | Facilitateur (Pot, Matching, Réseau) | ⬜ |
+|| S29-S30 | Missions collectives | ⬜ |
 | S3 | Messagerie (envoi) | ✅ |
 | S4 | Messagerie (réponse) | ✅ |
 | S5 | Changement de statut (QR → completion) | ✅ |

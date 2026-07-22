@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeHeroes — Roadmap 2026-2028</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    padding: 40px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #00d4aa;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: #888;
+    font-size: 1rem;
+    margin-bottom: 40px;
+  }
+  .phase {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .phase:hover { border-color: #00d4aa44; }
+  .phase.done { border-left: 4px solid #00d4aa; }
+  .phase.current { border-left: 4px solid #f0a500; }
+  .phase.future { border-left: 4px solid #7c5cfc; }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .phase-marker {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .phase.done .phase-marker { background: #00d4aa22; color: #00d4aa; }
+  .phase.current .phase-marker { background: #f0a50022; color: #f0a500; }
+  .phase.future .phase-marker { background: #7c5cfc22; color: #7c5cfc; }
+  .phase-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .phase-period {
+    color: #888;
+    font-size: 0.85rem;
+    margin-left: auto;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .stat-card {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #00d4aa;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 4px;
+  }
+  .lot-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .lot-tag {
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    background: #1e1e1e;
+    border: 1px solid #2a2a2a;
+  }
+  .lot-tag.done { border-color: #00d4aa44; color: #00d4aa; }
+  .lot-tag.current { border-color: #f0a50044; color: #f0a500; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 14px;
+  }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+  .feature-list {
+    list-style: none;
+  }
+  .feature-list li {
+    padding: 4px 0;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .feature-list li::before { content: "→"; color: #00d4aa; }
+  .price-card {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #2a2a2a;
+  }
+  .price-card h4 { font-size: 1rem; margin-bottom: 4px; }
+  .price { font-size: 1.3rem; font-weight: 700; color: #00d4aa; }
+  .price-note { font-size: 0.8rem; color: #888; }
+  .footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #555;
+    font-size: 0.85rem;
+    border-top: 1px solid #2a2a2a;
+    padding-top: 24px;
+  }
+  .cta { color: #00d4aa; text-decoration: none; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>🗺️ TimeHeroes — Roadmap</h1>
+<p class="subtitle">Plan directeur 2026-2028 · timeheroes.fr · Ronald Mounien — ESSEC EMBA WE27</p>
+
+<!-- Phase 1 -->
+<div class="phase done">
+  <div class="phase-header">
+    <span class="phase-marker">✅ TERMINÉ</span>
+    <span class="phase-title">Phase 1 — POC → Pilotes</span>
+    <span class="phase-period">Mai → Novembre 2026</span>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value">25</div><div class="stat-label">Lots livrés</div></div>
+    <div class="stat-card"><div class="stat-value">36</div><div class="stat-label">Utilisateurs</div></div>
+    <div class="stat-card"><div class="stat-value">326</div><div class="stat-label">TIME émis</div></div>
+    <div class="stat-card"><div class="stat-value">49</div><div class="stat-label">Services</div></div>
+    <div class="stat-card"><div class="stat-value">20</div><div class="stat-label">Missions faites</div></div>
+    <div class="stat-card"><div class="stat-value">+29</div><div class="stat-label">Pts wellbeing</div></div>
+  </div>
+  <div class="lot-list">
+    <span class="lot-tag done">🔐 Auth</span>
+    <span class="lot-tag done">🏪 Marketplace</span>
+    <span class="lot-tag done">📅 Booking</span>
+    <span class="lot-tag done">⭐ Rating</span>
+    <span class="lot-tag done">📍 Local Heroes</span>
+    <span class="lot-tag done">🚨 Urgent Help</span>
+    <span class="lot-tag done">🎮 Gamification</span>
+    <span class="lot-tag done">🤝 Pot Commun</span>
+    <span class="lot-tag done">🏛️ Organisations</span>
+    <span class="lot-tag done">🤖 IA Matchmaking</span>
+    <span class="lot-tag done">📊 Impact</span>
+    <span class="lot-tag done">🎨 UI/UX</span>
+  </div>
+  <div class="two-col">
+    <div>
+      <strong style="color:#f0a500;">En cours (été 2026)</strong>
+      <ul class="feature-list">
+        <li>Recrutement bêta-testeurs CCAS</li>
+        <li>PWA mobile installable</li>
+        <li>Design polish (6 lots)</li>
+        <li>Conventions de pilote standardisées</li>
+      </ul>
+    </div>
+    <div>
+      <strong style="color:#888;">Livrables fin Phase 1</strong>
+      <ul class="feature-list">
+        <li>2-3 pilotes CCAS terminés</li>
+        <li>Rapports d'impact positifs</li>
+        <li>Convention de pilote standardisée</li>
+        <li>Statut juridique choisi</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Phase 2 -->
+<div class="phase current">
+  <div class="phase-header">
+    <span class="phase-marker">🔄 PHASE ACTUELLE</span>
+    <span class="phase-title">Phase 2 — MVP → Scale</span>
+    <span class="phase-period">Décembre 2026 → Mi-2027</span>
+  </div>
+  <div class="two-col">
+    <div>
+      <strong style="color:#f0a500;">Objectifs techniques</strong>
+      <ul class="feature-list">
+        <li>PostgreSQL (scale multi-organisations)</li>
+        <li>Dashboard admin analytics</li>
+        <li>Notifications temps réel</li>
+        <li>API publique — intégrations tierces</li>
+        <li>Onboarding enrichi partenaire</li>
+        <li>Mobile first — PWA mature</li>
+      </ul>
+    </div>
+    <div>
+      <strong style="color:#f0a500;">Modèle économique</strong>
+      <div class="price-card" style="margin-bottom:8px;">
+        <h4>Découverte</h4>
+        <div class="price">150 €<span class="price-note">/mois</span></div>
+        <div class="price-note">Associations</div>
+      </div>
+      <div class="price-card" style="margin-bottom:8px;">
+        <h4>Standard</h4>
+        <div class="price">300 €<span class="price-note">/mois</span></div>
+        <div class="price-note">CCAS, résidences</div>
+      </div>
+      <div class="price-card">
+        <h4>Premium</h4>
+        <div class="price">500 €<span class="price-note">/mois</span></div>
+        <div class="price-note">Collectivités, entreprises</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:14px;background:#1a1a1a;border-radius:10px;padding:14px;text-align:center;border:1px solid #f0a50033;">
+    <span style="font-weight:700;color:#f0a500;">🎯 Projection CA Année 1 : ~34 000 €</span>
+    <span style="color:#888;display:block;font-size:0.85rem;margin-top:4px;">13-15 organisations · Pack Pilote 300 €/3 mois</span>
+  </div>
+</div>
+
+<!-- Phase 3 -->
+<div class="phase future">
+  <div class="phase-header">
+    <span class="phase-marker">📋 VISION</span>
+    <span class="phase-title">Phase 3 — TIME on-chain</span>
+    <span class="phase-period">Mi-2027 → 2028</span>
+  </div>
+  <div class="two-col">
+    <div>
+      <ul class="feature-list">
+        <li>Token TIME sur Base (L2 Ethereum)</li>
+        <li>ERC-20 restreint — pas de spéculation</li>
+        <li>Smart account via passkey (invisible)</li>
+        <li>Paymaster — gas sponsorisé</li>
+        <li>Transparence immuable des contributions</li>
+      </ul>
+    </div>
+    <div>
+      <div style="background:#7c5cfc10;border:1px solid #7c5cfc33;border-radius:10px;padding:12px;">
+        <strong style="color:#7c5cfc;">⚠️ Prérequis Phase 3</strong>
+        <ul class="feature-list" style="margin-top:8px;">
+          <li>Base utilisateurs stable (&gt;100 actifs)</li>
+          <li>Modèle économique validé</li>
+          <li>Budget frais de gas identifié</li>
+          <li>Audit sécurité contrat TIME</li>
+          <li>Testnet Base Sepolia validé</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div style="background:#7c5cfc10;border:1px solid #7c5cfc22;border-radius:10px;padding:10px;margin-top:12px;font-size:0.85rem;color:#999;">
+    ⚡ <strong style="color:#7c5cfc;">Principe fondateur :</strong> TIME n'est pas une crypto spéculative. Pas d'achat, pas de revente, pas de trading. 
+    L'utilisateur ne voit jamais la blockchain. Tabou marketing jusqu'à la Phase 3.
+  </div>
+</div>
+
+<div style="display:flex;justify-content:center;gap:16px;margin-top:32px;flex-wrap:wrap;">
+  <div style="background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:20px;text-align:center;flex:1;min-width:200px;">
+    <div style="font-size:2rem;font-weight:800;color:#00d4aa;">5</div>
+    <div style="color:#888;font-size:0.85rem;">Décisions stratégiques</div>
+  </div>
+  <div style="background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:20px;text-align:center;flex:1;min-width:200px;">
+    <div style="font-size:2rem;font-weight:800;color:#f0a500;">×5,7</div>
+    <div style="color:#888;font-size:0.85rem;">ROI social estimé</div>
+  </div>
+  <div style="background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:20px;text-align:center;flex:1;min-width:200px;">
+    <div style="font-size:2rem;font-weight:800;color:#7c5cfc;">2028</div>
+    <div style="color:#888;font-size:0.85rem;">TIME on-chain</div>
+  </div>
+</div>
+
+<div class="footer">
+  <a href="https://timeheroes.fr" class="cta">timeheroes.fr</a> · 
+  Ronald Mounien — ESSEC EMBA WE27 · Juillet 2026
+</div>
+
+</body>
+</html>
